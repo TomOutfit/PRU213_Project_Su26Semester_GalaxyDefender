@@ -4,7 +4,7 @@
 ## Overview
 
 | Person | Role | Tasks | Est. Hours |
-|--------|------|-------|-----------|----------------|
+|--------|------|-------|-----------|
 | P1 — Lead Dev | Core gameplay systems | 40 | ~120h |
 | P2 — Systems Dev | Managers + integration | 35 | ~90h |
 | P3 — UI & Level | UI scripts + tilemap + animation | 54 | ~80h |
