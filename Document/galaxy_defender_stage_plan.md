@@ -59,20 +59,20 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 
 **Week 1 — Pure setup (get everyone unblocked first)**
 
-- [ ] Create Unity 2022.3 LTS project, set build target to Windows x86-64
-- [ ] Physics2D gravity = (0,0); Application.targetFrameRate = 60
-- [ ] Create Layers: Player, Enemy, Boss, PlayerBullet, EnemyBullet, PowerUp
-- [ ] Configure Layer Collision Matrix (PlayerBullet→Enemy/Boss; EnemyBullet→Player; Enemy ignores Enemy)
-- [ ] Define Tags: Player, Enemy, Boss, PowerUp
-- [ ] Init Git repo + Unity .gitignore; push; share link with team
-- [ ] Create full `Assets/` folder structure (Scripts/Player, Scripts/Enemy, Scripts/Managers, Scripts/Systems, Scripts/UI, Prefabs, Sprites, Audio, Scenes, Fonts, Animations)
+- [x] Create Unity 6000.4.6f1 project, set build target to Windows x86-64
+- [x] Physics2D gravity = (0,0); Application.targetFrameRate = 60
+- [x] Create Layers: Player, Enemy, Boss, PlayerBullet, EnemyBullet, PowerUp
+- [x] Configure Layer Collision Matrix (PlayerBullet→Enemy/Boss; EnemyBullet→Player; Enemy ignores Enemy)
+- [x] Define Tags: Player, Enemy, Boss, PowerUp
+- [x] Init Git repo + Unity .gitignore; push; share link with team
+- [x] Create full `Assets/` folder structure (Scripts/Player, Scripts/Enemy, Scripts/Managers, Scripts/Systems, Scripts/UI, Prefabs, Sprites, Audio, Scenes, Fonts, Animations)
 - [ ] Set up AudioMixer: 3 groups (Master, Music, SFX); expose MasterVolume, MusicVolume, SFXVolume parameters
 
 **Week 2 — First scripts**
 
-- [ ] `ObjectPool.cs` — Generic pool, Get()/Release(), hard caps (20 player bullets, 30 enemy bullets), auto-return oldest at cap
-- [ ] `PlayerController.cs` — WASD/Arrow input, `rb.MovePosition()` in FixedUpdate, screen viewport clamp, Shift → dash coroutine
-- [ ] `PlayerHealth.cs` — maxHP=100, maxShield=50, TakeDamage() checks isDashing first, shield absorbs before HP, OnDeath/OnHPChanged/OnShieldChanged events
+- [x] `ObjectPool.cs` — Generic pool, Get()/Release(), hard caps (20 player bullets, 30 enemy bullets), auto-return oldest at cap
+- [x] `PlayerController.cs` — WASD/Arrow input, `rb.MovePosition()` in FixedUpdate, screen viewport clamp, Shift → dash coroutine
+- [x] `PlayerHealth.cs` — maxHP=100, maxShield=50, TakeDamage() checks isDashing first, shield absorbs before HP, OnDeath/OnHPChanged/OnShieldChanged events
 - [ ] Quick play test: place Player prefab in temp scene → confirm movement, clamp, dash all work
 
 > **Handoff to P2 at end of Week 1:** Folder structure + Git repo must exist so P2 can create GameManager simultaneously.
