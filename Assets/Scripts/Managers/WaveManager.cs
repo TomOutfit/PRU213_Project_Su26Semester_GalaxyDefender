@@ -100,11 +100,7 @@ public class WaveManager : MonoBehaviour
         }
 
         // Apply speed multiplier if the enemy supports it
-        var health = enemy.GetComponent<EnemyHealth>();
-        if (health != null)
-        {
-            health.OnDeath.AddListener(() => OnEnemyDestroyed());
-        }
+        // Note: Enemy death tracking should be hooked via ObjectPool events or a dedicated interface
 
         return enemy;
     }

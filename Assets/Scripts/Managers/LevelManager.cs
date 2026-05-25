@@ -58,9 +58,6 @@ public class LevelManager : MonoBehaviour
 
     private IEnumerator LevelCompleteSequence()
     {
-        HUDController hud = Object.FindObjectOfType<HUDController>();
-        if (hud != null) hud.ShowLevelComplete();
-
         yield return new WaitForSeconds(2f);
 
         string nextScene = GetNextSceneName();
@@ -74,9 +71,6 @@ public class LevelManager : MonoBehaviour
 
     private IEnumerator VictorySequence()
     {
-        HUDController hud = Object.FindObjectOfType<HUDController>();
-        if (hud != null) hud.ShowVictory();
-
         yield return new WaitForSeconds(3f);
 
         SaveManager.Instance?.SaveHighScore(ScoreManager.Instance?.currentScore ?? 0);

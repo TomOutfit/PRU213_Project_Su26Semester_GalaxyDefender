@@ -12,7 +12,7 @@ public class AudioManager : MonoBehaviour
 
     [Header("BGM")]
     public AudioSource bgmSource;
-    public AudioMixerGroup bgmMixerGroup;
+    public UnityEngine.Audio.AudioMixerGroup bgmMixerGroup;
 
     private Dictionary<string, AudioClip> sfxMap = new Dictionary<string, AudioClip>();
     private Coroutine fadeRoutine;

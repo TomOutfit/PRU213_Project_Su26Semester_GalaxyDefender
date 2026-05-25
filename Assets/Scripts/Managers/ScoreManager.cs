@@ -1,17 +1,18 @@
 using UnityEngine;
 using UnityEngine.Events;
+using System.Collections;
 
 public class ScoreManager : MonoBehaviour
 {
     public static ScoreManager Instance { get; private set; }
 
-    public int currentScore { get; private set; }
+    public int currentScore { get; internal set; }
     public int comboCount { get; private set; }
     public bool powerUpMultiplierActive { get; private set; }
 
     public UnityEvent<int> OnScoreChanged;
-    public UnityEvent OnPlayerDamaged;
-    public UnityEvent OnEnemyKilled;
+    public UnityEvent OnPlayerDamagedEvent;
+    public UnityEvent OnEnemyKilledEvent;
 
     private Coroutine multiplierTimerRoutine;
 
@@ -43,13 +44,13 @@ public class ScoreManager : MonoBehaviour
     public void OnPlayerDamaged()
     {
         comboCount = 0;
-        OnPlayerDamaged?.Invoke();
+        OnPlayerDamagedEvent?.Invoke();
     }
 
     public void OnEnemyKilled()
     {
         comboCount++;
-        OnEnemyKilled?.Invoke();
+        OnEnemyKilledEvent?.Invoke();
     }
 
     public void ActivateScoreMultiplier(float duration = 10f)
