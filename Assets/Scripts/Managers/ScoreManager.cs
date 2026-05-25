@@ -1,0 +1,78 @@
+using UnityEngine;
+using UnityEngine.Events;
+
+public class ScoreManager : MonoBehaviour
+{
+    public static ScoreManager Instance { get; private set; }
+
+    public int currentScore { get; private set; }
+    public int comboCount { get; private set; }
+    public bool powerUpMultiplierActive { get; private set; }
+
+    public UnityEvent<int> OnScoreChanged;
+    public UnityEvent OnPlayerDamaged;
+    public UnityEvent OnEnemyKilled;
+
+    private Coroutine multiplierTimerRoutine;
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+    }
+
+    public void AddScore(int baseScore)
+    {
+        int multiplier = GetMultiplier();
+        currentScore += baseScore * multiplier;
+        OnScoreChanged?.Invoke(currentScore);
+    }
+
+    public int GetMultiplier()
+    {
+        if (powerUpMultiplierActive) return 2;
+        if (comboCount >= 10) return 3;
+        if (comboCount >= 5) return 2;
+        return 1;
+    }
+
+    public void OnPlayerDamaged()
+    {
+        comboCount = 0;
+        OnPlayerDamaged?.Invoke();
+    }
+
+    public void OnEnemyKilled()
+    {
+        comboCount++;
+        OnEnemyKilled?.Invoke();
+    }
+
+    public void ActivateScoreMultiplier(float duration = 10f)
+    {
+        powerUpMultiplierActive = true;
+
+        if (multiplierTimerRoutine != null)
+            StopCoroutine(multiplierTimerRoutine);
+
+        multiplierTimerRoutine = StartCoroutine(MultiplierTimer(duration));
+    }
+
+    private IEnumerator MultiplierTimer(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        powerUpMultiplierActive = false;
+    }
+
+    public void ResetScore()
+    {
+        currentScore = 0;
+        comboCount = 0;
+        powerUpMultiplierActive = false;
+        OnScoreChanged?.Invoke(currentScore);
+    }
+}
