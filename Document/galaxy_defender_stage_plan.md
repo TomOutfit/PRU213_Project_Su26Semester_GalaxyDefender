@@ -83,16 +83,16 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 
 **Week 1 — Skeleton managers (can write offline, push to shared repo)**
 
-- [ ] `GameManager.cs` — Singleton, enum State {Playing, Paused, GameOver, Victory}, SetState() fires OnStateChanged, Paused→timeScale=0, Playing→timeScale=1, track survivalTime float in Update
-- [ ] `AudioManager.cs` — Singleton skeleton: Dictionary<string, AudioClip> sfx (populated in Inspector), PlaySFX(string), PlayBGM(string) stub, CrossFade coroutine stub (full implementation in S2)
+- [x] `GameManager.cs` — Singleton, enum State {Playing, Paused, GameOver, Victory}, SetState() fires OnStateChanged, Paused→timeScale=0, Playing→timeScale=1, track survivalTime float in Update
+- [x] `AudioManager.cs` — Singleton skeleton: Dictionary<string, AudioClip> sfx (populated in Inspector), PlaySFX(string), PlayBGM(string) stub, CrossFade coroutine stub (full implementation in S2)
 
 **Week 2 — WaveManager skeleton**
 
-- [ ] `WaveManager.cs` — serialized WaveData[] (enemy prefab, count, X positions array, speedMultiplier); StartWave(int) stub; SpawnEnemy(prefab, pos) public method (needed by BossController later); IEnumerator PollWaveCleared() stub
-- [ ] `ScoreManager.cs` — Singleton skeleton: currentScore, comboCount, AddScore(int) with GetMultiplier() returning 1 for now; OnScoreChanged event; OnPlayerDamaged() resets combo
-- [ ] Create 3 empty scene files: MainMenu.unity, Level1.unity, GameOver.unity — push to Git so P3 can open them
-- [ ] Add EventSystem + basic Canvas to Level1.unity so P3 can begin HUD layout
-- [ ] Wire GameManager ↔ ScoreManager initial references in Level1.unity
+- [x] `WaveManager.cs` — serialized WaveData[] (enemy prefab, count, X positions array, speedMultiplier); StartWave(int) stub; SpawnEnemy(prefab, pos) public method (needed by BossController later); IEnumerator PollWaveCleared() stub
+- [x] `ScoreManager.cs` — Singleton skeleton: currentScore, comboCount, AddScore(int) with GetMultiplier() returning 1 for now; OnScoreChanged event; OnPlayerDamaged() resets combo
+- [x] Create 3 empty scene files: MainMenu.unity, Level1.unity, GameOver.unity — push to Git so P3 can open them
+- [x] Add EventSystem + basic Canvas to Level1.unity so P3 can begin HUD layout
+- [x] Wire GameManager ↔ ScoreManager initial references in Level1.unity
 
 > **P2 dependency:** Needs P1's folder structure from Week 1 before pushing any scripts.
 

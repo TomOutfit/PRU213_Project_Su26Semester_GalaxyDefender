@@ -374,7 +374,7 @@ Assets/
 
 #### I. UI Elements
 
-> Download the confirmed-working Kenney UI Pack (CC0) — faster than generating: https://kenney.nl/assets/ui-pack
+> Download the confirmed-working Kenney UI Pack (CC0) — faster than generating: https://kenney.nl/assets/ui-pack-sci-fi
 
 From the pack, use these files:
 
