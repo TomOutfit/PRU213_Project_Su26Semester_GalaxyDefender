@@ -125,36 +125,36 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 
 **Week 1 — Downloads (all audio + visual packs)**
 
-- [ ] Download Kenney Sci-Fi Sounds: https://kenney.nl/assets/sci-fi-sounds → unzip → `/raw/kenney_scifi/`
-- [ ] Download Kenney Interface Sounds: https://kenney.nl/assets/interface-sounds → unzip
-- [ ] Download Kenney Impact Sounds: https://kenney.nl/assets/impact-sounds → unzip
-- [ ] Download Kenney UI Audio: https://kenney.nl/assets/ui-audio → unzip
-- [ ] Download BGM pack: https://opengameart.org/content/space-shooter-game-music-pack → unzip
-- [ ] Download 5 Chiptunes Action: https://opengameart.org/content/5-chiptunes-action → unzip
-- [ ] Download Kenney UI Pack: https://kenney.nl/assets/ui-pack → unzip
-- [ ] Download explosion spritesheet: https://opengameart.org/content/explosion
-- [ ] Download parallax backgrounds: https://ansimuz.itch.io/spaceship-shooter-environment
-- [ ] Download PressStart2P font: https://fonts.google.com/specimen/Press+Start+2P
+- [x] Download Kenney Sci-Fi Sounds: https://kenney.nl/assets/sci-fi-sounds → unzip → `/raw/kenney_scifi/`
+- [x] Download Kenney Interface Sounds: https://kenney.nl/assets/interface-sounds → unzip
+- [x] Download Kenney Impact Sounds: https://kenney.nl/assets/impact-sounds → unzip
+- [x] Download Kenney UI Audio: https://kenney.nl/assets/ui-audio → unzip
+- [x] Download BGM pack: https://opengameart.org/content/space-shooter-game-music-pack → unzip
+- [x] Download 5 Chiptunes Action: https://opengameart.org/content/5-chiptunes-action → unzip
+- [x] Download Kenney UI Pack: https://kenney.nl/assets/ui-pack → unzip
+- [x] Download explosion spritesheet: https://opengameart.org/content/explosion
+- [x] Download parallax backgrounds: https://ansimuz.itch.io/spaceship-shooter-environment
+- [x] Download PressStart2P font: https://fonts.google.com/specimen/Press+Start+2P
 
 **Week 1–2 — AI Generation (all sprites)**
 
-- [ ] Generate `player_ship.png` + `player_thruster_sheet.png` (4-frame strip 128×32)
-- [ ] Generate `enemy_drone.png` + `enemy_drone_sheet.png` (2-frame 64×32)
-- [ ] Generate `enemy_hunter.png` + `enemy_hunter_sheet.png` (4-frame 128×32)
-- [ ] Generate `enemy_boss.png` + `enemy_boss_phase2.png` + `enemy_boss_phase3.png` (all 64×64)
-- [ ] Generate `bullet_player.png` (8×16) + `bullet_enemy.png` (8×16) + `bullet_boss.png` (12×24)
-- [ ] Generate `powerup_health.png` + `powerup_shield.png` + `powerup_score.png` (all 16×16)
-- [ ] Generate `obstacle_mine.png` + `obstacle_mine_sheet.png` (4-frame 96×24)
-- [ ] Generate `bg_stars_far.png` + `bg_stars_mid.png` + `bg_nebula_l1/l2/l3.png` (all 1280×720)
-- [ ] Generate `tiles_station.png` + `tiles_asteroid.png` + `tiles_deepspace.png` + `tiles_hazard.png` + `tiles_decor.png`
+- [x] Generate `player_ship.png` + `player_thruster_sheet.png` (4-frame strip 128×32)
+- [x] Generate `enemy_drone.png` + `enemy_drone_sheet.png` (2-frame 64×32)
+- [x] Generate `enemy_hunter.png` + `enemy_hunter_sheet.png` (4-frame 128×32)
+- [x] Generate `enemy_boss.png` + `enemy_boss_phase2.png` + `enemy_boss_phase3.png` (all 64×64)
+- [x] Generate `bullet_player.png` (8×16) + `bullet_enemy.png` (8×16) + `bullet_boss.png` (12×24)
+- [x] Generate `powerup_health.png` + `powerup_shield.png` + `powerup_score.png` (all 16×16)
+- [x] Generate `obstacle_mine.png` + `obstacle_mine_sheet.png` (4-frame 96×24)
+- [x] Generate `bg_stars_far.png` + `bg_stars_mid.png` + `bg_nebula_l1/l2/l3.png` (all 1280×720)
+- [x] Generate `tiles_station.png` + `tiles_asteroid.png` + `tiles_deepspace.png` + `tiles_hazard.png` + `tiles_decor.png`
 
 **Week 2 — Post-processing**
 
-- [ ] Photopea: create `player_damage.png` (red overlay 50% on player_ship)
-- [ ] Verify transparent backgrounds on all AI sprites; fix any white-fill issues in Photopea
-- [ ] Rename ALL sprites to exact PRD filenames
-- [ ] From Kenney audio packs: pick + rename all 19 SFX files; pick + rename 4 BGM files
-- [ ] From Kenney UI Pack: pick + rename UI sprites (healthbar, buttons, panel)
+- [x] Photopea: create `player_damage.png` (red overlay 50% on player_ship)
+- [x] Verify transparent backgrounds on all AI sprites; fix any white-fill issues in Photopea
+- [x] Rename ALL sprites to exact PRD filenames
+- [x] From Kenney audio packs: pick + rename all 19 SFX files; pick + rename 4 BGM files
+- [x] From Kenney UI Pack: pick + rename UI sprites (healthbar, buttons, panel)
 
 ---
 
