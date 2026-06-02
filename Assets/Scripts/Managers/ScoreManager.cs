@@ -6,7 +6,7 @@ public class ScoreManager : MonoBehaviour
 {
     public static ScoreManager Instance { get; private set; }
 
-    public int currentScore { get; internal set; }
+    public int currentScore { get; private set; }
     public int comboCount { get; private set; }
     public bool powerUpMultiplierActive { get; private set; }
 
@@ -24,6 +24,15 @@ public class ScoreManager : MonoBehaviour
             return;
         }
         Instance = this;
+    }
+
+    private void Start()
+    {
+        PlayerHealth player = FindObjectOfType<PlayerHealth>();
+        if (player != null)
+        {
+            player.OnDamageTaken.AddListener(OnPlayerDamaged);
+        }
     }
 
     public void AddScore(int baseScore)
@@ -74,6 +83,9 @@ public class ScoreManager : MonoBehaviour
         currentScore = 0;
         comboCount = 0;
         powerUpMultiplierActive = false;
+        if (multiplierTimerRoutine != null)
+            StopCoroutine(multiplierTimerRoutine);
+        multiplierTimerRoutine = null;
         OnScoreChanged?.Invoke(currentScore);
     }
 }

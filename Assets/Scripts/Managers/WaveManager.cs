@@ -12,7 +12,7 @@ public class WaveManager : MonoBehaviour
     {
         public GameObject enemyPrefab;
         public int enemyCount = 4;
-        public float[] spawnPositionsX; // screen-width percentages (0–1)
+        public float[] spawnPositionsX;
         public float speedMultiplier = 1f;
         public float spawnDelay = 0.3f;
     }
@@ -29,6 +29,7 @@ public class WaveManager : MonoBehaviour
     private int currentWaveIndex = -1;
     private int activeEnemyCount = 0;
     private bool waveInProgress = false;
+    private readonly HashSet<GameObject> trackedEnemies = new HashSet<GameObject>();
 
     private void Awake()
     {
@@ -65,7 +66,7 @@ public class WaveManager : MonoBehaviour
 
         for (int i = 0; i < data.enemyCount; i++)
         {
-            float pctX = data.spawnPositionsX.Length > i
+            float pctX = data.spawnPositionsX != null && data.spawnPositionsX.Length > i
                 ? data.spawnPositionsX[i]
                 : Random.Range(0.1f, 0.9f);
 
@@ -87,8 +88,6 @@ public class WaveManager : MonoBehaviour
 
     public GameObject SpawnEnemy(GameObject prefab, Vector3 position, float speedMult = 1f)
     {
-        activeEnemyCount++;
-
         GameObject enemy;
         if (enemyPool != null)
         {
@@ -99,21 +98,45 @@ public class WaveManager : MonoBehaviour
             enemy = Instantiate(prefab, position, Quaternion.identity);
         }
 
-        // Apply speed multiplier if the enemy supports it
-        // Note: Enemy death tracking should be hooked via ObjectPool events or a dedicated interface
+        trackedEnemies.Add(enemy);
+        activeEnemyCount++;
 
+        StartCoroutine(TrackEnemy(enemy));
         return enemy;
     }
 
-    public void RegisterEnemy()
+    private IEnumerator TrackEnemy(GameObject enemy)
     {
-        activeEnemyCount++;
+        while (enemy != null && enemy.activeSelf && trackedEnemies.Contains(enemy))
+        {
+            yield return null;
+        }
+
+        if (enemy != null && trackedEnemies.Contains(enemy))
+        {
+            trackedEnemies.Remove(enemy);
+            activeEnemyCount--;
+            OnEnemyKilled?.Invoke(activeEnemyCount);
+        }
     }
 
-    private void OnEnemyDestroyed()
+    public void ReleaseEnemy(GameObject enemy)
     {
-        activeEnemyCount--;
-        OnEnemyKilled?.Invoke(activeEnemyCount);
+        if (trackedEnemies.Contains(enemy))
+        {
+            trackedEnemies.Remove(enemy);
+            activeEnemyCount--;
+            OnEnemyKilled?.Invoke(activeEnemyCount);
+        }
+
+        if (enemyPool != null)
+        {
+            enemyPool.Release(enemy);
+        }
+        else
+        {
+            Destroy(enemy);
+        }
     }
 
     private IEnumerator PollWaveCleared()
