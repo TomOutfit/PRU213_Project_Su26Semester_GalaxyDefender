@@ -1,4 +1,4 @@
-<img width="1919" height="1018" alt="image" src="https://github.com/user-attachments/assets/52ed3e89-d6cc-44c4-a229-2a185120a63e" /># Galaxy Defender — Stage Plan
+# Galaxy Defender — Stage Plan
 
 > **8 weeks · 4 people · 5 stages**
 > Read alongside `galaxy_defender_work_breakdown.md` for full task detail.
