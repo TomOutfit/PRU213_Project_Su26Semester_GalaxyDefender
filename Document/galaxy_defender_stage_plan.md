@@ -103,9 +103,9 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 **Week 1 — Layout without scripts (visual-only work, fully parallel)**
 
 - [x] `ParallaxBackground.cs` — store prevCamX/Y, LateUpdate: compute delta, move each layer by delta×speedMult, loop when layer exits viewport
-- [ ] Open MainMenu.unity (created by P2 end of Week 1); build Canvas hierarchy: Logo TMP "GALAXY DEFENDER" (PressStart2P 48px), 5 stacked Button GOs (no onClick wired yet), HighScorePanel (5 TMP labels, hidden), OptionsPanel (3 Slider + Toggle, hidden), LevelIndicator TMP
-- [ ] Open Level1.unity; add Canvas_HUD: HPSlider, ShieldSlider, ScoreText TMP, WaveText TMP, LivesText TMP; position elements so none overlap playfield
-- [ ] Add Canvas_Pause to Level1.unity (inactive by default): Resume/Restart/MainMenu buttons, semi-transparent black overlay
+- [x] Open MainMenu.unity (created by P2 end of Week 1); build Canvas hierarchy: Logo TMP "GALAXY DEFENDER" (PressStart2P 48px), 5 stacked Button GOs (no onClick wired yet), HighScorePanel (5 TMP labels, hidden), OptionsPanel (3 Slider + Toggle, hidden), LevelIndicator TMP
+- [x] Open Level1.unity; add Canvas_HUD: HPSlider, ShieldSlider, ScoreText TMP, WaveText TMP, LivesText TMP; position elements so none overlap playfield
+- [x] Add Canvas_Pause to Level1.unity (inactive by default): Resume/Restart/MainMenu buttons, semi-transparent black overlay
 
 **Week 2 — Animator prep (no sprites needed yet — create empty controllers)**
 
