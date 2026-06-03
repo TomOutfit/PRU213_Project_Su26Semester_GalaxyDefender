@@ -180,10 +180,10 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 
 **Week 3 — Bullet + Drone systems**
 
-- [ ] `BulletPlayer.cs` — velocity upward 12 u/s, OnTriggerEnter2D tag Enemy/Boss → EnemyHealth.TakeDamage(10) → Release() to pool
-- [ ] `BulletEnemy.cs` — velocity downward 10 u/s, OnTriggerEnter2D tag Player → PlayerHealth.TakeDamage(10) → Release()
-- [ ] `EnemyDrone.cs` — downward movement 2 u/s FixedUpdate; FireRoutine coroutine every 2s; OnBecameInvisible → return to pool
-- [ ] `EnemyHealth.cs` — TakeDamage(int), OnDeath event → ScoreManager.AddScore(points) + 30% chance PowerUpManager.Drop(pos)
+- [x] `BulletPlayer.cs` — velocity upward 12 u/s, OnTriggerEnter2D tag Enemy/Boss → EnemyHealth.TakeDamage(10) → Release() to pool
+- [x] `BulletEnemy.cs` — velocity downward 10 u/s, OnTriggerEnter2D tag Player → PlayerHealth.TakeDamage(10) → Release()
+- [x] `EnemyDrone.cs` — downward movement 2 u/s FixedUpdate; FireRoutine coroutine every 2s; OnBecameInvisible → return to pool
+- [x] `EnemyHealth.cs` — TakeDamage(int), OnDeath event → ScoreManager.AddScore(points) + 30% chance PowerUpManager.Drop(pos)
 - [ ] **Player prefab** (full assembly): SpriteRenderer=player_ship.png, Rigidbody2D Kinematic gravity=0, PolygonCollider2D trimmed 70%, Animator=PlayerAnimator, PlayerController, PlayerHealth; child BulletSpawnPoint at nose
 - [ ] **BulletPlayer prefab**: SpriteRenderer=bullet_player.png, CapsuleCollider2D isTrigger, Rigidbody2D gravity=0, BulletPlayer; layer=PlayerBullet
 - [ ] **BulletEnemy prefab**: same setup, BulletEnemy script; layer=EnemyBullet
