@@ -109,11 +109,11 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 
 **Week 2 — Animator prep (no sprites needed yet — create empty controllers)**
 
-- [ ] Create `PlayerAnimator.controller` in Assets/Animations/; add states: Thruster (default), Damaged; add Trigger param "Hit"; wire transition Thruster→Damaged→Thruster (Exit Time 1.0)
-- [ ] Create `DroneAnimator.controller`; add Idle state (default)
-- [ ] Create `HunterAnimator.controller`; add Idle state (default)
-- [ ] Create `BossAnimator.controller`; add states Phase1/Phase2/Phase3; int param "Phase"
-- [ ] Add ParallaxBackground GO to Level1.unity: 3 child Image GOs (Layer1 speed=0.1, Layer2 speed=0.3, Layer3 speed=0.6); assign placeholder white sprite for now (real sprites in S2)
+- [x] Create `PlayerAnimator.controller` in Assets/Animations/; add states: Thruster (default), Damaged; add Trigger param "Hit"; wire transition Thruster→Damaged→Thruster (Exit Time 1.0)
+- [x] Create `DroneAnimator.controller`; add Idle state (default)
+- [x] Create `HunterAnimator.controller`; add Idle state (default)
+- [x] Create `BossAnimator.controller`; add states Phase1/Phase2/Phase3; int param "Phase"
+- [x] Add ParallaxBackground GO to Level1.unity: 3 child Image GOs (Layer1 speed=0.1, Layer2 speed=0.3, Layer3 speed=0.6); assign placeholder white sprite for now (real sprites in S2)
 
 > **P3 dependency on P2:** Needs scene files pushed to Git before opening. Needs Canvas in Level1.unity. Both deliverable end of Week 1.
 
