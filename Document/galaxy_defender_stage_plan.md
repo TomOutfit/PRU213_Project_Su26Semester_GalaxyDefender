@@ -1,4 +1,4 @@
-# Galaxy Defender — Stage Plan
+<img width="1919" height="1018" alt="image" src="https://github.com/user-attachments/assets/52ed3e89-d6cc-44c4-a229-2a185120a63e" /># Galaxy Defender — Stage Plan
 
 > **8 weeks · 4 people · 5 stages**
 > Read alongside `galaxy_defender_work_breakdown.md` for full task detail.
@@ -102,7 +102,7 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 
 **Week 1 — Layout without scripts (visual-only work, fully parallel)**
 
-- [ ] `ParallaxBackground.cs` — store prevCamX/Y, LateUpdate: compute delta, move each layer by delta×speedMult, loop when layer exits viewport
+- [x] `ParallaxBackground.cs` — store prevCamX/Y, LateUpdate: compute delta, move each layer by delta×speedMult, loop when layer exits viewport
 - [ ] Open MainMenu.unity (created by P2 end of Week 1); build Canvas hierarchy: Logo TMP "GALAXY DEFENDER" (PressStart2P 48px), 5 stacked Button GOs (no onClick wired yet), HighScorePanel (5 TMP labels, hidden), OptionsPanel (3 Slider + Toggle, hidden), LevelIndicator TMP
 - [ ] Open Level1.unity; add Canvas_HUD: HPSlider, ShieldSlider, ScoreText TMP, WaveText TMP, LivesText TMP; position elements so none overlap playfield
 - [ ] Add Canvas_Pause to Level1.unity (inactive by default): Resume/Restart/MainMenu buttons, semi-transparent black overlay
