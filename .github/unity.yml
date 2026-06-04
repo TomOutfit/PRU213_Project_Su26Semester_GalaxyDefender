@@ -1,0 +1,169 @@
+name: Unity CI/CD Pipeline 🎮
+
+on:
+  push:
+    branches:
+      - '**' # Run on push to all branches
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - 'Document/**'
+  pull_request:
+    branches:
+      - '**'
+  workflow_dispatch:
+    inputs:
+      get_activation_file:
+        description: 'Set to "true" to generate and upload the manual activation file (.alf)'
+        required: false
+        default: 'false'
+
+jobs:
+  # Job 1: Manual license activation file generation (.alf)
+  # Run this job manually in the Actions tab to get the license file required for free accounts
+  activation:
+    name: Generate Unity Activation File (.alf) 🔑
+    # Only run if workflow_dispatch input is set to true
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.get_activation_file == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Request activation file
+        uses: game-ci/unity-request-activation-file@v2
+
+      - name: Upload activation file as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: unity-activation-file
+          path: ${{ steps.request-activation-file.outputs.filePath }}
+          retention-days: 1
+
+  # Job 2: Run tests (EditMode + PlayMode)
+  test:
+    name: Run Unity Tests 🧪
+    # Skip if we are running the manual activation generator
+    if: !(github.event_name == 'workflow_dispatch' && github.event.inputs.get_activation_file == 'true')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Check Unity license configuration
+        id: check_license
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+        run: |
+          if [ -z "$UNITY_LICENSE" ] && [ -z "$UNITY_SERIAL" ]; then
+            echo "has_license=false" >> $GITHUB_OUTPUT
+            echo "::warning::Unity license secrets (UNITY_LICENSE or UNITY_SERIAL) are not set. Skipping tests."
+          else
+            echo "has_license=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Free up disk space (prevent out of disk space error)
+        if: steps.check_license.outputs.has_license == 'true'
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "/usr/local/share/boost"
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+
+      - name: Cache Unity Library
+        if: steps.check_license.outputs.has_license == 'true'
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-Test-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-Test-
+            Library-
+
+      - name: Run EditMode & PlayMode Tests
+        if: steps.check_license.outputs.has_license == 'true'
+        uses: game-ci/unity-test-runner@v4
+        continue-on-error: true # Test failures or lack of tests won't fail the build
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+        with:
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Test Results
+        if: always() && steps.check_license.outputs.has_license == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: Test-Results
+          path: artifacts
+          retention-days: 7
+
+  # Job 3: Build for targeted platforms (WebGL, StandaloneWindows64)
+  build:
+    name: Build for ${{ matrix.targetPlatform }} 🏗️
+    needs: test
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        targetPlatform:
+          - StandaloneWindows64
+          - WebGL
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Check Unity license configuration
+        id: check_license
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+        run: |
+          if [ -z "$UNITY_LICENSE" ] && [ -z "$UNITY_SERIAL" ]; then
+            echo "has_license=false" >> $GITHUB_OUTPUT
+            echo "::warning::Unity license secrets (UNITY_LICENSE or UNITY_SERIAL) are not set. Skipping build."
+          else
+            echo "has_license=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Free up disk space
+        if: steps.check_license.outputs.has_license == 'true'
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "/usr/local/share/boost"
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+
+      - name: Cache Unity Library
+        if: steps.check_license.outputs.has_license == 'true'
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-Build-${{ matrix.targetPlatform }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-Build-${{ matrix.targetPlatform }}-
+            Library-Build-
+            Library-
+
+      - name: Build Game
+        if: steps.check_license.outputs.has_license == 'true'
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+        with:
+          targetPlatform: ${{ matrix.targetPlatform }}
+
+      - name: Upload Build Artifacts
+        if: steps.check_license.outputs.has_license == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: Build-${{ matrix.targetPlatform }}
+          path: build/${{ matrix.targetPlatform }}
+          retention-days: 14
