@@ -35,7 +35,7 @@ public class SaveManager : MonoBehaviour
         int savedScore = PlayerPrefs.GetInt(KEY_LAST_SCORE, 0);
 
         if (ScoreManager.Instance != null)
-            ScoreManager.Instance.currentScore = savedScore;
+            ScoreManager.Instance.SetScore(savedScore);
 
         UnityEngine.SceneManagement.SceneManager.LoadScene(savedLevel);
     }
