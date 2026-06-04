@@ -7,16 +7,6 @@ public class WaveManager : MonoBehaviour
 {
     public static WaveManager Instance { get; private set; }
 
-    [System.Serializable]
-    public class WaveData
-    {
-        public GameObject enemyPrefab;
-        public int enemyCount = 4;
-        public float[] spawnPositionsX;
-        public float speedMultiplier = 1f;
-        public float spawnDelay = 0.3f;
-    }
-
     [Header("Level Waves")]
     public WaveData[] waves;
 
@@ -69,6 +59,8 @@ public class WaveManager : MonoBehaviour
             float pctX = data.spawnPositionsX != null && data.spawnPositionsX.Length > i
                 ? data.spawnPositionsX[i]
                 : Random.Range(0.1f, 0.9f);
+
+            if (pctX > 1f) pctX /= 100f;
 
             float worldX = Mathf.Lerp(
                 cam.ViewportToWorldPoint(Vector3.left).x,

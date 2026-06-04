@@ -28,11 +28,17 @@ public class ScoreManager : MonoBehaviour
 
     private void Start()
     {
-        PlayerHealth player = FindObjectOfType<PlayerHealth>();
+        PlayerHealth player = FindAnyObjectByType<PlayerHealth>();
         if (player != null)
         {
             player.OnDamageTaken.AddListener(OnPlayerDamaged);
         }
+    }
+
+    public void SetScore(int score)
+    {
+        currentScore = score;
+        OnScoreChanged?.Invoke(currentScore);
     }
 
     public void AddScore(int baseScore)
