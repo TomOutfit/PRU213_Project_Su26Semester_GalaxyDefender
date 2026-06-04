@@ -41,11 +41,7 @@ public class EnemyHealth : MonoBehaviour
 
         if (PowerUpManager.Instance != null)
         {
-            // 30% chance to drop power-up
-            if (Random.value <= 0.3f)
-            {
-                PowerUpManager.Instance.Drop(transform.position);
-            }
+            PowerUpManager.Instance.Drop(transform.position);
         }
 
         ObjectPool pool = GetComponentInParent<ObjectPool>();
