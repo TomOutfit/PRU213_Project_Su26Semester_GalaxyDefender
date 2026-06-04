@@ -12,6 +12,8 @@ public class PlayerHealth : MonoBehaviour
 
     [HideInInspector]
     public bool isDashing = false;
+    [HideInInspector]
+    public bool isInvincible = false;
 
     [Header("Events")]
     public UnityEvent OnDeath;
@@ -30,9 +32,10 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        if (isDashing) return;
+        if (isDashing || isInvincible) return;
 
         OnDamageTaken?.Invoke();
+        ScoreManager.Instance?.OnPlayerDamaged();
 
         // Shield absorbs first
         if (currentShield > 0)
@@ -73,6 +76,14 @@ public class PlayerHealth : MonoBehaviour
     public void AddShield(int amount)
     {
         currentShield = Mathf.Min(maxShield, currentShield + amount);
+        OnShieldChanged?.Invoke(currentShield);
+    }
+
+    public void ResetHealthAndShield()
+    {
+        currentHP = maxHP;
+        currentShield = 0;
+        OnHPChanged?.Invoke(currentHP);
         OnShieldChanged?.Invoke(currentShield);
     }
 

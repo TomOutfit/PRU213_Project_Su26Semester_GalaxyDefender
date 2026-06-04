@@ -10,6 +10,12 @@ public class PlayerController : MonoBehaviour
     public float dashDuration = 0.15f;
     public float dashCooldown = 2.0f;
 
+    [Header("Shooting")]
+    public Transform firePoint;
+    public float fireRate = 0.15f;
+    private float nextFireTime = 0f;
+    private ObjectPool playerBulletPool;
+
     private Rigidbody2D rb;
     private PlayerHealth playerHealth;
     private Camera mainCamera;
@@ -37,6 +43,12 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.LeftShift) && Time.time >= lastDashTime + dashCooldown)
         {
             StartCoroutine(DashRoutine());
+        }
+
+        if (Input.GetKey(KeyCode.Space) && Time.time >= nextFireTime)
+        {
+            nextFireTime = Time.time + fireRate;
+            FireBullet();
         }
     }
 
@@ -94,5 +106,26 @@ public class PlayerController : MonoBehaviour
         maxX = middleRight.x - paddingX;
         minY = bottomLeft.y + paddingY;
         maxY = middleRight.y - paddingY;
+    }
+
+    private void FireBullet()
+    {
+        if (firePoint == null) return;
+
+        if (playerBulletPool == null)
+        {
+            playerBulletPool = GameObject.Find("BulletPlayerPool")?.GetComponent<ObjectPool>();
+        }
+
+        if (playerBulletPool != null)
+        {
+            GameObject bullet = playerBulletPool.Get(firePoint.position, Quaternion.identity);
+            BulletPlayer bp = bullet.GetComponent<BulletPlayer>();
+            if (bp != null)
+            {
+                bp.pool = playerBulletPool;
+            }
+            AudioManager.Instance?.PlaySFX("sfx_shoot_player");
+        }
     }
 }
