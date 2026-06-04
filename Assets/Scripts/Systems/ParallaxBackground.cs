@@ -11,10 +11,10 @@ public class VerticalParallaxManager : MonoBehaviour
     }
 
     [Header("Cấu hình chung")]
-    [SerializeField] private float baseMoveSpeed = 2f; // Tốc độ gốc (nền trôi xuống dưới)
+    public float baseMoveSpeed = 2f; // Tốc độ gốc (nền trôi xuống dưới)
 
     [Header("Danh sách các Layers")]
-    [SerializeField] private ParallaxLayer[] parallaxLayers;
+    public ParallaxLayer[] parallaxLayers;
 
     void Start()
     {
@@ -26,7 +26,15 @@ public class VerticalParallaxManager : MonoBehaviour
                 SpriteRenderer spriteRenderer = parallaxLayers[i].layerTransform.GetComponent<SpriteRenderer>();
                 if (spriteRenderer != null)
                 {
-                    parallaxLayers[i].imageHeight = spriteRenderer.sprite.texture.height / spriteRenderer.sprite.pixelsPerUnit;
+                    if (spriteRenderer.sprite != null)
+                    {
+                        parallaxLayers[i].imageHeight = spriteRenderer.sprite.bounds.size.y;
+                    }
+                    else
+                    {
+                        parallaxLayers[i].imageHeight = 10f; // Default height fallback
+                        Debug.LogWarning($"Layer {parallaxLayers[i].layerTransform.name} has a SpriteRenderer but no Sprite assigned!");
+                    }
                 }
                 else
                 {
