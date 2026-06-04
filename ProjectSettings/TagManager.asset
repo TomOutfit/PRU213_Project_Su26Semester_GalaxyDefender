@@ -4,10 +4,12 @@
 TagManager:
   serializedVersion: 3
   tags:
+  - Collectible
+  - Obstacle
   - Player
-  - Boss
-  - Enemy
-  - PowerUp
+  - Ground
+  - SlowDown
+  - Penalty
   layers:
   - Default
   - TransparentFX
@@ -17,12 +19,13 @@ TagManager:
   - UI
   - 
   - 
+  - Ground
   - Player
-  - Enemy
-  - Boss
-  - PlayerBullet
-  - EnemyBullet
-  - PowerUp
+  - Obstacle
+  - Collectible
+  - 
+  - 
+  - 
   - 
   - 
   - 
