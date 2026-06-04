@@ -223,20 +223,20 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 
 **Week 3 — Scripts + Tilemap start**
 
-- [ ] `HUDController.cs` — Awake: subscribe PlayerHealth.OnHPChanged → HPSlider.value; OnShieldChanged → ShieldSlider; ScoreManager.OnScoreChanged → ScoreText; WaveManager.OnWaveChanged → WaveText; all instant (no lerp)
-- [ ] `PauseMenuController.cs` — Update: ESC when state==Playing → SetState(Paused); OnResumeClick → SetState(Playing); OnRestartClick → timeScale=1 + LoadScene(current); OnMainMenuClick → timeScale=1 + LoadScene("MainMenu")
-- [ ] `MainMenuController.cs` — OnStartClick → LoadScene("Level1"); OnOptionsClick → toggle OptionsPanel; OnHighScoreClick → toggle HighScorePanel; OnExitClick → Application.Quit()
-- [ ] Open Window → 2D → Tile Palette; import `tiles_station.png` (P4 must have imported this first) → Slice 16×16 → create "Station Palette"
-- [ ] Import `tiles_hazard.png`, `tiles_decor.png` → add to Station Palette
+- [x] `HUDController.cs` — Awake: subscribe PlayerHealth.OnHPChanged → HPSlider.value; OnShieldChanged → ShieldSlider; ScoreManager.OnScoreChanged → ScoreText; WaveManager.OnWaveChanged → WaveText; all instant (no lerp)
+- [x] `PauseMenuController.cs` — Update: ESC when state==Playing → SetState(Paused); OnResumeClick → SetState(Playing); OnRestartClick → timeScale=1 + LoadScene(current); OnMainMenuClick → timeScale=1 + LoadScene("MainMenu")
+- [x] `MainMenuController.cs` — OnStartClick → LoadScene("Level1"); OnOptionsClick → toggle OptionsPanel; OnHighScoreClick → toggle HighScorePanel; OnExitClick → Application.Quit()
+- [x] Open Window → 2D → Tile Palette; import `tiles_station.png` (P4 must have imported this first) → Slice 16×16 → create "Station Palette"
+- [x] Import `tiles_hazard.png`, `tiles_decor.png` → add to Station Palette
 
 **Week 4 — Tilemap Level 1 + animation clips**
 
-- [ ] Paint Tilemap_BG (full coverage, no gaps), Tilemap_Collision (border walls + 2 zigzag interior pillars), Tilemap_Hazard (2 strips), Tilemap_Decor (scattered props)
-- [ ] Add TilemapCollider2D + CompositeCollider2D + Rigidbody2D(Static) to Tilemap_Collision; add TilemapCollider2D(isTrigger) + `TilemapHazard` script to Tilemap_Hazard
-- [ ] Create AnimationClip `Player_Thruster`: 4 frames Sample=12 Loop=true; assign to PlayerAnimator Thruster state
-- [ ] Create AnimationClip `Player_Damaged`: 6 frames alternating, Sample=8 Loop=false; assign to PlayerAnimator Damaged state
-- [ ] Create AnimationClip `Drone_Idle`: 2 frames Sample=4 Loop=true; assign to DroneAnimator
-- [ ] Create AnimationClip `Explosion_Small`: 6 frames Sample=12 Loop=false + AnimationEvent last frame → ReturnToPool()
+- [x] Paint Tilemap_BG (full coverage, no gaps), Tilemap_Collision (border walls + 2 zigzag interior pillars), Tilemap_Hazard (2 strips), Tilemap_Decor (scattered props)
+- [x] Add TilemapCollider2D + CompositeCollider2D + Rigidbody2D(Static) to Tilemap_Collision; add TilemapCollider2D(isTrigger) + `TilemapHazard` script to Tilemap_Hazard
+- [x] Create AnimationClip `Player_Thruster`: 4 frames Sample=12 Loop=true; assign to PlayerAnimator Thruster state
+- [x] Create AnimationClip `Player_Damaged`: 6 frames alternating, Sample=8 Loop=false; assign to PlayerAnimator Damaged state
+- [x] Create AnimationClip `Drone_Idle`: 2 frames Sample=4 Loop=true; assign to DroneAnimator
+- [x] Create AnimationClip `Explosion_Small`: 6 frames Sample=12 Loop=false + AnimationEvent last frame → ReturnToPool()
 
 ---
 
