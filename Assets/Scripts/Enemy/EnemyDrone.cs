@@ -17,8 +17,11 @@ public class EnemyDrone : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
+    private bool hasBeenVisible = false;
+
     private void Start()
     {
+        RuntimeSpriteFixer.EnsureSprite(GetComponent<SpriteRenderer>(), "Assets/Sprites/Enemies/enemy_drone.png");
         enemyPool = GetComponentInParent<ObjectPool>();
         
         // Find the specific pool for Enemy Bullets (as dictated by P2's setup)
@@ -31,6 +34,7 @@ public class EnemyDrone : MonoBehaviour
 
     private void OnEnable()
     {
+        hasBeenVisible = false;
         StartCoroutine(FireRoutine());
     }
 
@@ -59,8 +63,15 @@ public class EnemyDrone : MonoBehaviour
         }
     }
 
+    private void OnBecameVisible()
+    {
+        hasBeenVisible = true;
+    }
+
     private void OnBecameInvisible()
     {
+        if (!hasBeenVisible) return;
+
         if (enemyPool != null)
         {
             enemyPool.Release(gameObject);
@@ -71,3 +82,4 @@ public class EnemyDrone : MonoBehaviour
         }
     }
 }
+

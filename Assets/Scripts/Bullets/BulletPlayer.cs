@@ -16,12 +16,13 @@ public class BulletPlayer : MonoBehaviour
 
     private void Start()
     {
+        RuntimeSpriteFixer.EnsureSprite(GetComponent<SpriteRenderer>(), "Assets/Sprites/Bullets/bullet_player.png");
         pool = GetComponentInParent<ObjectPool>();
     }
 
     private void FixedUpdate()
     {
-        rb.velocity = Vector2.up * speed;
+        rb.linearVelocity = Vector2.up * speed;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -32,6 +33,15 @@ public class BulletPlayer : MonoBehaviour
             if (health != null)
             {
                 health.TakeDamage(damage);
+            }
+            GameObject poolObj = GameObject.Find("HitEffectPool");
+            if (poolObj != null)
+            {
+                ObjectPool hitPool = poolObj.GetComponent<ObjectPool>();
+                if (hitPool != null)
+                {
+                    hitPool.Get(transform.position, Quaternion.identity);
+                }
             }
             ReturnToPool();
         }

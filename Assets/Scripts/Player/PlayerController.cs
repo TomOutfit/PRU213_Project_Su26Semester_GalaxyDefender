@@ -10,6 +10,11 @@ public class PlayerController : MonoBehaviour
     public float dashDuration = 0.15f;
     public float dashCooldown = 2.0f;
 
+    [Header("Shooting")]
+    public GameObject bulletPrefab;
+    public Transform bulletSpawnPoint;
+    public float fireRate = 0.15f;
+
     private Rigidbody2D rb;
     private PlayerHealth playerHealth;
     private Camera mainCamera;
@@ -17,6 +22,9 @@ public class PlayerController : MonoBehaviour
     private Vector2 inputVector;
     private bool isDashing = false;
     private float lastDashTime = -10f;
+
+    private ObjectPool bulletPool;
+    private float nextFireTime = 0f;
 
     private float minX, maxX, minY, maxY;
 
@@ -26,6 +34,21 @@ public class PlayerController : MonoBehaviour
         playerHealth = GetComponent<PlayerHealth>();
         mainCamera = Camera.main;
         UpdateScreenBounds();
+    }
+
+    private void Start()
+    {
+        RuntimeSpriteFixer.EnsureSprite(GetComponent<SpriteRenderer>(), "Assets/Sprites/Player/player_ship.png");
+        Transform thruster = transform.Find("Thruster");
+        if (thruster != null)
+        {
+            RuntimeSpriteFixer.EnsureSprite(thruster.GetComponent<SpriteRenderer>(), "Assets/Sprites/Player/player_thruster_sheet.png");
+        }
+        GameObject poolObj = GameObject.Find("BulletPlayerPool");
+        if (poolObj != null)
+        {
+            bulletPool = poolObj.GetComponent<ObjectPool>();
+        }
     }
 
     private void Update()
@@ -38,6 +61,30 @@ public class PlayerController : MonoBehaviour
         {
             StartCoroutine(DashRoutine());
         }
+
+        // Shooting logic
+        if (GameManager.Instance != null && GameManager.Instance.CurrentState == GameManager.State.Playing)
+        {
+            if (Input.GetKey(KeyCode.Space) && Time.time >= nextFireTime)
+            {
+                nextFireTime = Time.time + fireRate;
+                Shoot();
+            }
+        }
+    }
+
+    private void Shoot()
+    {
+        if (bulletPool != null && bulletSpawnPoint != null)
+        {
+            bulletPool.Get(bulletSpawnPoint.position, Quaternion.identity);
+        }
+        else if (bulletPrefab != null && bulletSpawnPoint != null)
+        {
+            Instantiate(bulletPrefab, bulletSpawnPoint.position, Quaternion.identity);
+        }
+
+        AudioManager.Instance?.PlaySFX("sfx_shoot_player");
     }
 
     private void FixedUpdate()
