@@ -26,6 +26,25 @@ public class ScoreManager : MonoBehaviour
         Instance = this;
     }
 
+    private PlayerHealth playerRef;
+
+    private void Start()
+    {
+        playerRef = FindAnyObjectByType<PlayerHealth>();
+        if (playerRef != null)
+        {
+            playerRef.OnDamageTaken.AddListener(OnPlayerDamaged);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (playerRef != null)
+        {
+            playerRef.OnDamageTaken.RemoveListener(OnPlayerDamaged);
+        }
+    }
+
     public void AddScore(int baseScore)
     {
         int multiplier = GetMultiplier();

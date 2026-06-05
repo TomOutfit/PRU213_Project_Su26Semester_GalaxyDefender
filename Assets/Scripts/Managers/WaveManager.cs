@@ -7,16 +7,6 @@ public class WaveManager : MonoBehaviour
 {
     public static WaveManager Instance { get; private set; }
 
-    [System.Serializable]
-    public class WaveData
-    {
-        public GameObject enemyPrefab;
-        public int enemyCount = 4;
-        public float[] spawnPositionsX; // screen-width percentages (0–1)
-        public float speedMultiplier = 1f;
-        public float spawnDelay = 0.3f;
-    }
-
     [Header("Level Waves")]
     public WaveData[] waves;
 
@@ -29,6 +19,7 @@ public class WaveManager : MonoBehaviour
     private int currentWaveIndex = -1;
     private int activeEnemyCount = 0;
     private bool waveInProgress = false;
+    private List<GameObject> activeEnemies = new List<GameObject>();
 
     private void Awake()
     {
@@ -54,6 +45,7 @@ public class WaveManager : MonoBehaviour
 
         currentWaveIndex = index;
         waveInProgress = true;
+        activeEnemies.Clear();
         OnWaveChanged?.Invoke(currentWaveIndex + 1);
         StartCoroutine(SpawnWave(waves[index]));
     }
@@ -65,9 +57,12 @@ public class WaveManager : MonoBehaviour
 
         for (int i = 0; i < data.enemyCount; i++)
         {
-            float pctX = data.spawnPositionsX.Length > i
+            float pctX = (data.spawnPositionsX != null && data.spawnPositionsX.Length > i)
                 ? data.spawnPositionsX[i]
                 : Random.Range(0.1f, 0.9f);
+
+            // Handle percentages defined as 0-100 or 0-1
+            if (pctX > 1f) pctX /= 100f;
 
             float worldX = Mathf.Lerp(
                 cam.ViewportToWorldPoint(Vector3.left).x,
@@ -89,10 +84,26 @@ public class WaveManager : MonoBehaviour
     {
         activeEnemyCount++;
 
-        GameObject enemy;
-        if (enemyPool != null)
+        GameObject enemy = null;
+        ObjectPool pool = enemyPool;
+
+        // Try to find pool managing this prefab in the scene if not explicitly assigned
+        if (pool == null)
         {
-            enemy = enemyPool.Get(position, Quaternion.identity);
+            ObjectPool[] allPools = FindObjectsByType<ObjectPool>(FindObjectsInactive.Include);
+            foreach (var p in allPools)
+            {
+                if (p.prefab == prefab)
+                {
+                    pool = p;
+                    break;
+                }
+            }
+        }
+
+        if (pool != null)
+        {
+            enemy = pool.Get(position, Quaternion.identity);
         }
         else
         {
@@ -100,8 +111,13 @@ public class WaveManager : MonoBehaviour
         }
 
         // Apply speed multiplier if the enemy supports it
-        // Note: Enemy death tracking should be hooked via ObjectPool events or a dedicated interface
+        EnemyDrone drone = enemy.GetComponent<EnemyDrone>();
+        if (drone != null)
+        {
+            drone.moveSpeed = 2f * speedMult; // base speed is 2f
+        }
 
+        activeEnemies.Add(enemy);
         return enemy;
     }
 
@@ -118,8 +134,21 @@ public class WaveManager : MonoBehaviour
 
     private IEnumerator PollWaveCleared()
     {
-        while (activeEnemyCount > 0)
+        while (true)
         {
+            bool anyActive = false;
+            for (int i = activeEnemies.Count - 1; i >= 0; i--)
+            {
+                if (activeEnemies[i] != null && activeEnemies[i].activeSelf)
+                {
+                    anyActive = true;
+                    break;
+                }
+            }
+
+            if (!anyActive)
+                break;
+
             yield return new WaitForSeconds(0.5f);
         }
 
@@ -140,3 +169,4 @@ public class WaveManager : MonoBehaviour
     public int GetActiveEnemyCount() => activeEnemyCount;
     public bool IsWaveInProgress() => waveInProgress;
 }
+
