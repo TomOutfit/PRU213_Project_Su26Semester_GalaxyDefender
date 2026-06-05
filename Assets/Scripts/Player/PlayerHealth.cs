@@ -19,8 +19,11 @@ public class PlayerHealth : MonoBehaviour
     public UnityEvent<int> OnShieldChanged;
     public UnityEvent OnDamageTaken;
 
+    private Animator animator;
+
     private void Start()
     {
+        animator = GetComponent<Animator>();
         currentHP = maxHP;
         currentShield = 0; // Shield only restores via Shield power-up
         
@@ -33,6 +36,28 @@ public class PlayerHealth : MonoBehaviour
         if (isDashing) return;
 
         OnDamageTaken?.Invoke();
+
+        if (animator != null)
+        {
+            animator.SetTrigger("Hit");
+        }
+
+        CameraShake.Instance?.Shake(0.2f, 0.15f);
+        GetComponent<SpriteFlash>()?.Flash(0.1f, Color.red);
+
+        // Play SFX
+        AudioManager.Instance?.PlaySFX("sfx_player_hit");
+
+        // Spawn hit effect
+        GameObject poolObj = GameObject.Find("HitEffectPool");
+        if (poolObj != null)
+        {
+            ObjectPool pool = poolObj.GetComponent<ObjectPool>();
+            if (pool != null)
+            {
+                pool.Get(transform.position, Quaternion.identity);
+            }
+        }
 
         // Shield absorbs first
         if (currentShield > 0)

@@ -26,7 +26,7 @@ public class VerticalParallaxManager : MonoBehaviour
                 SpriteRenderer spriteRenderer = parallaxLayers[i].layerTransform.GetComponent<SpriteRenderer>();
                 if (spriteRenderer != null)
                 {
-                    parallaxLayers[i].imageHeight = spriteRenderer.sprite.texture.height / spriteRenderer.sprite.pixelsPerUnit;
+                    parallaxLayers[i].imageHeight = (spriteRenderer.sprite.texture.height / spriteRenderer.sprite.pixelsPerUnit) * spriteRenderer.transform.localScale.y;
                 }
                 else
                 {

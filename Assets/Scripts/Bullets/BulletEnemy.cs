@@ -16,12 +16,13 @@ public class BulletEnemy : MonoBehaviour
 
     private void Start()
     {
+        RuntimeSpriteFixer.EnsureSprite(GetComponent<SpriteRenderer>(), "Assets/Sprites/Bullets/bullet_enemy.png");
         pool = GetComponentInParent<ObjectPool>();
     }
 
     private void FixedUpdate()
     {
-        rb.velocity = Vector2.down * speed;
+        rb.linearVelocity = Vector2.down * speed;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

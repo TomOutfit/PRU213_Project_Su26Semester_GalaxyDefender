@@ -22,6 +22,8 @@ public class EnemyHealth : MonoBehaviour
         if (currentHP <= 0) return; // Already dead
 
         currentHP -= damage;
+        GetComponent<SpriteFlash>()?.Flash(0.08f, Color.white);
+
         if (currentHP <= 0)
         {
             currentHP = 0;
@@ -33,6 +35,33 @@ public class EnemyHealth : MonoBehaviour
     {
         OnDeath?.Invoke();
 
+        CameraShake.Instance?.Shake(0.15f, 0.1f);
+
+        // Play SFX
+        AudioManager.Instance?.PlaySFX("sfx_explosion_small");
+
+        // Spawn small explosion
+        GameObject poolObj = GameObject.Find("ExplosionSmallPool");
+        if (poolObj != null)
+        {
+            ObjectPool explosionPool = poolObj.GetComponent<ObjectPool>();
+            if (explosionPool != null)
+            {
+                explosionPool.Get(transform.position, Quaternion.identity);
+            }
+        }
+
+        // Spawn large explosion overlay for visual impact
+        GameObject largePoolObj = GameObject.Find("ExplosionLargePool");
+        if (largePoolObj != null)
+        {
+            ObjectPool largeExplosionPool = largePoolObj.GetComponent<ObjectPool>();
+            if (largeExplosionPool != null)
+            {
+                largeExplosionPool.Get(transform.position, Quaternion.identity);
+            }
+        }
+
         if (ScoreManager.Instance != null)
         {
             ScoreManager.Instance.AddScore(points);
@@ -41,11 +70,7 @@ public class EnemyHealth : MonoBehaviour
 
         if (PowerUpManager.Instance != null)
         {
-            // 30% chance to drop power-up
-            if (Random.value <= 0.3f)
-            {
-                PowerUpManager.Instance.Drop(transform.position);
-            }
+            PowerUpManager.Instance.Drop(transform.position);
         }
 
         ObjectPool pool = GetComponentInParent<ObjectPool>();

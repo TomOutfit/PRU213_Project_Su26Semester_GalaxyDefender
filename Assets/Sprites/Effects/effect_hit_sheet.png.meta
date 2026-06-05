@@ -6,7 +6,7 @@ TextureImporter:
   serializedVersion: 13
   mipmaps:
     mipMapMode: 0
-    enableMipMap: 1
+    enableMipMap: 0
     sRGBTexture: 1
     linearTexture: 0
     fadeOut: 0
@@ -37,13 +37,13 @@ TextureImporter:
     filterMode: 1
     aniso: 1
     mipBias: 0
-    wrapU: 0
-    wrapV: 0
-    wrapW: 0
-  nPOTScale: 1
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 0
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -52,9 +52,9 @@ TextureImporter:
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
-  alphaIsTransparency: 0
+  alphaIsTransparency: 1
   spriteTessellationDetail: -1
-  textureType: 0
+  textureType: 8
   textureShape: 1
   singleChannelComponent: 0
   flipbookRows: 1
@@ -80,35 +80,93 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: Standalone
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    - serializedVersion: 2
+      name: effect_hit_sheet_0
+      rect:
+        serializedVersion: 2
+          x: 0
+          y: 0
+          width: 16
+          height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0cb9c7cb8dffccc6a40fd25886db30eb
+      internalID: 1064984978091113497
+    - serializedVersion: 2
+      name: effect_hit_sheet_1
+      rect:
+        serializedVersion: 2
+          x: 16
+          y: 0
+          width: 16
+          height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7a577a016b1faacffbdce2ecf4e6c26d
+      internalID: 1064983878579485286
+    - serializedVersion: 2
+      name: effect_hit_sheet_2
+      rect:
+        serializedVersion: 2
+          x: 32
+          y: 0
+          width: 16
+          height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 91ea27a61f3db71314227f68fc88a76e
+      internalID: 1064982779067857075
+    - serializedVersion: 2
+      name: effect_hit_sheet_3
+      rect:
+        serializedVersion: 2
+          x: 48
+          y: 0
+          width: 16
+          height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ae32950e37e72a73e2ee7a44b66cad5a
+      internalID: 1064981679556228864
+    - serializedVersion: 2
+      name: effect_hit_sheet_4
+      rect:
+        serializedVersion: 2
+          x: 64
+          y: 0
+          width: 16
+          height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ab25fee7734701549dc2355bad0408e0
+      internalID: 1064989376137626341
     outline: []
     customData: 
     physicsShape: []
@@ -122,7 +180,12 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      effect_hit_sheet_0: 1064984978091113497
+      effect_hit_sheet_1: 1064983878579485286
+      effect_hit_sheet_2: 1064982779067857075
+      effect_hit_sheet_3: 1064981679556228864
+      effect_hit_sheet_4: 1064989376137626341
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
