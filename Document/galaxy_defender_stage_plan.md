@@ -246,13 +246,13 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 
 **Week 3 — Full sprite import (high priority, do first)**
 
-- [ ] Pull Git repo; import all sprites into `Assets/Sprites/` subfolders (Player/, Enemies/, Bullets/, Effects/, PowerUps/, Tiles/, Backgrounds/, UI/)
-- [ ] Set import settings on EVERY sprite: Texture Type=Sprite, Filter Mode=**Point (no filter)**, Compression=None, PPU=32
-- [ ] Slice `player_thruster_sheet.png` → Sprite Editor → Grid 32×32; verify 4 named sprites generated
-- [ ] Slice `enemy_drone_sheet.png` (32×32), `enemy_hunter_sheet.png` (32×32), `obstacle_mine_sheet.png` (24×24)
-- [ ] Slice `explosion_small_sheet.png` (32×32 → 6 sprites), `explosion_large_sheet.png` (64×64 → 8 sprites), `effect_hit_sheet.png` (16×16 → 4 sprites)
-- [ ] Slice all tile sheets (16×16 each): tiles_station, tiles_asteroid, tiles_deepspace, tiles_decor
-- [ ] Background images (bg_*.png): Filter Mode=Bilinear, PPU=1 (exception — do NOT use Point filter on these)
+- [x] Pull Git repo; import all sprites into `Assets/Sprites/` subfolders (Player/, Enemies/, Bullets/, Effects/, PowerUps/, Tiles/, Backgrounds/, UI/)
+- [x] Set import settings on EVERY sprite: Texture Type=Sprite, Filter Mode=**Point (no filter)**, Compression=None, PPU=32
+- [x] Slice `player_thruster_sheet.png` → Sprite Editor → Grid 32×32; verify 4 named sprites generated
+- [x] Slice `enemy_drone_sheet.png` (32×32), `enemy_hunter_sheet.png` (32×32), `obstacle_mine_sheet.png` (24×24)
+- [x] Slice `explosion_small_sheet.png` (32×32 → 6 sprites), `explosion_large_sheet.png` (64×64 → 8 sprites), `effect_hit_sheet.png` (16×16 → 4 sprites)
+- [x] Slice all tile sheets (16×16 each): tiles_station, tiles_asteroid, tiles_deepspace, tiles_decor
+- [x] Background images (bg_*.png): Filter Mode=Bilinear, PPU=1 (exception — do NOT use Point filter on these)
 
 **Week 3 — Font import**
 
