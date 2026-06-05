@@ -262,10 +262,10 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 
 **Week 4 — Audio import**
 
-- [ ] Import all SFX .wav → Assets/Audio/SFX/; select all → Load Type=Decompress on Load; Apply
-- [ ] Import all BGM .ogg → Assets/Audio/BGM/; select all → Load Type=Streaming, Loop=true; Apply
-- [ ] Open Level1.unity → BGM AudioSource: assign bgm_gameplay.ogg; verify it plays on start
-- [ ] Spot-check Console for red errors after import — fix any misnamed/missing files
+- [x] Import all SFX .wav → Assets/Audio/SFX/; select all → Load Type=Decompress on Load; Apply
+- [x] Import all BGM .ogg → Assets/Audio/BGM/; select all → Load Type=Streaming, Loop=true; Apply
+- [x] Open Level1.unity → BGM AudioSource: assign bgm_gameplay.ogg; verify it plays on start
+- [x] Spot-check Console for red errors after import — fix any misnamed/missing files
 - [ ] Test: enter Play mode in Level1.unity → confirm no pink sprites, correct font renders, BGM audible
 
 ---
