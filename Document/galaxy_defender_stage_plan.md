@@ -256,9 +256,9 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 
 **Week 3 — Font import**
 
-- [ ] Import `PressStart2P-Regular.ttf` → Assets/Fonts/
-- [ ] Window → TextMeshPro → Font Asset Creator: Source=PressStart2P, Atlas=512×512, Charset=ASCII → Generate → Save as `PressStart2P_TMP` in Assets/Fonts/
-- [ ] Update ALL existing TMP Text components in MainMenu.unity and Level1.unity to use PressStart2P_TMP
+- [x] Import `PressStart2P-Regular.ttf` → Assets/Fonts/
+- [x] Window → TextMeshPro → Font Asset Creator: Source=PressStart2P, Atlas=512×512, Charset=ASCII → Generate → Save as `PressStart2P_TMP` in Assets/Fonts/
+- [x] Update ALL existing TMP Text components in MainMenu.unity and Level1.unity to use PressStart2P_TMP
 
 **Week 4 — Audio import**
 
