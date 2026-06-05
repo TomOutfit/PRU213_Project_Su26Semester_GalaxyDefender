@@ -202,19 +202,19 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 
 **Week 3 — WaveManager + ScoreManager complete**
 
-- [ ] `WaveManager.cs` complete: WaveData ScriptableObject, StartWave() instantiates enemies from pool at correct X positions, IEnumerator PollWaveCleared() polls activeEnemies every 0.5s, on clear → wait 2s → StartWave(next) or LevelManager.LevelComplete()
-- [ ] `ScoreManager.cs` complete: GetMultiplier() (×1/×2/×3 based on combo), combo reset on PlayerHealth.OnDamageTaken, powerUpMultiplierActive timer, OnScoreChanged event fired correctly
-- [ ] Create WaveData ScriptableObject for Level1 Wave1: 4 EnemyDrone, X=[20,40,60,80]%screenWidth, speedMult=1.0
-- [ ] Create WaveData for Level1 Wave2: 6 EnemyDrone, X=[10,25,40,60,75,90]%, speedMult=1.2
+- [x] `WaveManager.cs` complete: WaveData ScriptableObject, StartWave() instantiates enemies from pool at correct X positions, IEnumerator PollWaveCleared() polls activeEnemies every 0.5s, on clear → wait 2s → StartWave(next) or LevelManager.LevelComplete()
+- [x] `ScoreManager.cs` complete: GetMultiplier() (×1/×2/×3 based on combo), combo reset on PlayerHealth.OnDamageTaken, powerUpMultiplierActive timer, OnScoreChanged event fired correctly
+- [x] Create WaveData ScriptableObject for Level1 Wave1: 4 EnemyDrone, X=[20,40,60,80]%screenWidth, speedMult=1.0
+- [x] Create WaveData for Level1 Wave2: 6 EnemyDrone, X=[10,25,40,60,75,90]%, speedMult=1.2
 
 **Week 4 — Level1 scene + AudioManager wiring**
 
-- [ ] `AudioManager.cs` complete: Dictionary populated in Inspector, PlaySFX() implementation, PlayBGM() with 1s cross-fade coroutine
-- [ ] Build Level1.unity complete hierarchy: Camera, ParallaxBG (3 layers), Grid (4 Tilemap children - empty for now), Player prefab placed, WaveManager GO with WaveData references, ObjectPoolContainer (BulletPlayerPool×20, BulletEnemyPool×30, ExplosionSmallPool×10, HitEffectPool×15), Canvas_HUD, Canvas_Pause, AudioManager GO, BGM AudioSource (bgm_gameplay.ogg, loop)
-- [ ] Wire WaveManager → SpawnEnemy() from pool; confirm enemies use Get() not Instantiate()
-- [ ] Wire GameManager.OnStateChanged → PauseMenuController (show/hide panel) + timeScale
-- [ ] **ExplosionSmall + HitEffect prefabs** placed in ObjectPoolContainer
-- [ ] Assign AudioManager clip dictionary entries: sfx_shoot_player, sfx_explosion_small, sfx_player_hit entries populated in Inspector
+- [x] `AudioManager.cs` complete: Dictionary populated in Inspector, PlaySFX() implementation, PlayBGM() with 1s cross-fade coroutine
+- [x] Build Level1.unity complete hierarchy: Camera, ParallaxBG (3 layers), Grid (4 Tilemap children - empty for now), Player prefab placed, WaveManager GO with WaveData references, ObjectPoolContainer (BulletPlayerPool×20, BulletEnemyPool×30, ExplosionSmallPool×10, HitEffectPool×15), Canvas_HUD, Canvas_Pause, AudioManager GO, BGM AudioSource (bgm_gameplay.ogg, loop)
+- [x] Wire WaveManager → SpawnEnemy() from pool; confirm enemies use Get() not Instantiate()
+- [x] Wire GameManager.OnStateChanged → PauseMenuController (show/hide panel) + timeScale
+- [x] **ExplosionSmall + HitEffect prefabs** placed in ObjectPoolContainer
+- [x] Assign AudioManager clip dictionary entries: sfx_shoot_player, sfx_explosion_small, sfx_player_hit entries populated in Inspector
 - [ ] Quick integration test: kill Drone → explosion plays, score +100, wave count decrements
 
 ---
