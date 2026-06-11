@@ -4,6 +4,7 @@ using UnityEngine;
 public class WaveData : ScriptableObject
 {
     public GameObject enemyPrefab;
+    public GameObject[] enemyPrefabs;
     public int enemyCount = 4;
     public float[] spawnPositionsX; // screen-width percentages (0–1)
     public float speedMultiplier = 1f;

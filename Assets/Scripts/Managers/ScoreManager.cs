@@ -69,6 +69,10 @@ public class ScoreManager : MonoBehaviour
     public void OnEnemyKilled()
     {
         comboCount++;
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.totalEnemiesKilled++;
+        }
         OnEnemyKilledEvent?.Invoke();
     }
 

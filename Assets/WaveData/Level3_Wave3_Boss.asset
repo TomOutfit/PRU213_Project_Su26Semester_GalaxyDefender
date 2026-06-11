@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b917d49cffa796a40ab94d673d3b7093, type: 3}
+  m_Name: Level3_Wave3_Boss
+  m_EditorClassIdentifier: Assembly-CSharp::WaveData
+  enemyPrefab: {fileID: 4663720243234999152, guid: 6e96f3f11f7030a4e9826c440c7a4110, type: 3}
+  enemyPrefabs: []
+  enemyCount: 1
+  spawnPositionsX:
+  - 0.5
+  speedMultiplier: 1
+  spawnDelay: 1

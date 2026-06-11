@@ -51,6 +51,24 @@ public class LevelManager : MonoBehaviour
         Instance = this;
     }
 
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "Victory")
+        {
+            Victory();
+        }
+    }
+
     public void LevelComplete()
     {
         StartCoroutine(LevelCompleteSequence());
@@ -58,9 +76,21 @@ public class LevelManager : MonoBehaviour
 
     private IEnumerator LevelCompleteSequence()
     {
+        HUDController hud = Object.FindAnyObjectByType<HUDController>();
+        if (hud != null)
+        {
+            hud.DisplayMessage("LEVEL COMPLETE!", 2f);
+        }
+
         yield return new WaitForSeconds(2f);
 
         string nextScene = GetNextSceneName();
+        
+        // Save game state
+        int nextIndex = GetSceneIndex(nextScene);
+        int scoreVal = ScoreManager.Instance != null ? ScoreManager.Instance.currentScore : 0;
+        SaveManager.Instance?.SaveGame(nextIndex, scoreVal);
+
         SceneManager.LoadScene(nextScene);
     }
 
@@ -71,6 +101,12 @@ public class LevelManager : MonoBehaviour
 
     private IEnumerator VictorySequence()
     {
+        HUDController hud = Object.FindAnyObjectByType<HUDController>();
+        if (hud != null)
+        {
+            hud.DisplayMessage("VICTORY!", 3f);
+        }
+
         yield return new WaitForSeconds(3f);
 
         SaveManager.Instance?.SaveHighScore(ScoreManager.Instance?.currentScore ?? 0);

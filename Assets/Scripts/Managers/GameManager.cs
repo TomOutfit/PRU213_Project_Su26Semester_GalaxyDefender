@@ -13,6 +13,19 @@ public class GameManager : MonoBehaviour
 
     [HideInInspector]
     public float survivalTime;
+    
+    [HideInInspector]
+    public int totalEnemiesKilled;
+
+    public void ResetSession()
+    {
+        survivalTime = 0f;
+        totalEnemiesKilled = 0;
+        if (ScoreManager.Instance != null)
+        {
+            ScoreManager.Instance.ResetScore();
+        }
+    }
 
     private void Awake()
     {

@@ -6,10 +6,10 @@ using UnityEditor;
 
 public static class RuntimeSpriteFixer
 {
-    public static void EnsureSprite(SpriteRenderer sr, string spritePath)
+    public static void EnsureSprite(SpriteRenderer sr, string spritePath, bool force = false)
     {
         if (sr == null) return;
-        if (sr.sprite != null) return;
+        if (sr.sprite != null && !force) return;
 
 #if UNITY_EDITOR
         // 1. Try native AssetDatabase load first

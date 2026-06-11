@@ -60,16 +60,25 @@ public class AudioManager : MonoBehaviour
             bgmSource2.outputAudioMixerGroup = bgmMixerGroup;
     }
 
+    [HideInInspector]
+    public float sfxVolume = 1f;
+
+    public void SetSFXVolume(float volume)
+    {
+        sfxVolume = Mathf.Clamp01(volume);
+    }
+
     public void PlaySFX(string key)
     {
         if (!sfxMap.TryGetValue(key, out AudioClip clip)) return;
-
+ 
         AudioSource src = gameObject.AddComponent<AudioSource>();
         src.clip = clip;
         src.playOnAwake = false;
         if (bgmMixerGroup != null)
-            src.outputAudioMixerGroup = bgmMixerGroup; // default to same group or sfx group if present
-        src.PlayOneShot(clip);
+            src.outputAudioMixerGroup = bgmMixerGroup;
+        src.volume = sfxVolume;
+        src.Play();
         StartCoroutine(CleanupSFXSource(src));
     }
 

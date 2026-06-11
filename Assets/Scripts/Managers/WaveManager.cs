@@ -71,7 +71,14 @@ public class WaveManager : MonoBehaviour
             );
 
             Vector3 spawnPos = new Vector3(worldX, topY + 1f, 0f);
-            SpawnEnemy(data.enemyPrefab, spawnPos, data.speedMultiplier);
+
+            GameObject prefabToSpawn = data.enemyPrefab;
+            if (data.enemyPrefabs != null && data.enemyPrefabs.Length > 0)
+            {
+                prefabToSpawn = data.enemyPrefabs[i % data.enemyPrefabs.Length];
+            }
+
+            SpawnEnemy(prefabToSpawn, spawnPos, data.speedMultiplier);
 
             if (i < data.enemyCount - 1)
                 yield return new WaitForSeconds(data.spawnDelay);
@@ -117,6 +124,13 @@ public class WaveManager : MonoBehaviour
             drone.moveSpeed = 2f * speedMult; // base speed is 2f
         }
 
+        EnemyHunter hunter = enemy.GetComponent<EnemyHunter>();
+        if (hunter != null)
+        {
+            hunter.moveSpeed = 3.5f * speedMult; // base tracking speed is 3.5f
+            hunter.verticalSpeed = 1.0f * speedMult; // base vertical speed is 1.0f
+        }
+
         activeEnemies.Add(enemy);
         return enemy;
     }
@@ -126,7 +140,7 @@ public class WaveManager : MonoBehaviour
         activeEnemyCount++;
     }
 
-    private void OnEnemyDestroyed()
+    public void OnEnemyDestroyed(GameObject enemy = null)
     {
         activeEnemyCount--;
         OnEnemyKilled?.Invoke(activeEnemyCount);
