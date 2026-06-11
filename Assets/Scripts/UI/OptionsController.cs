@@ -1,8 +1,12 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Audio;
 
 public class OptionsController : MonoBehaviour
 {
+    [Header("Audio Mixer")]
+    public AudioMixer audioMixer;
+
     [Header("UI Elements")]
     public Slider masterSlider;
     public Slider musicSlider;
@@ -28,22 +32,22 @@ public class OptionsController : MonoBehaviour
         if (masterSlider != null)
         {
             masterSlider.value = masterVolume;
-            masterSlider.onValueChanged.AddListener(SetMasterVolume);
+            masterSlider.onValueChanged.AddListener(OnMasterChanged);
         }
         if (musicSlider != null)
         {
             musicSlider.value = musicVolume;
-            musicSlider.onValueChanged.AddListener(SetMusicVolume);
+            musicSlider.onValueChanged.AddListener(OnMusicChanged);
         }
         if (sfxSlider != null)
         {
             sfxSlider.value = sfxVolume;
-            sfxSlider.onValueChanged.AddListener(SetSFXVolume);
+            sfxSlider.onValueChanged.AddListener(OnSFXChanged);
         }
         if (fullscreenToggle != null)
         {
             fullscreenToggle.isOn = isFullscreen;
-            fullscreenToggle.onValueChanged.AddListener(SetFullscreen);
+            fullscreenToggle.onValueChanged.AddListener(OnFullscreenToggle);
         }
         if (backButton != null)
         {
@@ -51,34 +55,67 @@ public class OptionsController : MonoBehaviour
         }
 
         // Apply immediately
-        SetMasterVolume(masterVolume);
-        SetMusicVolume(musicVolume);
-        SetSFXVolume(sfxVolume);
-        SetFullscreen(isFullscreen);
+        OnMasterChanged(masterVolume);
+        OnMusicChanged(musicVolume);
+        OnSFXChanged(sfxVolume);
+        OnFullscreenToggle(isFullscreen);
     }
 
-    public void SetMasterVolume(float value)
+    public void OnMasterChanged(float v)
     {
-        AudioListener.volume = value;
-        PlayerPrefs.SetFloat("Volume_Master", value);
+        float db = Mathf.Log10(Mathf.Max(v, 0.0001f)) * 20f;
+        if (audioMixer != null)
+        {
+            audioMixer.SetFloat("MasterVolume", db);
+        }
+        else
+        {
+            AudioListener.volume = v;
+        }
+        PlayerPrefs.SetFloat("Volume_Master", v);
+        OnAnyChange();
     }
 
-    public void SetMusicVolume(float value)
+    public void OnMusicChanged(float v)
     {
-        AudioManager.Instance?.SetBGMVolume(value);
-        PlayerPrefs.SetFloat("Volume_Music", value);
+        float db = Mathf.Log10(Mathf.Max(v, 0.0001f)) * 20f;
+        if (audioMixer != null)
+        {
+            audioMixer.SetFloat("MusicVolume", db);
+        }
+        else
+        {
+            AudioManager.Instance?.SetBGMVolume(v);
+        }
+        PlayerPrefs.SetFloat("Volume_Music", v);
+        OnAnyChange();
     }
 
-    public void SetSFXVolume(float value)
+    public void OnSFXChanged(float v)
     {
-        AudioManager.Instance?.SetSFXVolume(value);
-        PlayerPrefs.SetFloat("Volume_SFX", value);
+        float db = Mathf.Log10(Mathf.Max(v, 0.0001f)) * 20f;
+        if (audioMixer != null)
+        {
+            audioMixer.SetFloat("SFXVolume", db);
+        }
+        else
+        {
+            AudioManager.Instance?.SetSFXVolume(v);
+        }
+        PlayerPrefs.SetFloat("Volume_SFX", v);
+        OnAnyChange();
     }
 
-    public void SetFullscreen(bool value)
+    public void OnFullscreenToggle(bool v)
     {
-        Screen.fullScreen = value;
-        PlayerPrefs.SetInt("Fullscreen", value ? 1 : 0);
+        Screen.fullScreen = v;
+        PlayerPrefs.SetInt("Fullscreen", v ? 1 : 0);
+        OnAnyChange();
+    }
+
+    private void OnAnyChange()
+    {
+        PlayerPrefs.Save();
     }
 
     public void GoBack()

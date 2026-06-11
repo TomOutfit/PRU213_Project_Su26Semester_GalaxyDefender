@@ -18,7 +18,25 @@ public class GameOverController : MonoBehaviour
     public Button restartButton;
     public Button mainMenuButton;
 
-    private void Start()
+    private void Awake()
+    {
+        // Try to find buttons programmatically if not assigned
+        if (restartButton == null) restartButton = GameObject.Find("RestartButton")?.GetComponent<Button>();
+        if (mainMenuButton == null) mainMenuButton = GameObject.Find("MainMenuButton")?.GetComponent<Button>();
+
+        if (restartButton != null)
+        {
+            restartButton.onClick.RemoveListener(Restart);
+            restartButton.onClick.AddListener(Restart);
+        }
+        if (mainMenuButton != null)
+        {
+            mainMenuButton.onClick.RemoveListener(MainMenu);
+            mainMenuButton.onClick.AddListener(MainMenu);
+        }
+    }
+
+    private void OnEnable()
     {
         int finalScore = ScoreManager.Instance != null ? ScoreManager.Instance.currentScore : 0;
         float timeVal = GameManager.Instance != null ? GameManager.Instance.survivalTime : 0f;
@@ -37,24 +55,11 @@ public class GameOverController : MonoBehaviour
         if (enemiesKilledText != null) enemiesKilledText.text = $"Enemies Killed: {killedCount}";
         if (enemiesKilledTextTMP != null) enemiesKilledTextTMP.text = $"Enemies Killed: {killedCount}";
 
-        // Try to find buttons programmatically if not assigned
-        if (restartButton == null) restartButton = GameObject.Find("RestartButton")?.GetComponent<Button>();
-        if (mainMenuButton == null) mainMenuButton = GameObject.Find("MainMenuButton")?.GetComponent<Button>();
-
-        if (restartButton != null)
-        {
-            restartButton.onClick.AddListener(RestartGame);
-        }
-        if (mainMenuButton != null)
-        {
-            mainMenuButton.onClick.AddListener(LoadMainMenu);
-        }
-
         // Ensure timeScale is normal so buttons interact
         Time.timeScale = 1f;
     }
 
-    public void RestartGame()
+    public void Restart()
     {
         if (GameManager.Instance != null)
         {
@@ -64,7 +69,7 @@ public class GameOverController : MonoBehaviour
         SceneManager.LoadScene("Level1");
     }
 
-    public void LoadMainMenu()
+    public void MainMenu()
     {
         SceneManager.LoadScene("MainMenu");
     }
