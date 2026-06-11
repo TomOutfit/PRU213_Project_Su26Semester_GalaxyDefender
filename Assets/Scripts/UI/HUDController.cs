@@ -101,4 +101,37 @@ public class HUDController : MonoBehaviour
         if (WaveText != null) WaveText.text = text;
         if (WaveTextTMP != null) WaveTextTMP.text = text;
     }
+
+    [Header("Message Settings")]
+    public TMPro.TMP_FontAsset messageFont;
+
+    public void DisplayMessage(string message, float duration)
+    {
+        GameObject canvasHUD = GameObject.Find("Canvas_HUD");
+        if (canvasHUD == null) return;
+
+        GameObject textObj = new GameObject("HUDMessageText");
+        textObj.transform.SetParent(canvasHUD.transform, false);
+
+        RectTransform rect = textObj.AddComponent<RectTransform>();
+        rect.anchoredPosition = Vector2.zero;
+        rect.sizeDelta = new Vector2(800f, 150f);
+
+        TMPro.TextMeshProUGUI tmp = textObj.AddComponent<TMPro.TextMeshProUGUI>();
+        tmp.text = message;
+        tmp.fontSize = 48;
+        tmp.color = Color.yellow;
+        tmp.alignment = TMPro.TextAlignmentOptions.Center;
+
+        if (messageFont != null)
+        {
+            tmp.font = messageFont;
+        }
+
+        tmp.fontStyle = TMPro.FontStyles.Normal;
+        tmp.outlineWidth = 0.2f;
+        tmp.outlineColor = Color.black;
+
+        Destroy(textObj, duration);
+    }
 }
