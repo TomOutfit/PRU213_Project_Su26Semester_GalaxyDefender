@@ -311,25 +311,25 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 
 **Week 5 — Remaining managers**
 
-- [ ] `LevelManager.cs` — LevelComplete(): show "LEVEL COMPLETE!" via HUD → wait 2s → LoadScene(nextScene) lookup table (Level1→Level2, Level2→Level3Boss, Level3Boss→Victory); Victory(): show "VICTORY!" → wait 3s → SaveHighScore → LoadScene("MainMenu")
-- [ ] `SaveManager.cs` — SaveGame(): write LastLevel (int) + LastScore (int) to PlayerPrefs; LoadGame(): read → ScoreManager.currentScore = saved → LoadScene(savedLevel); SaveHighScore(): read 5 slots → insert if qualifies → sort desc → write back; GetHighScores(): return int[5]
-- [ ] `PowerUp.cs` abstract base + 3 subclasses: PowerUpHealth (+30HP cap 100), PowerUpShield (+25Shield cap 50), PowerUpScore (flag ScoreManager.powerUpMultiplierActive + start 10s coroutine to clear)
-- [ ] `PowerUpManager.cs` — Drop(pos): Random.value < 0.3f → pick random from 3 prefabs → Instantiate at pos
-- [ ] **PowerUp prefabs** (3): SpriteRenderer, CircleCollider2D isTrigger r=0.3, Rigidbody2D gravity=0, respective PowerUp script
+- [x] `LevelManager.cs` — LevelComplete(): show "LEVEL COMPLETE!" via HUD → wait 2s → LoadScene(nextScene) lookup table (Level1→Level2, Level2→Level3Boss, Level3Boss→Victory); Victory(): show "VICTORY!" → wait 3s → SaveHighScore → LoadScene("MainMenu")
+- [x] `SaveManager.cs` — SaveGame(): write LastLevel (int) + LastScore (int) to PlayerPrefs; LoadGame(): read → ScoreManager.currentScore = saved → LoadScene(savedLevel); SaveHighScore(): read 5 slots → insert if qualifies → sort desc → write back; GetHighScores(): return int[5]
+- [x] `PowerUp.cs` abstract base + 3 subclasses: PowerUpHealth (+30HP cap 100), PowerUpShield (+25Shield cap 50), PowerUpScore (flag ScoreManager.powerUpMultiplierActive + start 10s coroutine to clear)
+- [x] `PowerUpManager.cs` — Drop(pos): Random.value < 0.3f → pick random from 3 prefabs → Instantiate at pos
+- [x] **PowerUp prefabs** (3): SpriteRenderer, CircleCollider2D isTrigger r=0.3, Rigidbody2D gravity=0, respective PowerUp script
 
 **Week 5–6 — Level scenes + WaveManager configs**
 
-- [ ] Build `Level2.unity`: copy Level1 hierarchy → rename → swap nebula layer to bg_nebula_l2 → swap scene name references
-- [ ] Build `Level3_Boss.unity`: copy Level2 → add BossSpawnPoint Transform at top-center (X=0, Y=camera.top-1); activate BossHUD in Canvas_HUD
-- [ ] Create WaveData for Level2: Wave1 (2 Drone + 2 Hunter, Hunter delay=2s, speedMult=1.0); Wave2 (4 Hunter + 1 Drone, Hunter speedMult=1.15)
-- [ ] Create WaveData for Level3: Wave1 (3 Drone + 3 Hunter, random X each spawn, speedMult=1.2); Wave2 → trigger BossController.StartFight() after 2s delay
-- [ ] Wire Level3_Boss.unity: BossController subscribes AudioManager to switch to bgm_boss.ogg on StartFight(); wire BossHUDController to BossController events
-- [ ] Add PowerUpManager GO to all 3 level scenes; assign 3 power-up prefabs in Inspector
-- [ ] Wire AudioManager full clip dictionary: populate ALL 19 SFX + 4 BGM entries in Inspector across all scenes
+- [x] Build `Level2.unity`: copy Level1 hierarchy → rename → swap nebula layer to bg_nebula_l2 → swap scene name references
+- [x] Build `Level3_Boss.unity`: copy Level2 → add BossSpawnPoint Transform at top-center (X=0, Y=camera.top-1); activate BossHUD in Canvas_HUD
+- [x] Create WaveData for Level2: Wave1 (2 Drone + 2 Hunter, Hunter delay=2s, speedMult=1.0); Wave2 (4 Hunter + 1 Drone, Hunter speedMult=1.15)
+- [x] Create WaveData for Level3: Wave1 (3 Drone + 3 Hunter, random X each spawn, speedMult=1.2); Wave2 → trigger BossController.StartFight() after 2s delay
+- [x] Wire Level3_Boss.unity: BossController subscribes AudioManager to switch to bgm_boss.ogg on StartFight(); wire BossHUDController to BossController events
+- [x] Add PowerUpManager GO to all 3 level scenes; assign 3 power-up prefabs in Inspector
+- [x] Wire AudioManager full clip dictionary: populate ALL 19 SFX + 4 BGM entries in Inspector across all scenes
 
 **Week 6 — Integration smoke test**
 
-- [ ] Verify Level1→Level2→Level3 auto-transition works (all enemies killed → "Level Complete" → next scene loads)
+- [x] Verify Level1→Level2→Level3 auto-transition works (all enemies killed → "Level Complete" → next scene loads)
 
 ---
 
