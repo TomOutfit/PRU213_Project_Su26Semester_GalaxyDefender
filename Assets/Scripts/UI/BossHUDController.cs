@@ -56,7 +56,7 @@ public class BossHUDController : MonoBehaviour
         // Subscribe BossController.OnPhaseChanged -> BossHPSlider.value = hp/maxHP
         if (bossHealth != null && bossHPSlider != null)
         {
-            bossHPSlider.value = (float)bossHealth.currentHP / bossHealth.maxHP;
+            bossHPSlider.value = (float)bossHealth.CurrentHP / bossHealth.maxHP;
         }
     }
 
