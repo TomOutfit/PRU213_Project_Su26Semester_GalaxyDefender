@@ -8,9 +8,11 @@ public class EnemyHealth : MonoBehaviour
     public int points = 100;
     
     private int currentHP;
+    public int CurrentHP => currentHP;
 
     [Header("Events")]
     public UnityEvent OnDeath;
+    public UnityEvent<int> OnHealthChanged;
 
     private void OnEnable()
     {
@@ -21,7 +23,11 @@ public class EnemyHealth : MonoBehaviour
     {
         if (currentHP <= 0) return; // Already dead
 
+        BossController boss = GetComponent<BossController>();
+        if (boss != null && (boss.isSpawning || boss.isDying)) return;
+
         currentHP -= damage;
+        OnHealthChanged?.Invoke(currentHP);
         GetComponent<SpriteFlash>()?.Flash(0.08f, Color.white);
 
         if (currentHP <= 0)
