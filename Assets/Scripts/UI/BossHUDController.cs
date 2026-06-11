@@ -9,6 +9,7 @@ public class BossHUDController : MonoBehaviour
     public GameObject bossHUDPanel;
     public Slider bossHPSlider;
 
+    private BossController bossInstance;
     private EnemyHealth bossHealth;
 
     private void Awake()
@@ -30,10 +31,17 @@ public class BossHUDController : MonoBehaviour
         if (bossHUDPanel != null) bossHUDPanel.SetActive(true);
 
         // Find the boss in the scene dynamically
-        BossController boss = Object.FindAnyObjectByType<BossController>();
-        if (boss != null)
+        bossInstance = Object.FindAnyObjectByType<BossController>();
+        if (bossInstance != null)
         {
-            bossHealth = boss.GetComponent<EnemyHealth>();
+            // Subscribe to BossController events
+            bossInstance.OnBossDead.RemoveListener(DeactivateBossHPBar);
+            bossInstance.OnBossDead.AddListener(DeactivateBossHPBar);
+
+            bossInstance.OnPhaseChanged.RemoveListener(OnBossPhaseChanged);
+            bossInstance.OnPhaseChanged.AddListener(OnBossPhaseChanged);
+
+            bossHealth = bossInstance.GetComponent<EnemyHealth>();
             if (bossHealth != null)
             {
                 bossHealth.OnHealthChanged.RemoveListener(UpdateHP);
@@ -43,21 +51,48 @@ public class BossHUDController : MonoBehaviour
         }
     }
 
+    private void OnBossPhaseChanged(int phase)
+    {
+        // Subscribe BossController.OnPhaseChanged -> BossHPSlider.value = hp/maxHP
+        if (bossHealth != null && bossHPSlider != null)
+        {
+            bossHPSlider.value = (float)bossHealth.CurrentHP / bossHealth.maxHP;
+        }
+    }
+
     private void UpdateHP(int hp)
     {
         if (bossHealth != null && bossHPSlider != null)
         {
-            bossHPSlider.maxValue = bossHealth.maxHP;
-            bossHPSlider.value = hp;
+            // Support both direct and normalized slider ranges
+            if (bossHPSlider.maxValue > 1.1f)
+            {
+                bossHPSlider.maxValue = bossHealth.maxHP;
+                bossHPSlider.value = hp;
+            }
+            else
+            {
+                bossHPSlider.value = (float)hp / bossHealth.maxHP;
+            }
         }
+    }
+
+    private void DeactivateBossHPBar()
+    {
+        if (bossHUDPanel != null) bossHUDPanel.SetActive(false);
     }
 
     public void HideBossHUD()
     {
-        if (bossHUDPanel != null) bossHUDPanel.SetActive(false);
+        DeactivateBossHPBar();
         if (bossHealth != null)
         {
             bossHealth.OnHealthChanged.RemoveListener(UpdateHP);
+        }
+        if (bossInstance != null)
+        {
+            bossInstance.OnBossDead.RemoveListener(DeactivateBossHPBar);
+            bossInstance.OnPhaseChanged.RemoveListener(OnBossPhaseChanged);
         }
     }
 }

@@ -45,6 +45,7 @@ GameObject:
   - component: {fileID: 4372408500246569067}
   - component: {fileID: 3325420442168386432}
   - component: {fileID: 3127751966401112041}
+  - component: {fileID: -699655622189584495}
   m_Layer: 10
   m_Name: Boss
   m_TagString: Boss
@@ -250,3 +251,25 @@ MonoBehaviour:
   OnBossDead:
     m_PersistentCalls:
       m_Calls: []
+--- !u!95 &-699655622189584495
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4663720243234999152}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 65e4e6fae14fdbb42b72320ec58e2027, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
