@@ -366,10 +366,10 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 
 > P4's main import work is done. Week 5–6 is light; P4 begins QA preparation.
 
-- [ ] Verify all audio clips are in AudioManager GO Inspector slot → no missing references (pink fields) across all 3 level scenes
-- [ ] Spot-check all 3 levels in Play mode: no pink sprites, no missing audio, font renders correctly in all scenes
-- [ ] Create `Assets/Scenes/GameOver.unity` (empty scene with EventSystem) so P3 can build it in S4
-- [ ] Write smoke-test checklist (Google Doc or Notion): list every feature to verify in final QA with pass/fail column
+- [x] Verify all audio clips are in AudioManager GO Inspector slot → no missing references (pink fields) across all 3 level scenes
+- [x] Spot-check all 3 levels in Play mode: no pink sprites, no missing audio, font renders correctly in all scenes
+- [x] Create `Assets/Scenes/GameOver.unity` (empty scene with EventSystem) so P3 can build it in S4
+- [x] Write smoke-test checklist (Google Doc or Notion): list every feature to verify in final QA with pass/fail column
 
 ---
 
