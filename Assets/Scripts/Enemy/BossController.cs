@@ -2,6 +2,12 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
+/// <summary>
+/// Three-phase boss. After a warning/entry sequence it fights in phases keyed to HP: Phase 1
+/// (stationary, single aimed shot), Phase 2 (sine-wave strafe, faster fire) at ≤66% HP, and
+/// Phase 3 (wider strafe, 3-bullet ±15° spread, spawns two drones once) at ≤33% HP. Swaps its
+/// sprite per phase and runs a multi-blast death sequence that also applies an explosion force.
+/// </summary>
 [RequireComponent(typeof(EnemyHealth))]
 public class BossController : MonoBehaviour
 {
@@ -221,6 +227,7 @@ public class BossController : MonoBehaviour
         AudioManager.Instance?.PlaySFX("sfx_shoot_boss");
     }
 
+    /// <summary>Advances the boss phase as HP crosses the 66% and 33% thresholds.</summary>
     private void OnHealthChanged(int currentHP)
     {
         if (isSpawning || isDying) return;
@@ -264,6 +271,7 @@ public class BossController : MonoBehaviour
         RuntimeSpriteFixer.EnsureSprite(sr, path, true);
     }
 
+    /// <summary>Spawns exactly two flanking drones — called once on entering Phase 3.</summary>
     private void SpawnPhase3Drones()
     {
         if (dronePrefab == null || WaveManager.Instance == null) return;
