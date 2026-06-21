@@ -66,7 +66,7 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 - [x] Define Tags: Player, Enemy, Boss, PowerUp
 - [x] Init Git repo + Unity .gitignore; push; share link with team
 - [x] Create full `Assets/` folder structure (Scripts/Player, Scripts/Enemy, Scripts/Managers, Scripts/Systems, Scripts/UI, Prefabs, Sprites, Audio, Scenes, Fonts, Animations)
-- [ ] Set up AudioMixer: 3 groups (Master, Music, SFX); expose MasterVolume, MusicVolume, SFXVolume parameters
+- [x] Set up AudioMixer: 3 groups (Master, Music, SFX); expose MasterVolume, MusicVolume, SFXVolume parameters
 
 **Week 2 — First scripts**
 
@@ -184,15 +184,15 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 - [x] `BulletEnemy.cs` — velocity downward 10 u/s, OnTriggerEnter2D tag Player → PlayerHealth.TakeDamage(10) → Release()
 - [x] `EnemyDrone.cs` — downward movement 2 u/s FixedUpdate; FireRoutine coroutine every 2s; OnBecameInvisible → return to pool
 - [x] `EnemyHealth.cs` — TakeDamage(int), OnDeath event → ScoreManager.AddScore(points) + 30% chance PowerUpManager.Drop(pos)
-- [ ] **Player prefab** (full assembly): SpriteRenderer=player_ship.png, Rigidbody2D Kinematic gravity=0, PolygonCollider2D trimmed 70%, Animator=PlayerAnimator, PlayerController, PlayerHealth; child BulletSpawnPoint at nose
-- [ ] **BulletPlayer prefab**: SpriteRenderer=bullet_player.png, CapsuleCollider2D isTrigger, Rigidbody2D gravity=0, BulletPlayer; layer=PlayerBullet
-- [ ] **BulletEnemy prefab**: same setup, BulletEnemy script; layer=EnemyBullet
+- [x] **Player prefab** (full assembly): SpriteRenderer=player_ship.png, Rigidbody2D Kinematic gravity=0, PolygonCollider2D trimmed 70%, Animator=PlayerAnimator, PlayerController, PlayerHealth; child BulletSpawnPoint at nose
+- [x] **BulletPlayer prefab**: SpriteRenderer=bullet_player.png, CapsuleCollider2D isTrigger, Rigidbody2D gravity=0, BulletPlayer; layer=PlayerBullet
+- [x] **BulletEnemy prefab**: same setup, BulletEnemy script; layer=EnemyBullet
 
 **Week 4 — Drone prefab + physics validation**
 
-- [ ] **EnemyDrone prefab**: SpriteRenderer=enemy_drone.png, Rigidbody2D Dynamic gravity=0, CircleCollider2D, Animator=DroneAnimator, EnemyDrone, EnemyHealth(20, 100pts); layer=Enemy
-- [ ] **ExplosionSmall prefab**: SpriteRenderer, Animator, AnimationEvent on last frame → ReturnToPool
-- [ ] **HitEffect prefab**: same, smaller sprite
+- [x] **EnemyDrone prefab**: SpriteRenderer=enemy_drone.png, Rigidbody2D Dynamic gravity=0, CircleCollider2D, Animator=DroneAnimator, EnemyDrone, EnemyHealth(20, 100pts); layer=Enemy
+- [x] **ExplosionSmall prefab**: SpriteRenderer, Animator, AnimationEvent on last frame → ReturnToPool
+- [x] **HitEffect prefab**: same, smaller sprite
 - [ ] Validate Layer Collision Matrix: player bullet hits Enemy, enemy bullet hits Player, no cross-contamination
 - [ ] Tune PolygonCollider2D on Player (exclude wing tips); test in Play mode via Scene gizmos
 
@@ -293,17 +293,17 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 
 **Week 5**
 
-- [ ] `EnemyHunter.cs` — X tracking with MoveTowards speed=3.5 u/s FixedUpdate; Y moves down 1 u/s; fire every 1.5s; despawn off-screen
-- [ ] `BossController.cs` — Phase thresholds 300/200/100HP; Phase1 stationary straight shot 1s; Phase2 sine wave X (A=0.3×screenW, period=4s) barrage 0.7s; Phase3 spread shot 3 bullets ±15° 0.4s + SpawnEnemy() exactly 2 Drones once; isDying flag; OnPhaseChanged event; OnBossDead event
-- [ ] **EnemyHunter prefab**: Rigidbody2D Dynamic, CircleCollider2D, Animator=HunterAnimator, EnemyHunter, EnemyHealth(40, 200pts); layer=Enemy
-- [ ] **Boss prefab**: Rigidbody2D Kinematic, PolygonCollider2D, Animator=BossAnimator, BossController, EnemyHealth(300, 1000pts); layer=Boss; child BulletSpawnPoint
-- [ ] **BulletBoss prefab**: sprite=bullet_boss.png (12×24), damage=20, layer=EnemyBullet
-- [ ] **ExplosionLarge prefab**: SpriteRenderer, Animator with Explosion_Large clip, AnimationEvent last frame → ReturnToPool; add to ObjectPoolContainer (cap=3)
+- [x] `EnemyHunter.cs` — X tracking with MoveTowards speed=3.5 u/s FixedUpdate; Y moves down 1 u/s; fire every 1.5s; despawn off-screen
+- [x] `BossController.cs` — Phase thresholds 300/200/100HP; Phase1 stationary straight shot 1s; Phase2 sine wave X (A=0.3×screenW, period=4s) barrage 0.7s; Phase3 spread shot 3 bullets ±15° 0.4s + SpawnEnemy() exactly 2 Drones once; isDying flag; OnPhaseChanged event; OnBossDead event
+- [x] **EnemyHunter prefab**: Rigidbody2D Dynamic, CircleCollider2D, Animator=HunterAnimator, EnemyHunter, EnemyHealth(40, 200pts); layer=Enemy
+- [x] **Boss prefab**: Rigidbody2D Kinematic, PolygonCollider2D, Animator=BossAnimator, BossController, EnemyHealth(300, 1000pts); layer=Boss; child BulletSpawnPoint
+- [x] **BulletBoss prefab**: sprite=bullet_boss.png (12×24), damage=20, layer=EnemyBullet
+- [x] **ExplosionLarge prefab**: SpriteRenderer, Animator with Explosion_Large clip, AnimationEvent last frame → ReturnToPool; add to ObjectPoolContainer (cap=3)
 
 **Week 6 — Physics + knockback**
 
-- [ ] Implement knockback in `PlayerHealth.TakeDamage()`: `rb.AddForce(hitDir * 3f, ForceMode2D.Impulse)` (hitDir = normalize(player.pos - bullet.pos))
-- [ ] Boss death explosion force: `Physics2D.OverlapCircleAll(pos, 5f)` → each rb → `AddForce(away * 5f, Impulse)`
+- [x] Implement knockback in `PlayerHealth.TakeDamage()`: `rb.AddForce(hitDir * 3f, ForceMode2D.Impulse)` (hitDir = normalize(player.pos - bullet.pos)) — implemented as a MovePosition nudge since the player Rigidbody2D is Kinematic
+- [x] Boss death explosion force: `Physics2D.OverlapCircleAll(pos, 5f)` → each rb → `AddForce(away * 5f, Impulse)`
 
 ---
 
