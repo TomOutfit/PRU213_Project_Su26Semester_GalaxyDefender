@@ -184,15 +184,15 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 - [x] `BulletEnemy.cs` — velocity downward 10 u/s, OnTriggerEnter2D tag Player → PlayerHealth.TakeDamage(10) → Release()
 - [x] `EnemyDrone.cs` — downward movement 2 u/s FixedUpdate; FireRoutine coroutine every 2s; OnBecameInvisible → return to pool
 - [x] `EnemyHealth.cs` — TakeDamage(int), OnDeath event → ScoreManager.AddScore(points) + 30% chance PowerUpManager.Drop(pos)
-- [ ] **Player prefab** (full assembly): SpriteRenderer=player_ship.png, Rigidbody2D Kinematic gravity=0, PolygonCollider2D trimmed 70%, Animator=PlayerAnimator, PlayerController, PlayerHealth; child BulletSpawnPoint at nose
-- [ ] **BulletPlayer prefab**: SpriteRenderer=bullet_player.png, CapsuleCollider2D isTrigger, Rigidbody2D gravity=0, BulletPlayer; layer=PlayerBullet
-- [ ] **BulletEnemy prefab**: same setup, BulletEnemy script; layer=EnemyBullet
+- [x] **Player prefab** (full assembly): SpriteRenderer=player_ship.png, Rigidbody2D Kinematic gravity=0, PolygonCollider2D trimmed 70%, Animator=PlayerAnimator, PlayerController, PlayerHealth; child BulletSpawnPoint at nose
+- [x] **BulletPlayer prefab**: SpriteRenderer=bullet_player.png, CapsuleCollider2D isTrigger, Rigidbody2D gravity=0, BulletPlayer; layer=PlayerBullet
+- [x] **BulletEnemy prefab**: same setup, BulletEnemy script; layer=EnemyBullet
 
 **Week 4 — Drone prefab + physics validation**
 
-- [ ] **EnemyDrone prefab**: SpriteRenderer=enemy_drone.png, Rigidbody2D Dynamic gravity=0, CircleCollider2D, Animator=DroneAnimator, EnemyDrone, EnemyHealth(20, 100pts); layer=Enemy
-- [ ] **ExplosionSmall prefab**: SpriteRenderer, Animator, AnimationEvent on last frame → ReturnToPool
-- [ ] **HitEffect prefab**: same, smaller sprite
+- [x] **EnemyDrone prefab**: SpriteRenderer=enemy_drone.png, Rigidbody2D Dynamic gravity=0, CircleCollider2D, Animator=DroneAnimator, EnemyDrone, EnemyHealth(20, 100pts); layer=Enemy
+- [x] **ExplosionSmall prefab**: SpriteRenderer, Animator, AnimationEvent on last frame → ReturnToPool
+- [x] **HitEffect prefab**: same, smaller sprite
 - [ ] Validate Layer Collision Matrix: player bullet hits Enemy, enemy bullet hits Player, no cross-contamination
 - [ ] Tune PolygonCollider2D on Player (exclude wing tips); test in Play mode via Scene gizmos
 
