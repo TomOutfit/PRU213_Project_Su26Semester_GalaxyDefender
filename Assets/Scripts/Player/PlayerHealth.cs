@@ -1,6 +1,11 @@
 using UnityEngine;
 using UnityEngine.Events;
 
+/// <summary>
+/// Tracks the player's HP and shield and broadcasts changes to the HUD. Shield absorbs damage
+/// before HP. Damage taken while dashing is ignored (dash i-frames). Raises OnDeath when HP
+/// reaches zero. Health/shield are restored only via power-ups.
+/// </summary>
 public class PlayerHealth : MonoBehaviour
 {
     [Header("Stats")]
@@ -31,7 +36,12 @@ public class PlayerHealth : MonoBehaviour
         OnShieldChanged?.Invoke(currentShield);
     }
 
-    // Overload that also applies directional knockback away from the damage source.
+    /// <summary>
+    /// Applies damage and also knocks the player back away from the damage source. Skips the
+    /// knockback while dashing (i-frames).
+    /// </summary>
+    /// <param name="damage">Raw damage before shield absorption.</param>
+    /// <param name="hitSourcePos">World position of the bullet/source that caused the hit.</param>
     public void TakeDamage(int damage, Vector2 hitSourcePos)
     {
         if (!isDashing)
@@ -100,12 +110,14 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
+    /// <summary>Restores HP up to <see cref="maxHP"/> (used by the health power-up).</summary>
     public void AddHealth(int amount)
     {
         currentHP = Mathf.Min(maxHP, currentHP + amount);
         OnHPChanged?.Invoke(currentHP);
     }
 
+    /// <summary>Restores shield up to <see cref="maxShield"/> (used by the shield power-up).</summary>
     public void AddShield(int amount)
     {
         currentShield = Mathf.Min(maxShield, currentShield + amount);
