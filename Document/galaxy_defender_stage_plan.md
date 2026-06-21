@@ -353,12 +353,12 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 
 **Week 6 — Remaining animation clips**
 
-- [ ] AnimationClip `Hunter_Idle`: 4 frames, Sample=8, Loop=true → DroneAnimator
-- [ ] AnimationClip `Boss_Phase1` (static 1 frame), `Boss_Phase2` (2 frames subtle flash Sample=4), `Boss_Phase3` (2 frames rapid Sample=16) → BossAnimator; int param "Phase" wired to transitions
-- [ ] AnimationClip `Explosion_Large`: 8 frames Sample=10 Loop=false + ReturnToPool AnimationEvent
-- [ ] AnimationClip `HitEffect`: 4 frames Sample=16 Loop=false + ReturnToPool
-- [ ] AnimationClip `Mine_Pulse`: 4 frames Sample=6 Loop=true
-- [ ] Assign ALL Animator Controllers to ALL matching Prefabs (Player→PlayerAnimator, Drone→DroneAnimator, etc.)
+- [x] AnimationClip `Hunter_Idle`: 4 frames, Sample=8, Loop=true → DroneAnimator
+- [x] AnimationClip `Boss_Phase1` (static 1 frame), `Boss_Phase2` (2 frames subtle flash Sample=4), `Boss_Phase3` (2 frames rapid Sample=16) → BossAnimator; int param "Phase" wired to transitions
+- [x] AnimationClip `Explosion_Large`: 8 frames Sample=10 Loop=false + ReturnToPool AnimationEvent
+- [x] AnimationClip `HitEffect`: 4 frames Sample=16 Loop=false + ReturnToPool
+- [x] AnimationClip `Mine_Pulse`: 4 frames Sample=6 Loop=true
+- [x] Assign ALL Animator Controllers to ALL matching Prefabs (Player→PlayerAnimator, Drone→DroneAnimator, etc.)
 
 ---
 
