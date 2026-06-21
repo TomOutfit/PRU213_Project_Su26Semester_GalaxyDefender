@@ -295,8 +295,41 @@ public class BossController : MonoBehaviour
         StartCoroutine(DeathSequence());
     }
 
+    // On boss death, shove everything in range outward (P1 Stage 3 task).
+    private void ApplyDeathExplosionForce()
+    {
+        const float radius = 5f;
+        const float force = 5f;
+
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, radius);
+        foreach (Collider2D hit in hits)
+        {
+            if (hit.gameObject == gameObject) continue;
+
+            Vector2 away = (Vector2)hit.transform.position - (Vector2)transform.position;
+            away = away == Vector2.zero ? Vector2.up : away.normalized;
+
+            // The player Rigidbody2D is Kinematic, so AddForce is ignored —
+            // route the push through its knockback coroutine instead.
+            PlayerController player = hit.GetComponent<PlayerController>();
+            if (player != null)
+            {
+                player.Knockback(away);
+                continue;
+            }
+
+            Rigidbody2D body = hit.attachedRigidbody;
+            if (body != null && body.bodyType == RigidbodyType2D.Dynamic)
+            {
+                body.AddForce(away * force, ForceMode2D.Impulse);
+            }
+        }
+    }
+
     private IEnumerator DeathSequence()
     {
+        ApplyDeathExplosionForce();
+
         GameObject poolObj = GameObject.Find("ExplosionLargePool");
         ObjectPool explosionPool = poolObj != null ? poolObj.GetComponent<ObjectPool>() : null;
 
