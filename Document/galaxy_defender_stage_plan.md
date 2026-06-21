@@ -337,11 +337,11 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 
 **Week 5 — Remaining UI scripts**
 
-- [ ] `BossHUDController.cs` — ShowWarning(): activate WarningBanner → wait 3s → deactivate → activate BossHPBar; subscribe BossController.OnPhaseChanged → BossHPSlider.value = hp/maxHP; subscribe OnBossDead → deactivate BossHPBar
-- [ ] `OptionsController.cs` — Awake load PlayerPrefs → set slider+toggle; OnMasterChanged(v) → AudioMixer.SetFloat("MasterVolume", Log10(max(v,0.0001))×20); same for Music/SFX; OnFullscreenToggle → Screen.fullScreen; OnAnyChange → PlayerPrefs.Save()
-- [ ] `GameOverController.cs` — OnEnable: populate FinalScore, EnemiesDefeated, SurvivalTime (M:SS format); Restart → LoadScene("Level1"); MainMenu → LoadScene("MainMenu")
-- [ ] Add BossHUD elements to Level3 Canvas: WarningBanner TMP (hidden), BossHPSlider (256×20 fill), boss name label
-- [ ] Wire OptionsController sliders to AudioMixer; wire Fullscreen toggle; wire OptionsPanel show/hide button in MainMenuController
+- [x] `BossHUDController.cs` — ShowWarning(): activate WarningBanner → wait 3s → deactivate → activate BossHPBar; subscribe BossController.OnPhaseChanged → BossHPSlider.value = hp/maxHP; subscribe OnBossDead → deactivate BossHPBar
+- [x] `OptionsController.cs` — Awake load PlayerPrefs → set slider+toggle; OnMasterChanged(v) → AudioMixer.SetFloat("MasterVolume", Log10(max(v,0.0001))×20); same for Music/SFX; OnFullscreenToggle → Screen.fullScreen; OnAnyChange → PlayerPrefs.Save()
+- [x] `GameOverController.cs` — OnEnable: populate FinalScore, EnemiesDefeated, SurvivalTime (M:SS format); Restart → LoadScene("Level1"); MainMenu → LoadScene("MainMenu")
+- [x] Add BossHUD elements to Level3 Canvas: WarningBanner TMP (hidden), BossHPSlider (256×20 fill), boss name label
+- [x] Wire OptionsController sliders to AudioMixer; wire Fullscreen toggle; wire OptionsPanel show/hide button in MainMenuController
 
 **Week 5–6 — Tilemap Level 2 + Level 3**
 
