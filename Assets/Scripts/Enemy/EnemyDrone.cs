@@ -1,6 +1,11 @@
 using System.Collections;
 using UnityEngine;
 
+/// <summary>
+/// Basic enemy: drifts straight down at <see cref="moveSpeed"/> and fires a pooled bullet every
+/// <see cref="fireInterval"/> seconds (with a small random offset so a wave doesn't fire in
+/// lockstep). Returns to its pool once it scrolls off-screen.
+/// </summary>
 [RequireComponent(typeof(Rigidbody2D))]
 public class EnemyDrone : MonoBehaviour
 {
@@ -48,6 +53,7 @@ public class EnemyDrone : MonoBehaviour
         rb.MovePosition(rb.position + Vector2.down * moveSpeed * Time.fixedDeltaTime);
     }
 
+    /// <summary>Fires a pooled enemy bullet on a fixed interval for the drone's lifetime.</summary>
     private IEnumerator FireRoutine()
     {
         // Random offset so they don't all shoot on the exact same frame
