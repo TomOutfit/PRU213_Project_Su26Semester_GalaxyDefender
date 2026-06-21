@@ -92,7 +92,6 @@ public static class RuntimeSpriteFixer
                         }
                         
                         loadedSprite = Sprite.Create(tex, spriteRect, new Vector2(0.5f, 0.5f), 100.0f);
-                        Debug.Log($"[RuntimeSpriteFixer] Successfully loaded '{spritePath}' from raw bytes (Fallback).");
                     }
                 }
                 catch (System.Exception ex)
