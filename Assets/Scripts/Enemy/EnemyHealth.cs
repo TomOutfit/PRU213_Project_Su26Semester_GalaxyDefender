@@ -1,6 +1,11 @@
 using UnityEngine;
 using UnityEngine.Events;
 
+/// <summary>
+/// Shared health component for all enemies (drone, hunter, boss). Tracks HP, flashes on hit, and
+/// on death awards <see cref="points"/> to the score, rolls a power-up drop, plays explosion
+/// VFX/SFX, and returns the enemy to its pool. Damage is ignored while a boss is spawning/dying.
+/// </summary>
 public class EnemyHealth : MonoBehaviour
 {
     [Header("Stats")]
@@ -19,6 +24,7 @@ public class EnemyHealth : MonoBehaviour
         currentHP = maxHP;
     }
 
+    /// <summary>Subtracts HP, flashes the sprite, and triggers death when HP reaches zero.</summary>
     public void TakeDamage(int damage)
     {
         if (currentHP <= 0) return; // Already dead
@@ -37,6 +43,7 @@ public class EnemyHealth : MonoBehaviour
         }
     }
 
+    /// <summary>Awards score, rolls a power-up drop, plays explosion VFX/SFX, and pools the enemy.</summary>
     private void Die()
     {
         OnDeath?.Invoke();
