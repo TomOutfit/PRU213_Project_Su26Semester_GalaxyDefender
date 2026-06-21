@@ -45,7 +45,7 @@ public class BulletBoss : MonoBehaviour
             PlayerHealth health = collision.GetComponent<PlayerHealth>();
             if (health != null)
             {
-                health.TakeDamage(damage);
+                health.TakeDamage(damage, transform.position);
             }
             ReturnToPool();
         }

@@ -31,6 +31,17 @@ public class PlayerHealth : MonoBehaviour
         OnShieldChanged?.Invoke(currentShield);
     }
 
+    // Overload that also applies directional knockback away from the damage source.
+    public void TakeDamage(int damage, Vector2 hitSourcePos)
+    {
+        if (!isDashing)
+        {
+            Vector2 dir = (Vector2)transform.position - hitSourcePos;
+            GetComponent<PlayerController>()?.Knockback(dir);
+        }
+        TakeDamage(damage);
+    }
+
     public void TakeDamage(int damage)
     {
         if (isDashing) return;

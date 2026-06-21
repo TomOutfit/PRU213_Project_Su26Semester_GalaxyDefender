@@ -15,12 +15,17 @@ public class PlayerController : MonoBehaviour
     public Transform bulletSpawnPoint;
     public float fireRate = 0.15f;
 
+    [Header("Knockback")]
+    public float knockbackSpeed = 8f;
+    public float knockbackDuration = 0.1f;
+
     private Rigidbody2D rb;
     private PlayerHealth playerHealth;
     private Camera mainCamera;
 
     private Vector2 inputVector;
     private bool isDashing = false;
+    private bool isKnockback = false;
     private float lastDashTime = -10f;
 
     private ObjectPool bulletPool;
@@ -53,7 +58,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (isDashing) return;
+        if (isDashing || isKnockback) return;
 
         inputVector = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
 
@@ -89,7 +94,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (isDashing) return;
+        if (isDashing || isKnockback) return;
 
         UpdateScreenBounds(); // Called to ensure bounds are updated if screen resolution changes
         Vector2 targetPosition = rb.position + inputVector * moveSpeed * Time.fixedDeltaTime;
@@ -123,6 +128,33 @@ public class PlayerController : MonoBehaviour
 
         isDashing = false;
         if (playerHealth != null) playerHealth.isDashing = false;
+    }
+
+    // Pushes the player away from a hit. The Rigidbody2D is Kinematic, so AddForce is ignored;
+    // instead we nudge the body via MovePosition over a short window, respecting screen clamp.
+    public void Knockback(Vector2 dir)
+    {
+        if (dir == Vector2.zero || isDashing) return;
+        StartCoroutine(KnockbackRoutine(dir.normalized));
+    }
+
+    private IEnumerator KnockbackRoutine(Vector2 dir)
+    {
+        isKnockback = true;
+
+        float startTime = Time.time;
+        while (Time.time < startTime + knockbackDuration)
+        {
+            UpdateScreenBounds();
+            Vector2 pos = rb.position + dir * knockbackSpeed * Time.fixedDeltaTime;
+            pos.x = Mathf.Clamp(pos.x, minX, maxX);
+            pos.y = Mathf.Clamp(pos.y, minY, maxY);
+
+            rb.MovePosition(pos);
+            yield return new WaitForFixedUpdate();
+        }
+
+        isKnockback = false;
     }
 
     private void UpdateScreenBounds()
