@@ -1,6 +1,11 @@
 using System.Collections;
 using UnityEngine;
 
+/// <summary>
+/// Aggressive enemy that tracks the player. Each FixedUpdate it eases its X toward the player at
+/// <see cref="moveSpeed"/> while drifting down at <see cref="verticalSpeed"/>, and fires a pooled
+/// bullet every <see cref="fireInterval"/> seconds. Returns to its pool once it scrolls off-screen.
+/// </summary>
 [RequireComponent(typeof(Rigidbody2D))]
 public class EnemyHunter : MonoBehaviour
 {
@@ -68,6 +73,7 @@ public class EnemyHunter : MonoBehaviour
         rb.MovePosition(new Vector2(newX, newY));
     }
 
+    /// <summary>Fires a pooled enemy bullet on a fixed interval for the hunter's lifetime.</summary>
     private IEnumerator FireRoutine()
     {
         yield return new WaitForSeconds(Random.Range(0f, 0.5f));
