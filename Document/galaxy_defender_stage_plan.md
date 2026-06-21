@@ -345,11 +345,11 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 
 **Week 5–6 — Tilemap Level 2 + Level 3**
 
-- [ ] Import tiles_asteroid.png (P4 already imported in S2) → create "Asteroid Palette" in Tile Palette window
-- [ ] Build Level2 tilemap: paint all 4 layers with asteroid rock theme; jagged walls, more open center than Level1; configure TilemapCollider2D + CompositeCollider2D
-- [ ] Import tiles_deepspace.png → create "DeepSpace Palette"
-- [ ] Build Level3 tilemap: dark alien tech theme; wide open center (boss fight needs space); hazard tiles only in corners
-- [ ] Verify all 3 levels' Tilemap_Collision has CompositeCollider2D set to Polygon (not Outline)
+- [x] Import tiles_asteroid.png (P4 already imported in S2) → create "Asteroid Palette" in Tile Palette window
+- [x] Build Level2 tilemap: paint all 4 layers with asteroid rock theme; jagged walls, more open center than Level1; configure TilemapCollider2D + CompositeCollider2D
+- [x] Import tiles_deepspace.png → create "DeepSpace Palette"
+- [x] Build Level3 tilemap: dark alien tech theme; wide open center (boss fight needs space); hazard tiles only in corners
+- [x] Verify all 3 levels' Tilemap_Collision has CompositeCollider2D set to Polygon (not Outline)
 
 **Week 6 — Remaining animation clips**
 
