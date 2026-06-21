@@ -66,7 +66,7 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 - [x] Define Tags: Player, Enemy, Boss, PowerUp
 - [x] Init Git repo + Unity .gitignore; push; share link with team
 - [x] Create full `Assets/` folder structure (Scripts/Player, Scripts/Enemy, Scripts/Managers, Scripts/Systems, Scripts/UI, Prefabs, Sprites, Audio, Scenes, Fonts, Animations)
-- [ ] Set up AudioMixer: 3 groups (Master, Music, SFX); expose MasterVolume, MusicVolume, SFXVolume parameters
+- [x] Set up AudioMixer: 3 groups (Master, Music, SFX); expose MasterVolume, MusicVolume, SFXVolume parameters
 
 **Week 2 — First scripts**
 
