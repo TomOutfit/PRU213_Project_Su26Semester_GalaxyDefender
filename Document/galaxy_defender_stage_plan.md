@@ -293,17 +293,17 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 
 **Week 5**
 
-- [ ] `EnemyHunter.cs` — X tracking with MoveTowards speed=3.5 u/s FixedUpdate; Y moves down 1 u/s; fire every 1.5s; despawn off-screen
-- [ ] `BossController.cs` — Phase thresholds 300/200/100HP; Phase1 stationary straight shot 1s; Phase2 sine wave X (A=0.3×screenW, period=4s) barrage 0.7s; Phase3 spread shot 3 bullets ±15° 0.4s + SpawnEnemy() exactly 2 Drones once; isDying flag; OnPhaseChanged event; OnBossDead event
-- [ ] **EnemyHunter prefab**: Rigidbody2D Dynamic, CircleCollider2D, Animator=HunterAnimator, EnemyHunter, EnemyHealth(40, 200pts); layer=Enemy
-- [ ] **Boss prefab**: Rigidbody2D Kinematic, PolygonCollider2D, Animator=BossAnimator, BossController, EnemyHealth(300, 1000pts); layer=Boss; child BulletSpawnPoint
-- [ ] **BulletBoss prefab**: sprite=bullet_boss.png (12×24), damage=20, layer=EnemyBullet
-- [ ] **ExplosionLarge prefab**: SpriteRenderer, Animator with Explosion_Large clip, AnimationEvent last frame → ReturnToPool; add to ObjectPoolContainer (cap=3)
+- [x] `EnemyHunter.cs` — X tracking with MoveTowards speed=3.5 u/s FixedUpdate; Y moves down 1 u/s; fire every 1.5s; despawn off-screen
+- [x] `BossController.cs` — Phase thresholds 300/200/100HP; Phase1 stationary straight shot 1s; Phase2 sine wave X (A=0.3×screenW, period=4s) barrage 0.7s; Phase3 spread shot 3 bullets ±15° 0.4s + SpawnEnemy() exactly 2 Drones once; isDying flag; OnPhaseChanged event; OnBossDead event
+- [x] **EnemyHunter prefab**: Rigidbody2D Dynamic, CircleCollider2D, Animator=HunterAnimator, EnemyHunter, EnemyHealth(40, 200pts); layer=Enemy
+- [x] **Boss prefab**: Rigidbody2D Kinematic, PolygonCollider2D, Animator=BossAnimator, BossController, EnemyHealth(300, 1000pts); layer=Boss; child BulletSpawnPoint
+- [x] **BulletBoss prefab**: sprite=bullet_boss.png (12×24), damage=20, layer=EnemyBullet
+- [x] **ExplosionLarge prefab**: SpriteRenderer, Animator with Explosion_Large clip, AnimationEvent last frame → ReturnToPool; add to ObjectPoolContainer (cap=3)
 
 **Week 6 — Physics + knockback**
 
-- [ ] Implement knockback in `PlayerHealth.TakeDamage()`: `rb.AddForce(hitDir * 3f, ForceMode2D.Impulse)` (hitDir = normalize(player.pos - bullet.pos))
-- [ ] Boss death explosion force: `Physics2D.OverlapCircleAll(pos, 5f)` → each rb → `AddForce(away * 5f, Impulse)`
+- [x] Implement knockback in `PlayerHealth.TakeDamage()`: `rb.AddForce(hitDir * 3f, ForceMode2D.Impulse)` (hitDir = normalize(player.pos - bullet.pos)) — implemented as a MovePosition nudge since the player Rigidbody2D is Kinematic
+- [x] Boss death explosion force: `Physics2D.OverlapCircleAll(pos, 5f)` → each rb → `AddForce(away * 5f, Impulse)`
 
 ---
 
