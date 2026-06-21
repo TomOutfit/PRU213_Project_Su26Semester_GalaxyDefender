@@ -1,6 +1,12 @@
 using System.Collections;
 using UnityEngine;
 
+/// <summary>
+/// Drives the player ship: 8-directional movement (normalized so diagonals are not faster),
+/// a Shift-triggered dash with i-frames, Space-to-shoot from a pooled bullet, and a hit
+/// knockback nudge. Movement is applied to a Kinematic Rigidbody2D via MovePosition in
+/// FixedUpdate and clamped to the lower half of the camera viewport.
+/// </summary>
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
 {
@@ -105,6 +111,10 @@ public class PlayerController : MonoBehaviour
         rb.MovePosition(targetPosition);
     }
 
+    /// <summary>
+    /// Dashes in the current input direction (or up if idle) at <see cref="dashSpeed"/> for
+    /// <see cref="dashDuration"/>. Sets the dashing flag so PlayerHealth grants i-frames.
+    /// </summary>
     private IEnumerator DashRoutine()
     {
         isDashing = true;
@@ -130,8 +140,11 @@ public class PlayerController : MonoBehaviour
         if (playerHealth != null) playerHealth.isDashing = false;
     }
 
-    // Pushes the player away from a hit. The Rigidbody2D is Kinematic, so AddForce is ignored;
-    // instead we nudge the body via MovePosition over a short window, respecting screen clamp.
+    /// <summary>
+    /// Pushes the player away from a hit. The Rigidbody2D is Kinematic, so AddForce is ignored;
+    /// instead the body is nudged via MovePosition over a short window, respecting screen clamp.
+    /// </summary>
+    /// <param name="dir">World-space direction to push the player toward (normalized internally).</param>
     public void Knockback(Vector2 dir)
     {
         if (dir == Vector2.zero || isDashing) return;
