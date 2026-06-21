@@ -1,5 +1,10 @@
 using UnityEngine;
 
+/// <summary>
+/// Player projectile. Travels straight up at <see cref="speed"/>; on hitting an Enemy or Boss
+/// it deals <see cref="damage"/>, spawns a hit effect, and returns itself to the pool. Also
+/// returns to the pool when it leaves the screen.
+/// </summary>
 [RequireComponent(typeof(Rigidbody2D))]
 public class BulletPlayer : MonoBehaviour
 {
@@ -52,6 +57,7 @@ public class BulletPlayer : MonoBehaviour
         ReturnToPool();
     }
 
+    /// <summary>Releases this bullet back to its pool, or deactivates it if unpooled.</summary>
     private void ReturnToPool()
     {
         if (pool != null)
