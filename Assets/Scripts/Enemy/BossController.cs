@@ -205,13 +205,16 @@ public class BossController : MonoBehaviour
 
     private void ShootSingle(Vector3 position, Vector2 direction)
     {
-        if (bossBulletPool != null)
+        if (bossBulletPool != null && bossBulletPool.prefab != null)
         {
             GameObject bullet = bossBulletPool.Get(position, Quaternion.identity);
-            BulletBoss bb = bullet.GetComponent<BulletBoss>();
-            if (bb != null)
+            if (bullet != null)
             {
-                bb.SetDirection(direction);
+                BulletBoss bb = bullet.GetComponent<BulletBoss>();
+                if (bb != null)
+                {
+                    bb.SetDirection(direction);
+                }
             }
         }
         else if (bossBulletPrefab != null)

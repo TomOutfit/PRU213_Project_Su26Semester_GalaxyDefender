@@ -24,22 +24,53 @@ public class ObjectPool : MonoBehaviour
     /// </summary>
     public GameObject Get(Vector3 position, Quaternion rotation)
     {
-        GameObject obj;
+        GameObject obj = null;
 
-        if (availableObjects.Count > 0)
+        while (availableObjects.Count > 0)
         {
             obj = availableObjects.Dequeue();
+            if (obj != null) break;
         }
-        else if (activeObjects.Count < maxCapacity)
+
+        if (obj == null)
         {
-            obj = Instantiate(prefab, transform);
+            if (activeObjects.Count < maxCapacity)
+            {
+                if (prefab == null)
+                {
+                    Debug.LogError($"[ObjectPool] Prefab is null on pool '{gameObject.name}'!");
+                    return null;
+                }
+                obj = Instantiate(prefab, transform);
+            }
+            else
+            {
+                // Auto-return oldest
+                while (activeObjects.Count > 0)
+                {
+                    obj = activeObjects.First.Value;
+                    activeObjects.RemoveFirst();
+                    if (obj != null)
+                    {
+                        obj.SetActive(false);
+                        break;
+                    }
+                }
+            }
         }
-        else
+
+        if (obj == null)
         {
-            // Auto-return oldest
-            obj = activeObjects.First.Value;
-            activeObjects.RemoveFirst();
-            obj.SetActive(false);
+            // If we still don't have an object (e.g., all active objects were destroyed or prefab is null)
+            // try to instantiate a new one regardless of maxCapacity if needed, or return null.
+            if (prefab != null)
+            {
+                obj = Instantiate(prefab, transform);
+            }
+            else
+            {
+                return null;
+            }
         }
 
         obj.transform.position = position;
