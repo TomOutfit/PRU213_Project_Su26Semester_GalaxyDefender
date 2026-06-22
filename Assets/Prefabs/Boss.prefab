@@ -118,15 +118,15 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: e87dbe486412c62448abeb59751d97b2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 5, y: 5}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
 --- !u!61 &8702932752011411079
 BoxCollider2D:
@@ -165,10 +165,10 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 5, y: 5}
+    newSize: {x: 5, y: 5}
+    adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
@@ -237,7 +237,7 @@ MonoBehaviour:
   spawnDuration: 3
   phase2MoveSpeed: 1.5
   phase3MoveSpeed: 2
-  bossBulletPrefab: {fileID: 8516193421036748893, guid: f62afbddeec951744ab77c44a410afb6, type: 3}
+  bossBulletPrefab: {fileID: 367146451409334870, guid: d05a74dee8a429a4e9b459975c628b71, type: 3}
   dronePrefab: {fileID: 3653653387466251481, guid: 01b253af2286c824cb9ad2f82c8269df, type: 3}
   bulletSpawnPoint: {fileID: 3372106396854827961}
   phase1SpritePath: Assets/Sprites/Enemies/enemy_boss.png
