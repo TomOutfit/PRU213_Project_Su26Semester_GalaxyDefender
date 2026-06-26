@@ -16,9 +16,19 @@ public abstract class PowerUp : MonoBehaviour
         }
     }
 
+    protected virtual void Update()
+    {
+        // Fallback destruction if it goes too far down without being seen
+        if (transform.position.y < -10f)
+        {
+            Destroy(gameObject);
+        }
+    }
+
     protected virtual void OnBecameInvisible()
     {
-        Destroy(gameObject);
+        // Only destroy if it was already seen and then left the screen
+        // or just rely on Update boundary check to be safer
     }
 
     protected virtual void OnTriggerEnter2D(Collider2D other)
