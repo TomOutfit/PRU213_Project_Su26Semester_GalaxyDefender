@@ -127,6 +127,51 @@ public class PlayerHealth : MonoBehaviour
     private void Die()
     {
         OnDeath?.Invoke();
-        gameObject.SetActive(false);
+        
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.LoseLife();
+            
+            if (GameManager.Instance.GetCurrentLives() > 0)
+            {
+                // Respawn sequence
+                StartCoroutine(RespawnRoutine());
+            }
+            else
+            {
+                gameObject.SetActive(false);
+            }
+        }
+        else
+        {
+            gameObject.SetActive(false);
+        }
+    }
+
+    private System.Collections.IEnumerator RespawnRoutine()
+    {
+        // Hide and disable
+        GetComponent<SpriteRenderer>().enabled = false;
+        GetComponent<Collider2D>().enabled = false;
+        isDashing = true; // i-frames during respawn
+
+        yield return new WaitForSeconds(1f);
+
+        // Reset position to bottom center
+        transform.position = new Vector3(0, -4f, 0);
+        currentHP = maxHP;
+        currentShield = 0;
+        
+        OnHPChanged?.Invoke(currentHP);
+        OnShieldChanged?.Invoke(currentShield);
+
+        // Show and enable with flash
+        GetComponent<SpriteRenderer>().enabled = true;
+        GetComponent<SpriteFlash>()?.Flash(1.5f, Color.white);
+        
+        yield return new WaitForSeconds(1.5f);
+        
+        GetComponent<Collider2D>().enabled = true;
+        isDashing = false;
     }
 }

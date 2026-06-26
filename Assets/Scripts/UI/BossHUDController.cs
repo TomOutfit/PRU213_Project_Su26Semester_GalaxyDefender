@@ -66,7 +66,10 @@ public class BossHUDController : MonoBehaviour
     private IEnumerator WarningRoutine(float duration)
     {
         if (warningBanner != null) warningBanner.SetActive(true);
+        if (bossHUDPanel != null) bossHUDPanel.SetActive(false); // Ensure hidden during warning
+        
         yield return new WaitForSeconds(duration);
+        
         if (warningBanner != null) warningBanner.SetActive(false);
         if (bossHUDPanel != null) bossHUDPanel.SetActive(true);
 
@@ -87,18 +90,17 @@ public class BossHUDController : MonoBehaviour
                 bossHealth.OnHealthChanged.RemoveListener(UpdateHP);
                 bossHealth.OnHealthChanged.AddListener(UpdateHP);
                 
-                // Initialize health
-                targetHPNormalized = 1f;
-                if (bossHPSlider != null) bossHPSlider.value = 1f;
-                if (damageBufferSlider != null) damageBufferSlider.value = 1f;
-                
-                UpdateHP(bossHealth.CurrentHP);
+                // Initialize health values for bars
+                targetHPNormalized = (float)bossHealth.CurrentHP / bossHealth.maxHP;
+                if (bossHPSlider != null) bossHPSlider.value = targetHPNormalized;
+                if (damageBufferSlider != null) damageBufferSlider.value = targetHPNormalized;
             }
         }
     }
 
     private void OnBossPhaseChanged(int phase)
     {
+        // When phase changes, refresh the HP bar target based on current HP ratio
         if (bossHealth != null)
         {
             UpdateHP(bossHealth.CurrentHP);

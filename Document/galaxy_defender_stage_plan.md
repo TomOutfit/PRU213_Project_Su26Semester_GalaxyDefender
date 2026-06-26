@@ -433,11 +433,11 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 
 **Build GameOver scene + final UI wiring**
 
-- [ ] Build `GameOver.unity`: Canvas with "GAME OVER" header (48px), FinalScoreText + EnemiesText + SurvivalTimeText (18px each), Restart + MainMenu buttons; wire GameOverController; add bgm_gameover AudioSource
-- [ ] `MainMenuController.cs` Awake: populate 5 HighScore TMP labels from SaveManager.GetHighScores(); show LevelIndicator "Last played: Level N" if PlayerPrefs.HasKey("LastLevel")
-- [ ] Wire ALL MainMenu buttons onClick → correct MainMenuController methods
-- [ ] Wire OptionsPanel sliders to OptionsController; verify AudioMixer connection
-- [ ] Write `TilemapHazard.cs` (inline on P3, ~10 lines): OnTriggerStay2D → PlayerHealth.TakeDamage(Mathf.RoundToInt(10×Time.deltaTime)); assign to all Tilemap_Hazard objects
+- [x] Build `GameOver.unity`: Canvas with "GAME OVER" header (48px), FinalScoreText + EnemiesText + SurvivalTimeText (18px each), Restart + MainMenu buttons; wire GameOverController; add bgm_gameover AudioSource
+- [x] `MainMenuController.cs` Awake: populate 5 HighScore TMP labels from SaveManager.GetHighScores(); show LevelIndicator "Last played: Level N" if PlayerPrefs.HasKey("LastLevel")
+- [x] Wire ALL MainMenu buttons onClick → correct MainMenuController methods
+- [x] Wire OptionsPanel sliders to OptionsController; verify AudioMixer connection
+- [x] Write `TilemapHazard.cs` (inline on P3, ~10 lines): OnTriggerStay2D → PlayerHealth.TakeDamage(Mathf.RoundToInt(10×Time.deltaTime)); assign to all Tilemap_Hazard objects
 
 **UI + Level tests**
 

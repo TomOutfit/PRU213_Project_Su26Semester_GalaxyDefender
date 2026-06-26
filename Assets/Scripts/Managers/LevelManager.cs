@@ -49,6 +49,7 @@ public class LevelManager : MonoBehaviour
             return;
         }
         Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     private void OnEnable()
@@ -63,11 +64,22 @@ public class LevelManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        // Restore the accumulated score into the new scene's ScoreManager
+        if (ScoreManager.Instance != null && _pendingScore > 0)
+        {
+            ScoreManager.Instance.currentScore = _pendingScore;
+            ScoreManager.Instance.OnScoreChanged?.Invoke(_pendingScore);
+            _pendingScore = 0; // consumed
+        }
+
         if (scene.name == "Victory")
         {
             Victory();
         }
     }
+
+    // Score to carry over to the next scene
+    private int _pendingScore = 0;
 
     public void LevelComplete()
     {
@@ -76,6 +88,7 @@ public class LevelManager : MonoBehaviour
 
     private IEnumerator LevelCompleteSequence()
     {
+        // Show "LEVEL COMPLETE!" banner via HUD
         HUDController hud = Object.FindAnyObjectByType<HUDController>();
         if (hud != null)
         {
@@ -85,13 +98,23 @@ public class LevelManager : MonoBehaviour
         yield return new WaitForSeconds(2f);
 
         string nextScene = GetNextSceneName();
-        
-        // Save game state
-        int nextIndex = GetSceneIndex(nextScene);
-        int scoreVal = ScoreManager.Instance != null ? ScoreManager.Instance.currentScore : 0;
-        SaveManager.Instance?.SaveGame(nextIndex, scoreVal);
 
-        SceneManager.LoadScene(nextScene);
+        // Save accumulated score to carry forward AND save to PlayerPrefs
+        int currentScore = ScoreManager.Instance != null ? ScoreManager.Instance.currentScore : 0;
+        _pendingScore = currentScore;
+
+        int nextIndex = GetSceneIndex(nextScene);
+        SaveManager.Instance?.SaveGame(nextIndex, currentScore);
+
+        // Use cinematic fade transition
+        if (SceneTransitionManager.Instance != null)
+        {
+            SceneTransitionManager.Instance.LoadScene(nextScene);
+        }
+        else
+        {
+            SceneManager.LoadScene(nextScene);
+        }
     }
 
     public void Victory()
@@ -110,6 +133,14 @@ public class LevelManager : MonoBehaviour
         yield return new WaitForSeconds(3f);
 
         SaveManager.Instance?.SaveHighScore(ScoreManager.Instance?.currentScore ?? 0);
-        SceneManager.LoadScene("MainMenu");
+
+        if (SceneTransitionManager.Instance != null)
+        {
+            SceneTransitionManager.Instance.LoadScene("MainMenu");
+        }
+        else
+        {
+            SceneManager.LoadScene("MainMenu");
+        }
     }
 }
