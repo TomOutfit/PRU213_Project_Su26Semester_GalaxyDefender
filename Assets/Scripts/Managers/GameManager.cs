@@ -10,6 +10,11 @@ public class GameManager : MonoBehaviour
 
     public UnityEvent<State> OnStateChanged;
     public UnityEvent OnGameOver;
+    public UnityEvent<int> OnLivesChanged;
+
+    [Header("Session Stats")]
+    public int startingLives = 3;
+    private int currentLives;
 
     [HideInInspector]
     public float survivalTime;
@@ -21,9 +26,25 @@ public class GameManager : MonoBehaviour
     {
         survivalTime = 0f;
         totalEnemiesKilled = 0;
+        currentLives = startingLives;
+        OnLivesChanged?.Invoke(currentLives);
+        
         if (ScoreManager.Instance != null)
         {
             ScoreManager.Instance.ResetScore();
+        }
+    }
+
+    public int GetCurrentLives() => currentLives;
+
+    public void LoseLife()
+    {
+        currentLives--;
+        OnLivesChanged?.Invoke(currentLives);
+        
+        if (currentLives <= 0)
+        {
+            TriggerGameOver();
         }
     }
 
@@ -36,6 +57,8 @@ public class GameManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
+        
+        currentLives = startingLives;
     }
 
     private void Start()
@@ -128,7 +151,15 @@ public class GameManager : MonoBehaviour
     private System.Collections.IEnumerator GameOverSequence()
     {
         yield return new WaitForSeconds(1f);
-        UnityEngine.SceneManagement.SceneManager.LoadScene("GameOver");
+
+        if (SceneTransitionManager.Instance != null)
+        {
+            SceneTransitionManager.Instance.LoadScene("GameOver");
+        }
+        else
+        {
+            UnityEngine.SceneManagement.SceneManager.LoadScene("GameOver");
+        }
     }
 
     public void TriggerGameOver()
