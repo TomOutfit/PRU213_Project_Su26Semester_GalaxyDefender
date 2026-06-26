@@ -66,11 +66,18 @@ public class GameOverController : MonoBehaviour
             GameManager.Instance.ResetSession();
             GameManager.Instance.SetState(GameManager.State.Playing);
         }
-        SceneManager.LoadScene("Level1");
+
+        if (SceneTransitionManager.Instance != null)
+            SceneTransitionManager.Instance.LoadScene("Level1");
+        else
+            SceneManager.LoadScene("Level1");
     }
 
     public void MainMenu()
     {
-        SceneManager.LoadScene("MainMenu");
+        if (SceneTransitionManager.Instance != null)
+            SceneTransitionManager.Instance.LoadScene("MainMenu");
+        else
+            SceneManager.LoadScene("MainMenu");
     }
 }
