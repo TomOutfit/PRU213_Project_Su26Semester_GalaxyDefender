@@ -72,11 +72,18 @@ public class MainMenuController : MonoBehaviour
 
     private void Start()
     {
-        if (startButton == null) startButton = GameObject.Find("StartButton")?.GetComponent<Button>();
-        if (loadButton == null) loadButton = GameObject.Find("LoadButton")?.GetComponent<Button>();
-        if (optionsButton == null) optionsButton = GameObject.Find("OptionsButton")?.GetComponent<Button>();
-        if (highScoreButton == null) highScoreButton = GameObject.Find("HighScoreButton")?.GetComponent<Button>();
-        if (exitButton == null) exitButton = GameObject.Find("ExitButton")?.GetComponent<Button>();
+        // Find buttons directly
+        if (startButton == null) startButton = FindButton("MenuButtons/StartButton");
+        if (loadButton == null) loadButton = FindButton("MenuButtons/LoadButton");
+        if (optionsButton == null) optionsButton = FindButton("MenuButtons/OptionsButton");
+        if (highScoreButton == null) highScoreButton = FindButton("MenuButtons/HighScoreButton");
+        if (exitButton == null) exitButton = FindButton("MenuButtons/ExitButton");
+
+        if (startButton != null) startButton.onClick.RemoveListener(OnStartClick);
+        if (loadButton != null) loadButton.onClick.RemoveListener(OnLoadClick);
+        if (optionsButton != null) optionsButton.onClick.RemoveListener(OnOptionsClick);
+        if (highScoreButton != null) highScoreButton.onClick.RemoveListener(OnHighScoreClick);
+        if (exitButton != null) exitButton.onClick.RemoveListener(OnExitClick);
 
         if (startButton != null) startButton.onClick.AddListener(OnStartClick);
         if (loadButton != null) loadButton.onClick.AddListener(OnLoadClick);
@@ -84,18 +91,59 @@ public class MainMenuController : MonoBehaviour
         if (highScoreButton != null) highScoreButton.onClick.AddListener(OnHighScoreClick);
         if (exitButton != null) exitButton.onClick.AddListener(OnExitClick);
 
-        // Attach and run main menu visual effects
-        if (GetComponent<MainMenuEffectsInitializer>() == null)
-        {
-            gameObject.AddComponent<MainMenuEffectsInitializer>();
-        }
-
         // Ensure SceneTransitionManager exists so the menu fade-in plays
         if (SceneTransitionManager.Instance == null)
         {
             GameObject tm = new GameObject("[SceneTransitionManager]");
             tm.AddComponent<SceneTransitionManager>();
         }
+
+        // Fade in the overlay from black (for when entering MainMenu via SceneTransition)
+        StartCoroutine(FadeInMenuOverlay());
+    }
+
+    private System.Collections.IEnumerator FadeInMenuOverlay()
+    {
+        Canvas canvas = GetComponentInParent<Canvas>();
+        if (canvas == null) yield break;
+
+        // Find FadeOverlay → CanvasGroup
+        Transform fadeT = canvas.transform.Find("FadeOverlay");
+        CanvasGroup cg = fadeT != null ? fadeT.GetComponent<CanvasGroup>() : null;
+
+        // Also check SceneTransitionManager's own overlay
+        if (SceneTransitionManager.Instance != null)
+        {
+            // The STM creates its own overlay; just wait a moment then return
+            yield break;
+        }
+
+        if (cg != null)
+        {
+            // Wait one frame for the scene to fully settle
+            yield return null;
+
+            float duration = 0.7f;
+            float elapsed = 0f;
+            float startAlpha = cg.alpha;
+
+            while (elapsed < duration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                cg.alpha = Mathf.Lerp(startAlpha, 0f, elapsed / duration);
+                yield return null;
+            }
+            cg.alpha = 0f;
+            cg.blocksRaycasts = false;
+        }
+    }
+
+    private static Button FindButton(string path)
+    {
+        Canvas canvas = Object.FindAnyObjectByType<Canvas>();
+        if (canvas == null) return null;
+        Transform t = canvas.transform.Find(path);
+        return t != null ? t.GetComponent<Button>() : null;
     }
 
     public void OnStartClick()

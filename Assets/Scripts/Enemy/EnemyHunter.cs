@@ -19,6 +19,7 @@ public class EnemyHunter : MonoBehaviour
     private ObjectPool bulletPool;
     private ObjectPool enemyPool;
     private bool hasBeenVisible = false;
+    private bool _dying = false;
 
     private void Awake()
     {
@@ -46,6 +47,7 @@ public class EnemyHunter : MonoBehaviour
     private void OnEnable()
     {
         hasBeenVisible = false;
+        _dying = false;
         // Dynamically find player in case of respawn
         if (player == null)
         {
@@ -95,6 +97,10 @@ public class EnemyHunter : MonoBehaviour
     private void OnBecameInvisible()
     {
         if (!hasBeenVisible) return;
+        if (_dying) return; // Already dying via EnemyHealth.Die()
+
+        _dying = true;
+        WaveManager.Instance?.OnEnemyDestroyed(gameObject);
 
         if (enemyPool != null)
         {

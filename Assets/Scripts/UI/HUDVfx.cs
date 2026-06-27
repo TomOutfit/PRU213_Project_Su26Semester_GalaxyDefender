@@ -84,19 +84,16 @@ public class HUDVfx : MonoBehaviour
             if (scoreTextRect == null)
             {
                 if (hud.ScoreTextTMP != null) scoreTextRect = hud.ScoreTextTMP.GetComponent<RectTransform>();
-                else if (hud.ScoreText != null) scoreTextRect = hud.ScoreText.GetComponent<RectTransform>();
             }
 
             if (waveTextRect == null)
             {
                 if (hud.WaveTextTMP != null) waveTextRect = hud.WaveTextTMP.GetComponent<RectTransform>();
-                else if (hud.WaveText != null) waveTextRect = hud.WaveText.GetComponent<RectTransform>();
             }
 
             if (livesTextRect == null)
             {
                 if (hud.LivesTextTMP != null) livesTextRect = hud.LivesTextTMP.GetComponent<RectTransform>();
-                else if (hud.LivesText != null) livesTextRect = hud.LivesText.GetComponent<RectTransform>();
             }
         }
 
