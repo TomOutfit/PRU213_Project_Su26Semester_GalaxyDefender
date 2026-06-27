@@ -2,6 +2,16 @@ using UnityEngine;
 
 public abstract class PowerUp : MonoBehaviour
 {
+    private const float BASE_SCALE = 0.25f;
+    private const float PULSE_AMPLITUDE = 0.08f;
+    private const float ROTATE_SPEED = 45f;
+
+    // Magnet: distance at which power-ups are attracted to player
+    private const float MAGNET_RADIUS = 2.5f;
+    private const float MAGNET_SPEED = 5f;
+
+    private float _pulseTimer;
+
     protected virtual void Start()
     {
         Rigidbody2D rb = GetComponent<Rigidbody2D>();
@@ -18,6 +28,43 @@ public abstract class PowerUp : MonoBehaviour
 
     protected virtual void Update()
     {
+        // Pulsing scale animation
+        _pulseTimer += Time.deltaTime;
+        float scale = BASE_SCALE + Mathf.Sin(_pulseTimer * 3f) * PULSE_AMPLITUDE;
+        transform.localScale = new Vector3(scale, scale, 1f);
+
+        // Slow rotation for the glow ring child
+        var glow = transform.Find("GlowRing");
+        if (glow != null)
+        {
+            glow.Rotate(0f, 0f, -ROTATE_SPEED * Time.deltaTime);
+        }
+
+        // Magnet effect: pull toward player when in range
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            Vector3 dir = player.transform.position - transform.position;
+            float dist = dir.magnitude;
+            if (dist < MAGNET_RADIUS && dist > 0.1f)
+            {
+                // Scale pull strength by proximity (stronger when closer)
+                float pull = (1f - dist / MAGNET_RADIUS) * MAGNET_SPEED;
+                transform.position += dir.normalized * pull * Time.deltaTime;
+
+                // Disable rigidbody velocity while being attracted
+                Rigidbody2D rb = GetComponent<Rigidbody2D>();
+                if (rb != null)
+                {
+                    #if UNITY_2023_1_OR_NEWER
+                    rb.linearVelocity = Vector2.zero;
+                    #else
+                    rb.velocity = Vector2.zero;
+                    #endif
+                }
+            }
+        }
+
         // Fallback destruction if it goes too far down without being seen
         if (transform.position.y < -10f)
         {
@@ -27,8 +74,6 @@ public abstract class PowerUp : MonoBehaviour
 
     protected virtual void OnBecameInvisible()
     {
-        // Only destroy if it was already seen and then left the screen
-        // or just rely on Update boundary check to be safer
     }
 
     protected virtual void OnTriggerEnter2D(Collider2D other)

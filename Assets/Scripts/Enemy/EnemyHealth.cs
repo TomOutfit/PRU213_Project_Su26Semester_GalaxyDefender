@@ -14,6 +14,7 @@ public class EnemyHealth : MonoBehaviour
     
     private int currentHP;
     public int CurrentHP => currentHP;
+    private bool hasDied = false;
 
     [Header("Events")]
     public UnityEvent OnDeath;
@@ -22,12 +23,13 @@ public class EnemyHealth : MonoBehaviour
     private void OnEnable()
     {
         currentHP = maxHP;
+        hasDied = false;
     }
 
     /// <summary>Subtracts HP, flashes the sprite, and triggers death when HP reaches zero.</summary>
     public void TakeDamage(int damage)
     {
-        if (currentHP <= 0) return; // Already dead
+        if (currentHP <= 0 || hasDied) return; // Already dead
 
         BossController boss = GetComponent<BossController>();
         if (boss != null && (boss.isSpawning || boss.isDying)) return;
@@ -46,7 +48,11 @@ public class EnemyHealth : MonoBehaviour
     /// <summary>Awards score, rolls a power-up drop, plays explosion VFX/SFX, and pools the enemy.</summary>
     private void Die()
     {
+        hasDied = true;
+
         OnDeath?.Invoke();
+
+        WaveManager.Instance?.OnEnemyDestroyed(gameObject);
 
         CameraShake.Instance?.Shake(0.15f, 0.1f);
 

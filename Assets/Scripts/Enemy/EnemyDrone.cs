@@ -23,6 +23,7 @@ public class EnemyDrone : MonoBehaviour
     }
 
     private bool hasBeenVisible = false;
+    private bool _dying = false;
 
     private void Start()
     {
@@ -40,6 +41,7 @@ public class EnemyDrone : MonoBehaviour
     private void OnEnable()
     {
         hasBeenVisible = false;
+        _dying = false;
         StartCoroutine(FireRoutine());
     }
 
@@ -77,6 +79,10 @@ public class EnemyDrone : MonoBehaviour
     private void OnBecameInvisible()
     {
         if (!hasBeenVisible) return;
+        if (_dying) return; // Already dying via EnemyHealth.Die()
+
+        _dying = true;
+        WaveManager.Instance?.OnEnemyDestroyed(gameObject);
 
         if (enemyPool != null)
         {
