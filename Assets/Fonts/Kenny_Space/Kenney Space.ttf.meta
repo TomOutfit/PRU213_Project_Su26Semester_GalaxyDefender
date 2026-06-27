@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 7e393e12df77083459524f77f1e7b171
+guid: 042d8f516c0bd19439e234d0061f54e4
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -9,7 +9,7 @@ TrueTypeFontImporter:
   characterPadding: 1
   includeFontData: 1
   fontNames:
-  - Press Start 2P
+  - Kenney Space
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0
