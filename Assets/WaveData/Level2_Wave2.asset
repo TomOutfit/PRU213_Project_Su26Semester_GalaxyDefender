@@ -15,15 +15,26 @@ MonoBehaviour:
   enemyPrefab: {fileID: 0}
   enemyPrefabs:
   - {fileID: 3653653387466251481, guid: 01b253af2286c824cb9ad2f82c8269df, type: 3}
+  - {fileID: 3653653387466251481, guid: 01b253af2286c824cb9ad2f82c8269df, type: 3}
+  - {fileID: 3653653387466251481, guid: 01b253af2286c824cb9ad2f82c8269df, type: 3}
+  - {fileID: 3653653387466251481, guid: 01b253af2286c824cb9ad2f82c8269df, type: 3}
+  - {fileID: 3653653387466251481, guid: 01b253af2286c824cb9ad2f82c8269df, type: 3}
+  - {fileID: 3653653387466251481, guid: 01b253af2286c824cb9ad2f82c8269df, type: 3}
+  - {fileID: 3653653387466251481, guid: 01b253af2286c824cb9ad2f82c8269df, type: 3}
   - {fileID: 5741111372283233638, guid: c5ec5ee8f86485441a864823734e5be1, type: 3}
   - {fileID: 5741111372283233638, guid: c5ec5ee8f86485441a864823734e5be1, type: 3}
-  enemyCount: 6
+  - {fileID: 5741111372283233638, guid: c5ec5ee8f86485441a864823734e5be1, type: 3}
+  enemyCount: 10
   spawnPositionsX:
-  - 0.1
-  - 0.3
-  - 0.5
-  - 0.7
-  - 0.9
-  - 0.5
+  - 0.8138877
+  - 0.16007479
+  - 0.19231856
+  - 0.6257549
+  - 0.6466333
+  - 0.101256594
+  - 0.26398027
+  - 0.5238134
+  - 0.42865455
+  - 0.45900923
   speedMultiplier: 1.1
-  spawnDelay: 0.8
+  spawnDelay: 0.35

@@ -12,17 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b917d49cffa796a40ab94d673d3b7093, type: 3}
   m_Name: Level2_Wave1
   m_EditorClassIdentifier: Assembly-CSharp::WaveData
-  enemyPrefab: {fileID: 0}
-  enemyPrefabs:
-  - {fileID: 3653653387466251481, guid: 01b253af2286c824cb9ad2f82c8269df, type: 3}
-  - {fileID: 5741111372283233638, guid: c5ec5ee8f86485441a864823734e5be1, type: 3}
-  enemyCount: 6
+  enemyPrefab: {fileID: 3653653387466251481, guid: 01b253af2286c824cb9ad2f82c8269df, type: 3}
+  enemyPrefabs: []
+  enemyCount: 8
   spawnPositionsX:
-  - 0.2
-  - 0.4
-  - 0.6
-  - 0.8
-  - 0.3
-  - 0.7
+  - 0.86039716
+  - 0.70120925
+  - 0.70632213
+  - 0.6540724
+  - 0.67671245
+  - 0.3382903
+  - 0.40927523
+  - 0.46721753
   speedMultiplier: 1
-  spawnDelay: 1
+  spawnDelay: 0.4

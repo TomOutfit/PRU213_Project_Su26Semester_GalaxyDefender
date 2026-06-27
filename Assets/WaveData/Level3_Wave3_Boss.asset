@@ -18,4 +18,4 @@ MonoBehaviour:
   spawnPositionsX:
   - 0.5
   speedMultiplier: 1
-  spawnDelay: 1
+  spawnDelay: 0
