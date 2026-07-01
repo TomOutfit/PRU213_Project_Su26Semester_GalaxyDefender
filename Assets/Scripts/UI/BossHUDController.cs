@@ -55,6 +55,17 @@ public class BossHUDController : MonoBehaviour
                     damageBufferSlider.value = bossHPSlider.value;
                 }
             }
+
+            // Pulsate Boss HUD if low health
+            if (bossHPSlider != null && targetHPNormalized < 0.25f)
+            {
+                float pulse = 1.0f + Mathf.Sin(Time.time * 10f) * 0.02f;
+                bossHUDPanel.transform.localScale = new Vector3(pulse, pulse, 1f);
+            }
+            else if (bossHUDPanel != null)
+            {
+                bossHUDPanel.transform.localScale = Vector3.one;
+            }
         }
     }
 
@@ -111,7 +122,15 @@ public class BossHUDController : MonoBehaviour
     {
         if (bossHealth != null)
         {
+            float prevHP = targetHPNormalized;
             targetHPNormalized = (float)hp / bossHealth.maxHP;
+
+            // If damage taken, pulse the whole HUD panel
+            if (targetHPNormalized < prevHP)
+            {
+                StopCoroutine("PulseHUD");
+                StartCoroutine(PulseHUD());
+            }
 
             // If it's the start (full health) or target is reset to full, snap values immediately
             if (hp == bossHealth.maxHP)
@@ -120,6 +139,22 @@ public class BossHUDController : MonoBehaviour
                 if (damageBufferSlider != null) damageBufferSlider.value = targetHPNormalized;
             }
         }
+    }
+
+    private IEnumerator PulseHUD()
+    {
+        if (bossHUDPanel == null) yield break;
+        Vector3 originalScale = Vector3.one;
+        float duration = 0.15f;
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float s = 1.0f + Mathf.Sin((elapsed / duration) * Mathf.PI) * 0.05f;
+            bossHUDPanel.transform.localScale = originalScale * s;
+            yield return null;
+        }
+        bossHUDPanel.transform.localScale = originalScale;
     }
 
     private void DeactivateBossHPBar()

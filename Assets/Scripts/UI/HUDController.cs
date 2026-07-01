@@ -27,6 +27,14 @@ public class HUDController : MonoBehaviour
         PlayerHealth playerHealth = Object.FindAnyObjectByType<PlayerHealth>();
         if (playerHealth != null)
         {
+            // Auto-resolve components if not set in Inspector
+            if (HPSlider == null) HPSlider = transform.Find("HPBar")?.GetComponent<Slider>();
+            if (ShieldSlider == null) ShieldSlider = transform.Find("ShieldBar")?.GetComponent<Slider>();
+
+            // Set max values
+            if (HPSlider != null) HPSlider.maxValue = playerHealth.maxHP;
+            if (ShieldSlider != null) ShieldSlider.maxValue = playerHealth.maxShield;
+
             playerHealth.OnHPChanged.AddListener(UpdateHP);
             playerHealth.OnShieldChanged.AddListener(UpdateShield);
             
@@ -60,10 +68,7 @@ public class HUDController : MonoBehaviour
 
     private void Start()
     {
-        // Auto-resolve components if not set in Inspector
-        if (HPSlider == null) HPSlider = transform.Find("HPBar")?.GetComponent<Slider>();
-        if (ShieldSlider == null) ShieldSlider = transform.Find("ShieldBar")?.GetComponent<Slider>();
-        
+        // Auto-resolve other components if not set in Inspector
         if (ScoreTextTMP == null) ScoreTextTMP = transform.Find("ScorePanel/ScoreText")?.GetComponent<TMP_Text>();
         if (WaveTextTMP == null) WaveTextTMP = transform.Find("WavePanel/WaveText")?.GetComponent<TMP_Text>();
         if (LivesTextTMP == null) LivesTextTMP = transform.Find("LivesPanel/LivesText")?.GetComponent<TMP_Text>();
@@ -73,16 +78,18 @@ public class HUDController : MonoBehaviour
         EnsureHUDSprites(ShieldSlider, "Assets/Sprites/UI/ui_shieldbar_fill.png");
 
         // Dynamically attach HUDVfx if missing
-        if (GetComponent<HUDVfx>() == null)
+        HUDVfx vfx = GetComponent<HUDVfx>();
+        if (vfx == null)
         {
-            HUDVfx vfx = gameObject.AddComponent<HUDVfx>();
-            vfx.HPSlider = HPSlider;
-            vfx.ShieldSlider = ShieldSlider;
-            
-            if (ScoreTextTMP != null) vfx.scoreTextRect = ScoreTextTMP.GetComponent<RectTransform>();
-            if (WaveTextTMP != null) vfx.waveTextRect = WaveTextTMP.GetComponent<RectTransform>();
-            if (LivesTextTMP != null) vfx.livesTextRect = LivesTextTMP.GetComponent<RectTransform>();
+            vfx = gameObject.AddComponent<HUDVfx>();
         }
+        
+        vfx.HPSlider = HPSlider;
+        vfx.ShieldSlider = ShieldSlider;
+        
+        if (ScoreTextTMP != null) vfx.scoreTextRect = ScoreTextTMP.GetComponent<RectTransform>();
+        if (WaveTextTMP != null) vfx.waveTextRect = WaveTextTMP.GetComponent<RectTransform>();
+        if (LivesTextTMP != null) vfx.livesTextRect = LivesTextTMP.GetComponent<RectTransform>();
     }
 
     private void EnsureHUDSprites(Slider slider, string fillPath)

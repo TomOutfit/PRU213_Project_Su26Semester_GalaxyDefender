@@ -170,11 +170,15 @@ public class HUDVfx : MonoBehaviour
         {
             // HP decreased, trigger delay for buffer
             hpBufferTimer = bufferDelay;
+            // Pulse the bar on damage
+            StartCoroutine(PulseBar(HPSlider.transform));
         }
-        else
+        else if (value > hpTargetValue)
         {
             // HP increased, snap buffer up immediately
             hpBufferValue = value;
+            // Also pulse on heal (different effect maybe?)
+            StartCoroutine(PulseBar(HPSlider.transform));
         }
         hpTargetValue = value;
     }
@@ -184,6 +188,7 @@ public class HUDVfx : MonoBehaviour
         if (value < shieldTargetValue)
         {
             shieldBufferTimer = bufferDelay;
+            StartCoroutine(PulseBar(ShieldSlider.transform));
 
             // If shield just broke (reached 0)
             if (value <= 0f && shieldTargetValue > 0f)
@@ -191,11 +196,30 @@ public class HUDVfx : MonoBehaviour
                 TriggerShieldBreakParticles();
             }
         }
-        else
+        else if (value > shieldTargetValue)
         {
             shieldBufferValue = value;
+            StartCoroutine(PulseBar(ShieldSlider.transform));
         }
         shieldTargetValue = value;
+    }
+
+    private IEnumerator PulseBar(Transform bar)
+    {
+        Vector3 originalScale = Vector3.one;
+        float elapsed = 0f;
+        float duration = 0.15f;
+        float scaleAmount = 1.1f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float pct = elapsed / duration;
+            float currentScale = Mathf.Lerp(1f, scaleAmount, Mathf.Sin(pct * Mathf.PI));
+            bar.localScale = originalScale * currentScale;
+            yield return null;
+        }
+        bar.localScale = originalScale;
     }
 
     private void Update()

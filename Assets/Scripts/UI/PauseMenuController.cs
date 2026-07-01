@@ -54,6 +54,14 @@ public class PauseMenuController : MonoBehaviour
     }
 
     // Button click handlers
+    public void PauseGame()
+    {
+        if (GameManager.Instance != null && GameManager.Instance.CurrentState == GameManager.State.Playing)
+        {
+            GameManager.Instance.SetState(GameManager.State.Paused);
+        }
+    }
+
     public void OnResumeClick()
     {
         if (GameManager.Instance != null)
@@ -71,6 +79,13 @@ public class PauseMenuController : MonoBehaviour
     public void OnMainMenuClick()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene("MainMenu");
+        if (SceneTransitionManager.Instance != null)
+        {
+            SceneTransitionManager.Instance.LoadScene("MainMenu");
+        }
+        else
+        {
+            SceneManager.LoadScene("MainMenu");
+        }
     }
 }
