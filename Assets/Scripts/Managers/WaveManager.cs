@@ -57,6 +57,9 @@ public class WaveManager : MonoBehaviour
     {
         if (waves != null && waves.Length > 0)
         {
+            // Start the standard gameplay music
+            AudioManager.Instance?.PlayBGM("bgm_gameplay");
+
             waveCountdown = timeBetweenWaves;
             state = WaveState.Countdown;
             currentWaveIndex = 0;
@@ -110,6 +113,17 @@ public class WaveManager : MonoBehaviour
         {
             UpdateUI();
             return;
+        }
+
+        // --- Special Logic for Boss in Level 3 ---
+        // If this was the last wave (Boss) in Level 3, don't play the SFX here
+        // as the BossController already handles bgm_winner.
+        bool isBossLevel = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name.Contains("Level3");
+        bool isLastWave = (currentWaveIndex == waves.Length - 1);
+
+        if (!(isBossLevel && isLastWave))
+        {
+            AudioManager.Instance?.PlaySFX("sfx_wave_clear");
         }
 
         // All enemies cleared — advance to next wave
@@ -278,7 +292,7 @@ public class WaveManager : MonoBehaviour
         state = WaveState.LevelComplete;
         if (waveStatusText != null)
         {
-            waveStatusText.text = "LEVEL CLEARED!";
+            waveStatusText.text = "LEVEL COMPLETED!";
         }
         LevelManager.Instance?.LevelComplete();
     }
@@ -296,7 +310,7 @@ public class WaveManager : MonoBehaviour
             case WaveState.Countdown:
                 int displayWave = currentWaveIndex + 1;
                 if (displayWave > waves.Length) displayWave = waves.Length;
-                waveStatusText.text = $"Wave {displayWave} incoming: {Mathf.CeilToInt(waveCountdown)}s";
+                waveStatusText.text = $"Wave: {displayWave}";
                 break;
 
             case WaveState.Battling:
@@ -308,7 +322,7 @@ public class WaveManager : MonoBehaviour
                 break;
 
             case WaveState.LevelComplete:
-                waveStatusText.text = "LEVEL CLEARED!";
+                waveStatusText.text = "LEVEL COMPLETED!";
                 break;
         }
     }

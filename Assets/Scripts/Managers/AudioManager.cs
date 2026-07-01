@@ -7,8 +7,12 @@ public class AudioManager : MonoBehaviour
     public static AudioManager Instance { get; private set; }
 
     [Header("SFX Clips")]
-    [Tooltip("Assign AudioClip per key name for SFX playback.")]
+    [Tooltip("Assign AudioClip per key name for SFX playback (sfx_shoot, sfx_explosion, etc.).")]
     public List<NamedAudioClip> sfxClips = new List<NamedAudioClip>();
+
+    [Header("BGM Clips")]
+    [Tooltip("Assign BGM AudioClips here (bgm_gameplay, bgm_boss, bgm_gameover, bgm_winner, etc.).")]
+    public List<NamedAudioClip> bgmClips = new List<NamedAudioClip>();
 
     [Header("BGM")]
     public AudioSource bgmSource;
@@ -18,7 +22,11 @@ public class AudioManager : MonoBehaviour
     private AudioSource bgmSource2;
     private bool isSource1Active = true;
     private Dictionary<string, AudioClip> sfxMap = new Dictionary<string, AudioClip>();
+    private Dictionary<string, AudioClip> bgmMap = new Dictionary<string, AudioClip>();
     private Coroutine fadeRoutine;
+
+    [HideInInspector]
+    public float bgmVolume = 1f;
 
     [System.Serializable]
     public class NamedAudioClip
@@ -43,6 +51,12 @@ public class AudioManager : MonoBehaviour
                 sfxMap[entry.key] = entry.clip;
         }
 
+        foreach (var entry in bgmClips)
+        {
+            if (!string.IsNullOrEmpty(entry.key) && entry.clip != null)
+                bgmMap[entry.key] = entry.clip;
+        }
+
         if (bgmSource == null)
         {
             bgmSource = gameObject.AddComponent<AudioSource>();
@@ -62,6 +76,7 @@ public class AudioManager : MonoBehaviour
 
     [HideInInspector]
     public float sfxVolume = 1f;
+
 
     public void SetSFXVolume(float volume)
     {
@@ -90,7 +105,11 @@ public class AudioManager : MonoBehaviour
 
     public void PlayBGM(string key)
     {
-        if (!sfxMap.TryGetValue(key, out AudioClip clip)) return;
+        // Try bgmMap first; fall back to sfxMap for backward-compatibility
+        if (!bgmMap.TryGetValue(key, out AudioClip clip))
+        {
+            if (!sfxMap.TryGetValue(key, out clip)) return;
+        }
 
         if (fadeRoutine != null) StopCoroutine(fadeRoutine);
         fadeRoutine = StartCoroutine(CrossfadeBGM(clip));
@@ -114,13 +133,13 @@ public class AudioManager : MonoBehaviour
             elapsed += Time.deltaTime;
             float pct = elapsed / duration;
             activeSource.volume = Mathf.Lerp(startVol, 0f, pct);
-            newSource.volume = Mathf.Lerp(0f, 1f, pct);
+            newSource.volume = Mathf.Lerp(0f, bgmVolume, pct);
             yield return null;
         }
 
         activeSource.volume = 0f;
         activeSource.Stop();
-        newSource.volume = 1f;
+        newSource.volume = bgmVolume;
 
         isSource1Active = !isSource1Active;
         bgmSource = newSource; // Keep referencing the active one
@@ -134,8 +153,15 @@ public class AudioManager : MonoBehaviour
 
     public void SetBGMVolume(float volume)
     {
-        float clamped = Mathf.Clamp01(volume);
-        bgmSource1.volume = clamped;
-        bgmSource2.volume = clamped;
+        bgmVolume = Mathf.Clamp01(volume);
+        // Only apply to the currently-playing source so we don't
+        // override a crossfade that is still in progress.
+        AudioSource active = isSource1Active ? bgmSource1 : bgmSource2;
+        if (active != null) active.volume = bgmVolume;
+    }
+
+    public void SetSFXVolumePersist(float volume)
+    {
+        sfxVolume = Mathf.Clamp01(volume);
     }
 }
