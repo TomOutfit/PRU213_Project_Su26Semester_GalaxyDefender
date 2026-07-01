@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c01883c4d2b96704697d858bf74f1555, type: 3}
+  m_Name: LevelMusicConfig
+  m_EditorClassIdentifier: Assembly-CSharp::LevelMusicConfig
+  level1BGM: {fileID: 8300000, guid: 7064ab22ddad91349bc1c73e9ae41fe7, type: 3}
+  level2BGM: {fileID: 8300000, guid: 7064ab22ddad91349bc1c73e9ae41fe7, type: 3}
+  level3BGM: {fileID: 8300000, guid: 7064ab22ddad91349bc1c73e9ae41fe7, type: 3}
+  bossBGM: {fileID: 8300000, guid: c41010a88b10839468c27a4c1e563aab, type: 3}
+  winnerBGM: {fileID: 8300000, guid: 2d94a084f491be8418592b813517b7a3, type: 3}
