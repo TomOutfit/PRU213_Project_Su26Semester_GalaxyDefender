@@ -292,16 +292,11 @@ public class BossController : MonoBehaviour
         isDying = true;
         StopAllCoroutines();
 
-        // Immediately stop boss BGM loop
-        AudioManager.Instance?.StopBGM();
+        // Crossfade to winner music (bgm_boss will fade out automatically)
+        AudioManager.Instance?.PlayBGM("bgm_winner");
 
         OnBossDead?.Invoke();
-
-        // Notify WaveManager so activeEnemyCount is tracked
-        if (WaveManager.Instance != null)
-        {
-            WaveManager.Instance.OnEnemyDestroyed(gameObject);
-        }
+        OnBossDeadGlobal?.Invoke();
 
         StartCoroutine(DeathSequence());
     }
@@ -356,9 +351,6 @@ public class BossController : MonoBehaviour
             yield return new WaitForSeconds(0.25f);
         }
 
-        // Play the special destruction / victory sound effect
-        AudioManager.Instance?.PlaySFX("sfx_wave_clear");
-
         yield return new WaitForSeconds(0.5f);
 
         BossHUDController bossHUD = Object.FindAnyObjectByType<BossHUDController>();
@@ -367,6 +359,7 @@ public class BossController : MonoBehaviour
             bossHUD.HideBossHUD();
         }
 
+        // Deactivate Boss object
         ObjectPool enemyPool = GetComponentInParent<ObjectPool>();
         if (enemyPool != null)
         {
@@ -375,6 +368,17 @@ public class BossController : MonoBehaviour
         else
         {
             gameObject.SetActive(false);
+        }
+
+        // Trigger Level Complete → Victory scene transition
+        // (LevelManager handles the "LEVEL COMPLETE!" banner + 2s delay before loading)
+        if (WaveManager.Instance != null)
+        {
+            WaveManager.Instance.OnEnemyDestroyed(gameObject);
+        }
+        else
+        {
+            LevelManager.Instance?.LevelComplete();
         }
     }
 }
