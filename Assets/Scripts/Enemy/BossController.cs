@@ -55,16 +55,56 @@ public class BossController : MonoBehaviour
 
     private void Awake()
     {
+        Debug.Log($"[BossController] Awake called on GameObject: {gameObject.name}");
         rb = GetComponent<Rigidbody2D>();
         health = GetComponent<EnemyHealth>();
+    }
+
+    private void OnEnable()
+    {
+        Debug.Log($"[BossController] OnEnable called on GameObject: {gameObject.name}");
         isSpawning = true;
         isDying = false;
         currentPhase = 1;
+        spawnedDronesPhase3 = false;
+
+        // Reset sprite
+        SpriteRenderer sr = GetComponent<SpriteRenderer>();
+        RuntimeSpriteFixer.EnsureSprite(sr, phase1SpritePath);
+
+        // Reset positions
+        Camera cam = Camera.main;
+        float zDist = cam != null ? Mathf.Abs(cam.transform.position.z) : 10f;
+        float topY = cam != null ? cam.ViewportToWorldPoint(new Vector3(0.5f, 1f, zDist)).y : 5f;
+        startPosition = new Vector2(0f, topY + 3f);
+        targetSpawnPosition = new Vector2(0f, topY - 2.5f);
+        transform.position = new Vector3(startPosition.x, startPosition.y, 0f);
+
+        if (rb == null) rb = GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            rb.position = startPosition;
+            rb.simulated = true;
+        }
+
+        Debug.Log($"[BossController] topY={topY}, startPosition={startPosition}, targetSpawnPosition={targetSpawnPosition}, initialPosition={transform.position}");
+
+        StartCoroutine(SpawnSequence());
+    }
+
+    private void OnDisable()
+    {
+        Debug.Log($"[BossController] OnDisable called on GameObject: {gameObject.name}");
+    }
+
+    private void OnDestroy()
+    {
+        Debug.Log($"[BossController] OnDestroy called on GameObject: {gameObject.name}");
     }
 
     private void Start()
     {
-        RuntimeSpriteFixer.EnsureSprite(GetComponent<SpriteRenderer>(), phase1SpritePath);
+        Debug.Log($"[BossController] Start called on GameObject: {gameObject.name}");
 
         if (health != null)
         {
@@ -84,22 +124,16 @@ public class BossController : MonoBehaviour
                 bossBullet = bossBulletPrefab.GetComponent<BulletBoss>();
             }
         }
-
-        Camera cam = Camera.main;
-        float topY = cam != null ? cam.ViewportToWorldPoint(Vector3.up).y : 5f;
-        startPosition = new Vector2(0f, topY + 2f);
-        targetSpawnPosition = new Vector2(0f, topY - 1.5f);
-        transform.position = startPosition;
-
-        StartCoroutine(SpawnSequence());
     }
 
     private IEnumerator SpawnSequence()
     {
+        Debug.Log($"[BossController] SpawnSequence started. isSpawning={isSpawning}");
         isSpawning = true;
 
-        // Immediately play bgm_boss at the start of the warning sequence
-        AudioManager.Instance?.PlayBGM("bgm_boss");
+        // Immediately turn off current music and play bgm_boss
+        AudioManager.Instance?.StopBGM();
+        AudioManager.Instance?.PlayBGM("bgm_boss", true);
 
         BossHUDController bossHUD = Object.FindAnyObjectByType<BossHUDController>();
         if (bossHUD != null)
@@ -115,9 +149,14 @@ public class BossController : MonoBehaviour
             elapsed += Time.deltaTime;
             float pct = elapsed / spawnDuration;
             rb.position = Vector2.Lerp(startPosition, targetSpawnPosition, pct);
+            if (elapsed % 0.5f < Time.deltaTime)
+            {
+                Debug.Log($"[BossController] Spawning Lerp: pct={pct}, rb.position={rb.position}, transform.position={transform.position}");
+            }
             yield return null;
         }
         rb.position = targetSpawnPosition;
+        Debug.Log($"[BossController] Spawn sequence complete. rb.position={rb.position}, transform.position={transform.position}");
 
         isSpawning = false;
         OnPhaseChanged?.Invoke(currentPhase);
@@ -292,8 +331,25 @@ public class BossController : MonoBehaviour
         isDying = true;
         StopAllCoroutines();
 
-        // Crossfade to winner music (bgm_boss will fade out automatically)
-        AudioManager.Instance?.PlayBGM("bgm_winner");
+        // Immediately turn off bgm_boss and play bgm_winner
+        AudioManager.Instance?.StopAllLevelSounds();
+        AudioManager.Instance?.PlayBGM("bgm_winner", true);
+
+        // Award boss points!
+        if (ScoreManager.Instance != null && health != null)
+        {
+            ScoreManager.Instance.AddScore(health.points);
+            ScoreManager.Instance.OnEnemyKilled();
+        }
+
+        // Spawn a guaranteed power-up drop for defeating the boss!
+        if (PowerUpManager.Instance != null)
+        {
+            PowerUpManager.Instance.Drop(transform.position);
+        }
+
+        // Trigger camera shake for epic boss death!
+        CameraShake.Instance?.Shake(0.5f, 0.2f);
 
         OnBossDead?.Invoke();
         OnBossDeadGlobal?.Invoke();
@@ -370,8 +426,7 @@ public class BossController : MonoBehaviour
             gameObject.SetActive(false);
         }
 
-        // Trigger Level Complete → Victory scene transition
-        // (LevelManager handles the "LEVEL COMPLETE!" banner + 2s delay before loading)
+        // Trigger Level Complete for status
         if (WaveManager.Instance != null)
         {
             WaveManager.Instance.OnEnemyDestroyed(gameObject);

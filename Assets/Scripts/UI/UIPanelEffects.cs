@@ -63,7 +63,7 @@ public class UIPanelEffects : MonoBehaviour
 
         while (elapsed < animationDuration)
         {
-            elapsed += Time.deltaTime;
+            elapsed += Time.unscaledDeltaTime;
             float pct = Mathf.Clamp01(elapsed / animationDuration);
             float curvePct = animationCurve.Evaluate(pct);
 

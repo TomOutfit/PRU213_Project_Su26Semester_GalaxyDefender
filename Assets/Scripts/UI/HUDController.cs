@@ -21,8 +21,27 @@ public class HUDController : MonoBehaviour
     [Header("Message Settings")]
     public TMP_FontAsset messageFont;
 
+    private HUDVfx _vfx;
+
     private void Awake()
     {
+        // ── Khởi tạo _vfx trước để AnimateLives/AnimateScore gọi được ngay từ đầu ──
+        _vfx = GetComponent<HUDVfx>();
+        if (_vfx == null)
+            _vfx = gameObject.AddComponent<HUDVfx>();
+
+        // Auto-resolve text references trước khi subscribe events
+        if (ScoreTextTMP == null) ScoreTextTMP = transform.Find("ScorePanel/ScoreText")?.GetComponent<TMP_Text>();
+        if (WaveTextTMP == null)  WaveTextTMP  = transform.Find("WavePanel/WaveText")?.GetComponent<TMP_Text>();
+        if (LivesTextTMP == null) LivesTextTMP  = transform.Find("LivesPanel/LivesText")?.GetComponent<TMP_Text>();
+
+        // Feed references into VFX ngay
+        _vfx.HPSlider    = HPSlider;
+        _vfx.ShieldSlider = ShieldSlider;
+        if (ScoreTextTMP != null) _vfx.scoreTextRect = ScoreTextTMP.GetComponent<RectTransform>();
+        if (WaveTextTMP  != null) _vfx.waveTextRect  = WaveTextTMP.GetComponent<RectTransform>();
+        if (LivesTextTMP != null) _vfx.livesTextRect  = LivesTextTMP.GetComponent<RectTransform>();
+
         // Subscribe to PlayerHealth events
         PlayerHealth playerHealth = Object.FindAnyObjectByType<PlayerHealth>();
         if (playerHealth != null)
@@ -37,7 +56,7 @@ public class HUDController : MonoBehaviour
 
             playerHealth.OnHPChanged.AddListener(UpdateHP);
             playerHealth.OnShieldChanged.AddListener(UpdateShield);
-            
+
             // Set initial values
             UpdateHP(playerHealth.currentHP);
             UpdateShield(playerHealth.currentShield);
@@ -54,6 +73,7 @@ public class HUDController : MonoBehaviour
         if (WaveManager.Instance != null)
         {
             WaveManager.Instance.OnWaveChanged.AddListener(UpdateWave);
+            WaveManager.Instance.OnEnemyKilled.AddListener(UpdateEnemyCount);
             // Default to WAVE 1 until first wave actually starts spawning
             UpdateWave(WaveManager.Instance.waves != null ? 1 : 0);
         }
@@ -68,28 +88,23 @@ public class HUDController : MonoBehaviour
 
     private void Start()
     {
-        // Auto-resolve other components if not set in Inspector
+        // Fallback resolve nếu chưa có từ Awake (ví dụ khi assign qua Inspector không đầy đủ)
         if (ScoreTextTMP == null) ScoreTextTMP = transform.Find("ScorePanel/ScoreText")?.GetComponent<TMP_Text>();
-        if (WaveTextTMP == null) WaveTextTMP = transform.Find("WavePanel/WaveText")?.GetComponent<TMP_Text>();
-        if (LivesTextTMP == null) LivesTextTMP = transform.Find("LivesPanel/LivesText")?.GetComponent<TMP_Text>();
+        if (WaveTextTMP  == null) WaveTextTMP  = transform.Find("WavePanel/WaveText")?.GetComponent<TMP_Text>();
+        if (LivesTextTMP == null) LivesTextTMP  = transform.Find("LivesPanel/LivesText")?.GetComponent<TMP_Text>();
 
         // Apply visual bar frame sprites dynamically for a polished look
         EnsureHUDSprites(HPSlider, "Assets/Sprites/UI/ui_healthbar_fill.png");
         EnsureHUDSprites(ShieldSlider, "Assets/Sprites/UI/ui_shieldbar_fill.png");
 
-        // Dynamically attach HUDVfx if missing
-        HUDVfx vfx = GetComponent<HUDVfx>();
-        if (vfx == null)
-        {
-            vfx = gameObject.AddComponent<HUDVfx>();
-        }
-        
-        vfx.HPSlider = HPSlider;
-        vfx.ShieldSlider = ShieldSlider;
-        
-        if (ScoreTextTMP != null) vfx.scoreTextRect = ScoreTextTMP.GetComponent<RectTransform>();
-        if (WaveTextTMP != null) vfx.waveTextRect = WaveTextTMP.GetComponent<RectTransform>();
-        if (LivesTextTMP != null) vfx.livesTextRect = LivesTextTMP.GetComponent<RectTransform>();
+        // Đảm bảo references mới nhất được cập nhật vào VFX (trước đó Awake đã làm phần này)
+        if (ScoreTextTMP != null) _vfx.scoreTextRect = ScoreTextTMP.GetComponent<RectTransform>();
+        if (WaveTextTMP  != null) _vfx.waveTextRect  = WaveTextTMP.GetComponent<RectTransform>();
+        if (LivesTextTMP != null) _vfx.livesTextRect  = LivesTextTMP.GetComponent<RectTransform>();
+
+        // Kick-off count-up animation cho Lives ngay khi scene bắt đầu
+        if (GameManager.Instance != null)
+            UpdateLives(GameManager.Instance.GetCurrentLives());
     }
 
     private void EnsureHUDSprites(Slider slider, string fillPath)
@@ -174,17 +189,37 @@ public class HUDController : MonoBehaviour
 
     private void UpdateScore(int score)
     {
-        if (ScoreTextTMP != null) ScoreTextTMP.text = $"SCORE: {score}";
+        if (_vfx != null)
+            _vfx.AnimateScore(score);
+        else if (ScoreTextTMP != null)
+            ScoreTextTMP.text = $"SCORE: {score}";
     }
 
     private void UpdateWave(int wave)
     {
-        if (WaveTextTMP != null) WaveTextTMP.text = $"WAVE: {wave}";
+        if (_vfx != null)
+            _vfx.AnimateWave(wave, $"WAVES: {wave}");
+        else if (WaveTextTMP != null)
+            WaveTextTMP.text = $"WAVES: {wave}";
+    }
+
+    private void UpdateEnemyCount(int remaining)
+    {
+        if (WaveManager.Instance != null && WaveManager.Instance.GetState() == WaveState.Battling)
+        {
+            if (_vfx != null)
+                _vfx.AnimateWave(remaining, $"ENEMIES: {remaining}");
+            else if (WaveTextTMP != null)
+                WaveTextTMP.text = $"ENEMIES: {remaining}";
+        }
     }
 
     private void UpdateLives(int lives)
     {
-        if (LivesTextTMP != null) LivesTextTMP.text = $"LIVES: {lives}";
+        if (_vfx != null)
+            _vfx.AnimateLives(lives);
+        else if (LivesTextTMP != null)
+            LivesTextTMP.text = $"LIVES: {lives}";
     }
 
     /// <summary>Displays a temporary full-screen message (e.g., "LEVEL COMPLETE").</summary>

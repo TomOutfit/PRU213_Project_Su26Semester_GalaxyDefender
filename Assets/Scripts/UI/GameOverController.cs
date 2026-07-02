@@ -46,6 +46,11 @@ public class GameOverController : MonoBehaviour
     {
         Time.timeScale = 1f;
 
+        if (GameManager.Instance != null && GameManager.Instance.CurrentState != GameManager.State.GameOver)
+        {
+            GameManager.Instance.SetState(GameManager.State.GameOver);
+        }
+
         int finalScore   = ScoreManager.Instance != null ? ScoreManager.Instance.currentScore : 0;
         float timeVal    = GameManager.Instance   != null ? GameManager.Instance.survivalTime  : 0f;
         int killedCount  = GameManager.Instance   != null ? GameManager.Instance.totalEnemiesKilled : 0;

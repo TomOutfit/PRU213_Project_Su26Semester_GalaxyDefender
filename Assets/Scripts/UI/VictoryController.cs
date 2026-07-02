@@ -45,6 +45,11 @@ public class VictoryController : MonoBehaviour
     {
         Time.timeScale = 1f;
 
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.SetState(GameManager.State.Victory);
+        }
+
         int finalScore  = ScoreManager.Instance != null ? ScoreManager.Instance.currentScore : 0;
         float timeVal   = GameManager.Instance   != null ? GameManager.Instance.survivalTime  : 0f;
         int killedCount = GameManager.Instance   != null ? GameManager.Instance.totalEnemiesKilled : 0;

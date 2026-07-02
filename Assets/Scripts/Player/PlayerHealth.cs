@@ -9,8 +9,8 @@ using UnityEngine.Events;
 public class PlayerHealth : MonoBehaviour
 {
     [Header("Stats")]
-    public int maxHP = 100;
-    public int maxShield = 50;
+    public int maxHP = 10000;
+    public int maxShield = 500;
 
     public int currentHP { get; private set; }
     public int currentShield { get; private set; }
