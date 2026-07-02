@@ -304,10 +304,10 @@ public class PlayerController : MonoBehaviour
         };
         string[] bulletPaths = {
             "Assets/Sprites/Bullets/bullet_player.png",
-            "Assets/Sprites/Bullets/iron_vanguard_bullet.png",
-            "Assets/Sprites/Bullets/nova_prism_bullet.png",
-            "Assets/Sprites/Bullets/shadow_wraith_bullet.png",
-            "Assets/Sprites/Bullets/star_swift_bullet.png"
+            "Assets/Sprites/Bullets/player_iron_vanguard_bullet.png",
+            "Assets/Sprites/Bullets/player_nova_prism_bullet.png",
+            "Assets/Sprites/Bullets/player_shadow_wraith_bullet.png",
+            "Assets/Sprites/Bullets/player_star_swift_bullet.png"
         };
 
         shipConfigurations = new ShipConfig[shipNames.Length];

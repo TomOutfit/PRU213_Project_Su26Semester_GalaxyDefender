@@ -48,11 +48,11 @@ public class EnemyDrone : MonoBehaviour
     private static readonly string[] BULLET_SPRITES = new string[]
     {
         "Assets/Sprites/Bullets/bullet_enemy.png",
-        "Assets/Sprites/Bullets/red_energy_spike.png",
-        "Assets/Sprites/Bullets/teal_energy_orb.png",
-        "Assets/Sprites/Bullets/purple_bio-spore.png",
-        "Assets/Sprites/Bullets/cyan_sniper_beam.png",
-        "Assets/Sprites/Bullets/red_energy_spike.png"
+        "Assets/Sprites/Bullets/enemy_red_energy_spike.png",
+        "Assets/Sprites/Bullets/enemy_teal_energy_orb.png",
+        "Assets/Sprites/Bullets/enemy_purple_bio-spore.png",
+        "Assets/Sprites/Bullets/enemy_cyan_sniper_beam.png",
+        "Assets/Sprites/Bullets/enemy_red_energy_spike.png"
     };
 
     private int currentSpriteIndex = 0;
