@@ -43,11 +43,24 @@ public class HUDVfx : MonoBehaviour
     private float shieldTargetValue;
     private float shieldBufferTimer;
 
-    private int lastScore = 0;
-    private int lastWave = 0;
-    private int lastLives = 0;
+    private int lastLives = -1; // -1 = chưa khởi tạo, dùng để count-up từ 0 ở lần đầu tiên
 
     private Sprite whitePixelSprite;
+
+    // Cache variables for idle hovering motion
+    private RectTransform _scorePanel;
+    private RectTransform _wavePanel;
+    private RectTransform _livesPanel;
+    private Vector2 _scoreOrigPos;
+    private Vector2 _waveOrigPos;
+    private Vector2 _livesOrigPos;
+    private bool _hasOrigPositions = false;
+
+    // Active animation coroutines
+    private Coroutine _scoreCoroutine;
+    private Coroutine _waveCoroutine;
+    private Coroutine _livesCoroutine;
+    private int _currentScoreVal = 0;
 
     private void Start()
     {
@@ -97,24 +110,8 @@ public class HUDVfx : MonoBehaviour
             }
         }
 
-        // Setup Score and Wave listeners
-        if (ScoreManager.Instance != null)
-        {
-            ScoreManager.Instance.OnScoreChanged.AddListener(OnScoreChanged);
-            lastScore = ScoreManager.Instance.currentScore;
-        }
-
-        if (WaveManager.Instance != null)
-        {
-            WaveManager.Instance.OnWaveChanged.AddListener(OnWaveChanged);
-            lastWave = WaveManager.Instance.GetCurrentWave();
-        }
-
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.OnLivesChanged.AddListener(OnLivesChanged);
-            lastLives = GameManager.Instance.GetCurrentLives();
-        }
+        // Cache positions for panel hover animation
+        CacheOrigPositions();
 
         // Generate white pixel texture for shield break particles
         Texture2D tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
@@ -146,22 +143,7 @@ public class HUDVfx : MonoBehaviour
         if (fill == null) return;
 
         fillRect = fill.GetComponent<RectTransform>();
-
-        // Create Buffer Fill GameObject
-        GameObject bufferGO = Instantiate(fill.gameObject, fillArea);
-        bufferGO.name = "BufferFill";
-        
-        // Put buffer behind main fill in hierarchy so it renders behind
-        bufferGO.transform.SetSiblingIndex(0);
-
-        bufferRect = bufferGO.GetComponent<RectTransform>();
-
-        // Change color to buffer color
-        Image bufferImg = bufferGO.GetComponent<Image>();
-        if (bufferImg != null)
-        {
-            bufferImg.color = color;
-        }
+        bufferRect = null;
     }
 
     private void OnHPValueChanged(float value)
@@ -283,78 +265,230 @@ public class HUDVfx : MonoBehaviour
                 HPSlider.transform.localScale = Vector3.one;
             }
         }
+
+        // 4. Gentle idle floating motion for holographic HUD telemetry
+        if (_hasOrigPositions)
+        {
+            float time = Time.time;
+            if (_scorePanel != null)
+                _scorePanel.anchoredPosition = _scoreOrigPos + new Vector2(0f, Mathf.Sin(time * 2.0f) * 4f);
+            if (_wavePanel != null)
+                _wavePanel.anchoredPosition = _waveOrigPos + new Vector2(0f, Mathf.Sin(time * 2.0f + 1.2f) * 4f);
+            if (_livesPanel != null)
+                _livesPanel.anchoredPosition = _livesOrigPos + new Vector2(0f, Mathf.Sin(time * 2.0f + 2.4f) * 4f);
+        }
     }
 
-    private void OnScoreChanged(int score)
+    private void CacheOrigPositions()
     {
-        if (score != lastScore && scoreTextRect != null)
-        {
-            StopCoroutine("PulseText");
-            StartCoroutine(PulseText(scoreTextRect));
-        }
-        lastScore = score;
+        if (_hasOrigPositions) return;
+
+        Transform scoreP = transform.Find("ScorePanel");
+        Transform waveP = transform.Find("WavePanel");
+        Transform livesP = transform.Find("LivesPanel");
+
+        if (scoreP != null) _scorePanel = scoreP.GetComponent<RectTransform>();
+        if (waveP != null) _wavePanel = waveP.GetComponent<RectTransform>();
+        if (livesP != null) _livesPanel = livesP.GetComponent<RectTransform>();
+
+        if (_scorePanel != null) _scoreOrigPos = _scorePanel.anchoredPosition;
+        if (_wavePanel != null) _waveOrigPos = _wavePanel.anchoredPosition;
+        if (_livesPanel != null) _livesOrigPos = _livesPanel.anchoredPosition;
+        _hasOrigPositions = true;
     }
 
-    private void OnWaveChanged(int wave)
+    private TMP_Text GetTMP(RectTransform rect)
     {
-        if (wave != lastWave && waveTextRect != null)
-        {
-            StopCoroutine("PulseText");
-            StartCoroutine(PulseText(waveTextRect));
-        }
-        lastWave = wave;
+        if (rect == null) return null;
+        return rect.GetComponent<TMP_Text>();
     }
 
-    private void OnLivesChanged(int lives)
+    // ──────────────────────────────────────────────
+    // PUBLIC VALUE ANIMATION TRIGGERS
+    // ──────────────────────────────────────────────
+
+    public void AnimateScore(int targetScore)
     {
-        if (lives != lastLives && livesTextRect != null)
-        {
-            StopCoroutine("PulseText");
-            StartCoroutine(PulseText(livesTextRect));
-        }
-        lastLives = lives;
+        if (_scoreCoroutine != null) StopCoroutine(_scoreCoroutine);
+        _scoreCoroutine = StartCoroutine(ScoreAnimationRoutine(targetScore));
     }
 
-    private IEnumerator PulseText(RectTransform textRect)
+    private IEnumerator ScoreAnimationRoutine(int targetScore)
     {
-        // If the text is parented to a frame, pulse the frame instead
-        RectTransform targetRect = textRect;
-        if (textRect.parent != null && textRect.parent.name.EndsWith("_Frame"))
-        {
-            targetRect = textRect.parent.GetComponent<RectTransform>();
-        }
-
-        Vector3 originalScale = Vector3.one;
+        int startScore = _currentScoreVal;
+        float duration = 0.6f;
         float elapsed = 0f;
 
-        // Scale up quickly
-        float halfDuration = pulseDuration * 0.4f;
-        while (elapsed < halfDuration)
+        TMP_Text txt = GetTMP(scoreTextRect);
+        Color originalColor = txt != null ? txt.color : Color.white;
+        Color flashColor = new Color(0.0f, 1.0f, 0.9f, 1f); // Neon Cyan
+
+        Vector3 originalScale = Vector3.one;
+        RectTransform targetRect = scoreTextRect;
+        if (scoreTextRect != null && scoreTextRect.parent != null && scoreTextRect.parent.name.EndsWith("_Frame"))
+        {
+            targetRect = scoreTextRect.parent.GetComponent<RectTransform>();
+        }
+
+        while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
-            float pct = elapsed / halfDuration;
+            float t = elapsed / duration;
+            // Smooth step interpolation
+            float st = t * t * (3f - 2f * t);
+
+            _currentScoreVal = Mathf.RoundToInt(Mathf.Lerp(startScore, targetScore, st));
+            if (txt != null)
+            {
+                txt.text = $"SCORE: {_currentScoreVal:N0}";
+                txt.color = Color.Lerp(flashColor, originalColor, t);
+            }
+
             if (targetRect != null)
             {
-                targetRect.localScale = Vector3.Lerp(originalScale, originalScale * pulseScale, pct);
+                float scaleMult = 1f + Mathf.Sin(t * Mathf.PI) * 0.25f;
+                targetRect.localScale = originalScale * scaleMult;
             }
+
             yield return null;
         }
 
-        // Scale back down with a bounce
-        elapsed = 0f;
-        float returnDuration = pulseDuration * 0.6f;
-        while (elapsed < returnDuration)
+        _currentScoreVal = targetScore;
+        if (txt != null)
+        {
+            txt.text = $"SCORE: {_currentScoreVal:N0}";
+            txt.color = originalColor;
+        }
+        if (targetRect != null)
+        {
+            targetRect.localScale = originalScale;
+        }
+    }
+
+    public void AnimateWave(int value, string textToDisplay)
+    {
+        if (_waveCoroutine != null) StopCoroutine(_waveCoroutine);
+        _waveCoroutine = StartCoroutine(WaveAnimationRoutine(textToDisplay));
+    }
+
+    private IEnumerator WaveAnimationRoutine(string textToDisplay)
+    {
+        float duration = 0.5f;
+        float elapsed = 0f;
+
+        TMP_Text txt = GetTMP(waveTextRect);
+        Color originalColor = txt != null ? txt.color : Color.white;
+        Color flashColor = new Color(0.0f, 1.0f, 0.9f, 1f); // Neon Cyan
+
+        Vector3 originalScale = Vector3.one;
+        RectTransform targetRect = waveTextRect;
+        if (waveTextRect != null && waveTextRect.parent != null && waveTextRect.parent.name.EndsWith("_Frame"))
+        {
+            targetRect = waveTextRect.parent.GetComponent<RectTransform>();
+        }
+
+        if (txt != null) txt.text = textToDisplay;
+
+        while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
-            float pct = elapsed / returnDuration;
-            float scaleMult = Mathf.Lerp(pulseScale, 1.0f, pct);
+            float t = elapsed / duration;
+
+            float scaleMult = 1f + Mathf.Sin(t * Mathf.PI) * 0.35f;
+            float rotAngle = Mathf.Sin(t * Mathf.PI * 2f) * 5f; // Shake tilt
+
+            if (targetRect != null)
+            {
+                targetRect.localScale = originalScale * scaleMult;
+                targetRect.localRotation = Quaternion.Euler(0, 0, rotAngle);
+            }
+
+            if (txt != null)
+            {
+                txt.color = Color.Lerp(flashColor, originalColor, t);
+            }
+
+            yield return null;
+        }
+
+        if (txt != null)
+        {
+            txt.color = originalColor;
+        }
+        if (targetRect != null)
+        {
+            targetRect.localScale = originalScale;
+            targetRect.localRotation = Quaternion.identity;
+        }
+    }
+
+    public void AnimateLives(int targetLives)
+    {
+        // Lazy-resolve livesTextRect nếu chưa được gán (có thể gọi từ Awake trước Start)
+        if (livesTextRect == null)
+        {
+            HUDController hud = GetComponent<HUDController>();
+            if (hud != null && hud.LivesTextTMP != null)
+                livesTextRect = hud.LivesTextTMP.GetComponent<RectTransform>();
+        }
+
+        if (_livesCoroutine != null) StopCoroutine(_livesCoroutine);
+        _livesCoroutine = StartCoroutine(LivesAnimationRoutine(targetLives));
+    }
+
+    private IEnumerator LivesAnimationRoutine(int targetLives)
+    {
+        float duration = 0.6f;
+        float elapsed = 0f;
+
+        TMP_Text txt = GetTMP(livesTextRect);
+        Color originalColor = txt != null ? txt.color : Color.white;
+
+        bool lostLife = lastLives >= 0 && targetLives < lastLives;
+        Color flashColor = lostLife ? new Color(1f, 0.2f, 0.2f, 1f) : new Color(1f, 0.8f, 0f, 1f); // Red danger or Gold bonus
+
+        Vector3 originalScale = Vector3.one;
+        RectTransform targetRect = livesTextRect;
+        if (livesTextRect != null && livesTextRect.parent != null && livesTextRect.parent.name.EndsWith("_Frame"))
+        {
+            targetRect = livesTextRect.parent.GetComponent<RectTransform>();
+        }
+
+        // Count-up animation: số đếm từ 0 → targetLives trong suốt animation
+        int startCount = lostLife ? lastLives : 0;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+            float st = t * t * (3f - 2f * t); // SmoothStep
+
+            // Roll number up (hoặc down nếu mất mạng)
+            int displayCount = Mathf.RoundToInt(Mathf.Lerp(startCount, targetLives, st));
+            if (txt != null)
+            {
+                txt.text = $"LIVES: {displayCount}";
+                txt.color = Color.Lerp(flashColor, originalColor, t);
+            }
+
+            // Heartbeat double pulse
+            float pulseValue = Mathf.Max(0f, Mathf.Sin(t * Mathf.PI * 2f));
+            float scaleMult = 1f + pulseValue * (lostLife ? 0.4f : 0.25f);
+
             if (targetRect != null)
             {
                 targetRect.localScale = originalScale * scaleMult;
             }
+
             yield return null;
         }
 
+        lastLives = targetLives;
+        if (txt != null)
+        {
+            txt.text = $"LIVES: {targetLives}";
+            txt.color = originalColor;
+        }
         if (targetRect != null)
         {
             targetRect.localScale = originalScale;
