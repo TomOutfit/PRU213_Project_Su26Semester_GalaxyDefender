@@ -6,4 +6,6 @@ public class PowerUpShield : PowerUp
     {
         ph.AddShield(25);
     }
+
+    protected override string SFXKey => "sfx_powerup_shield";
 }

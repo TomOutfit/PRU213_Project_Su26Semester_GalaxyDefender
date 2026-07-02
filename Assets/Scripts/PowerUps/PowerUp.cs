@@ -84,9 +84,11 @@ public abstract class PowerUp : MonoBehaviour
         if (ph == null) return;
 
         ApplyEffect(ph);
+        AudioManager.Instance?.PlaySFX(SFXKey);
         ScoreManager.Instance?.AddScore(50);
         Destroy(gameObject);
     }
 
     public abstract void ApplyEffect(PlayerHealth ph);
+    protected abstract string SFXKey { get; }
 }

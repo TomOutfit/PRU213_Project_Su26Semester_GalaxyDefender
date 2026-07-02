@@ -138,7 +138,8 @@ public class GameManager : MonoBehaviour
                 Time.timeScale = 1f;
                 break;
             case State.GameOver:
-                AudioManager.Instance?.PlayBGM("bgm_gameover");
+                AudioManager.Instance?.StopBGM();
+                AudioManager.Instance?.PlayBGM("bgm_gameover", true);
                 StartCoroutine(GameOverSequence());
                 break;
             case State.Victory:

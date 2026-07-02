@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Audio;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -7,26 +8,32 @@ public class AudioManager : MonoBehaviour
     public static AudioManager Instance { get; private set; }
 
     [Header("SFX Clips")]
-    [Tooltip("Assign AudioClip per key name for SFX playback (sfx_shoot, sfx_explosion, etc.).")]
+    [Tooltip("Assign AudioClip per key name for SFX playback.")]
     public List<NamedAudioClip> sfxClips = new List<NamedAudioClip>();
 
     [Header("BGM Clips")]
-    [Tooltip("Assign BGM AudioClips here (bgm_gameplay, bgm_boss, bgm_gameover, bgm_winner, etc.).")]
+    [Tooltip("Assign BGM AudioClips here.")]
     public List<NamedAudioClip> bgmClips = new List<NamedAudioClip>();
 
-    [Header("BGM")]
-    public AudioSource bgmSource;
-    public UnityEngine.Audio.AudioMixerGroup bgmMixerGroup;
+    [Header("Audio Sources")]
+    [SerializeField] private AudioSource bgmSource1;
+    [SerializeField] private AudioSource bgmSource2;
+    [SerializeField] private AudioSource sfxSource;
 
-    private AudioSource bgmSource1;
-    private AudioSource bgmSource2;
+    [Header("Mixer Groups")]
+    public AudioMixerGroup bgmMixerGroup;
+    public AudioMixerGroup sfxMixerGroup;
+
     private bool isSource1Active = true;
     private Dictionary<string, AudioClip> sfxMap = new Dictionary<string, AudioClip>();
     private Dictionary<string, AudioClip> bgmMap = new Dictionary<string, AudioClip>();
+    private Dictionary<string, float> sfxCooldowns = new Dictionary<string, float>();
     private Coroutine fadeRoutine;
 
-    [HideInInspector]
+    [Header("Settings")]
     public float bgmVolume = 1f;
+    public float sfxVolume = 1f;
+    private const float MIN_SFX_INTERVAL = 0.05f; // Prevent rapid overlap of same sound
 
     [System.Serializable]
     public class NamedAudioClip
@@ -39,12 +46,52 @@ public class AudioManager : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
+            Instance.MergeClips(sfxClips, bgmClips);
             Destroy(gameObject);
             return;
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
+        InitializeMaps();
+        InitializeSources();
+    }
+
+    public void MergeClips(List<NamedAudioClip> newSfx, List<NamedAudioClip> newBgm)
+    {
+        if (newSfx != null)
+        {
+            foreach (var entry in newSfx)
+            {
+                if (!string.IsNullOrEmpty(entry.key) && entry.clip != null)
+                {
+                    if (!sfxMap.ContainsKey(entry.key))
+                    {
+                        sfxMap[entry.key] = entry.clip;
+                        sfxClips.Add(entry);
+                    }
+                }
+            }
+        }
+
+        if (newBgm != null)
+        {
+            foreach (var entry in newBgm)
+            {
+                if (!string.IsNullOrEmpty(entry.key) && entry.clip != null)
+                {
+                    if (!bgmMap.ContainsKey(entry.key))
+                    {
+                        bgmMap[entry.key] = entry.clip;
+                        bgmClips.Add(entry);
+                    }
+                }
+            }
+        }
+    }
+
+    private void InitializeMaps()
+    {
         foreach (var entry in sfxClips)
         {
             if (!string.IsNullOrEmpty(entry.key) && entry.clip != null)
@@ -56,97 +103,92 @@ public class AudioManager : MonoBehaviour
             if (!string.IsNullOrEmpty(entry.key) && entry.clip != null)
                 bgmMap[entry.key] = entry.clip;
         }
-
-        if (bgmSource == null)
-        {
-            bgmSource = gameObject.AddComponent<AudioSource>();
-        }
-        bgmSource1 = bgmSource;
-        bgmSource1.loop = true;
-        bgmSource1.playOnAwake = false;
-        if (bgmMixerGroup != null)
-            bgmSource1.outputAudioMixerGroup = bgmMixerGroup;
-
-        bgmSource2 = gameObject.AddComponent<AudioSource>();
-        bgmSource2.loop = true;
-        bgmSource2.playOnAwake = false;
-        if (bgmMixerGroup != null)
-            bgmSource2.outputAudioMixerGroup = bgmMixerGroup;
     }
 
-    [HideInInspector]
-    public float sfxVolume = 1f;
-
-
-    public void SetSFXVolume(float volume)
+    private void InitializeSources()
     {
-        sfxVolume = Mathf.Clamp01(volume);
+        AudioSource[] existing = GetComponents<AudioSource>();
+        int index = 0;
+
+        if (bgmSource1 == null)
+        {
+            if (index < existing.Length) bgmSource1 = existing[index++];
+            else bgmSource1 = gameObject.AddComponent<AudioSource>();
+        }
+        if (bgmSource2 == null)
+        {
+            if (index < existing.Length) bgmSource2 = existing[index++];
+            else bgmSource2 = gameObject.AddComponent<AudioSource>();
+        }
+        if (sfxSource == null)
+        {
+            if (index < existing.Length) sfxSource = existing[index++];
+            else sfxSource = gameObject.AddComponent<AudioSource>();
+        }
+
+        SetupBgmSource(bgmSource1);
+        SetupBgmSource(bgmSource2);
+        
+        sfxSource.loop = false;
+        sfxSource.playOnAwake = false;
+        if (sfxMixerGroup != null) sfxSource.outputAudioMixerGroup = sfxMixerGroup;
+    }
+
+    private void SetupBgmSource(AudioSource src)
+    {
+        src.loop = true;
+        src.playOnAwake = false;
+        if (bgmMixerGroup != null) src.outputAudioMixerGroup = bgmMixerGroup;
     }
 
     public void PlaySFX(string key)
     {
         if (!sfxMap.TryGetValue(key, out AudioClip clip)) return;
- 
-        AudioSource src = gameObject.AddComponent<AudioSource>();
-        src.clip = clip;
-        src.playOnAwake = false;
-        if (bgmMixerGroup != null)
-            src.outputAudioMixerGroup = bgmMixerGroup;
-        src.volume = sfxVolume;
-        src.Play();
-        StartCoroutine(CleanupSFXSource(src));
+
+        // Prevent overlapping too many instances of the same sound
+        if (sfxCooldowns.TryGetValue(key, out float lastPlayTime))
+        {
+            if (Time.time - lastPlayTime < MIN_SFX_INTERVAL) return;
+        }
+        sfxCooldowns[key] = Time.time;
+
+        sfxSource.PlayOneShot(clip, sfxVolume);
     }
 
-    private IEnumerator CleanupSFXSource(AudioSource src)
+    public void PlayBGM(string key, bool immediate = false)
     {
-        yield return new WaitUntil(() => !src.isPlaying);
-        Destroy(src);
-    }
-
-    public void PlayBGM(string key)
-    {
-        // Try bgmMap first; fall back to sfxMap for backward-compatibility
         if (!bgmMap.TryGetValue(key, out AudioClip clip))
         {
             if (!sfxMap.TryGetValue(key, out clip)) return;
         }
 
-        if (fadeRoutine != null) StopCoroutine(fadeRoutine);
-        fadeRoutine = StartCoroutine(CrossfadeBGM(clip));
-    }
+        // If the target clip is already playing, do nothing to prevent restart/stutter
+        if (bgmSource1.isPlaying && bgmSource1.clip == clip) return;
 
-    private IEnumerator CrossfadeBGM(AudioClip newClip)
-    {
-        AudioSource activeSource = isSource1Active ? bgmSource1 : bgmSource2;
-        AudioSource newSource = isSource1Active ? bgmSource2 : bgmSource1;
-
-        newSource.clip = newClip;
-        newSource.volume = 0f;
-        newSource.Play();
-
-        float duration = 1.0f;
-        float elapsed = 0f;
-        float startVol = activeSource.volume;
-
-        while (elapsed < duration)
+        if (fadeRoutine != null)
         {
-            elapsed += Time.deltaTime;
-            float pct = elapsed / duration;
-            activeSource.volume = Mathf.Lerp(startVol, 0f, pct);
-            newSource.volume = Mathf.Lerp(0f, bgmVolume, pct);
-            yield return null;
+            StopCoroutine(fadeRoutine);
+            fadeRoutine = null;
         }
 
-        activeSource.volume = 0f;
-        activeSource.Stop();
-        newSource.volume = bgmVolume;
+        // Stop all BGM sources to guarantee only one BGM is active at a time
+        bgmSource1.Stop();
+        bgmSource2.Stop();
 
-        isSource1Active = !isSource1Active;
-        bgmSource = newSource; // Keep referencing the active one
+        bgmSource1.clip = clip;
+        bgmSource1.volume = bgmVolume;
+        bgmSource1.Play();
+
+        isSource1Active = true;
     }
 
     public void StopBGM()
     {
+        if (fadeRoutine != null)
+        {
+            StopCoroutine(fadeRoutine);
+            fadeRoutine = null;
+        }
         bgmSource1.Stop();
         bgmSource2.Stop();
     }
@@ -154,14 +196,51 @@ public class AudioManager : MonoBehaviour
     public void SetBGMVolume(float volume)
     {
         bgmVolume = Mathf.Clamp01(volume);
-        // Only apply to the currently-playing source so we don't
-        // override a crossfade that is still in progress.
         AudioSource active = isSource1Active ? bgmSource1 : bgmSource2;
         if (active != null) active.volume = bgmVolume;
+    }
+
+    public void SetSFXVolume(float volume)
+    {
+        sfxVolume = Mathf.Clamp01(volume);
     }
 
     public void SetSFXVolumePersist(float volume)
     {
         sfxVolume = Mathf.Clamp01(volume);
+    }
+
+    private void OnEnable()
+    {
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
+    {
+        if (Instance != this) return;
+
+        if (scene.name == "Victory")
+        {
+            StopBGM();
+            PlayBGM("bgm_winner", true);
+        }
+        else if (scene.name == "GameOver")
+        {
+            StopBGM();
+            PlayBGM("bgm_gameover", true);
+        }
+        else if (scene.name == "MainMenu")
+        {
+            StopBGM();
+            if (bgmMap.ContainsKey("bgm_menu"))
+            {
+                PlayBGM("bgm_menu", true);
+            }
+        }
     }
 }

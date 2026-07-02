@@ -157,7 +157,7 @@ public class WaveManager : MonoBehaviour
     {
         if (waveStatusText != null)
         {
-            waveStatusText.text = $"--- WAVE {currentWaveIndex + 1} ---";
+            waveStatusText.text = $"WAVE {currentWaveIndex + 1}";
         }
 
         OnWaveChanged?.Invoke(currentWaveIndex + 1);
@@ -197,20 +197,25 @@ public class WaveManager : MonoBehaviour
             }
             else
             {
-                // Fallback: use camera
+                // Fallback: use camera viewport (0 to 1)
                 Camera cam = Camera.main;
-                worldX = Mathf.Lerp(
-                    cam.ViewportToWorldPoint(Vector3.left).x,
-                    cam.ViewportToWorldPoint(Vector3.right).x,
-                    pctX
-                );
+                if (cam != null)
+                {
+                    float zDist = Mathf.Abs(cam.transform.position.z);
+                    Vector3 leftEdge = cam.ViewportToWorldPoint(new Vector3(0.05f, 0.5f, zDist));
+                    Vector3 rightEdge = cam.ViewportToWorldPoint(new Vector3(0.95f, 0.5f, zDist));
+                    worldX = Mathf.Lerp(leftEdge.x, rightEdge.x, pctX);
+                }
+                else
+                {
+                    worldX = Mathf.Lerp(-8f, 8f, pctX);
+                }
             }
 
             Vector3 spawnPos = new Vector3(worldX, spawnPositionY, 0f);
 
             // 3. Spawn
             GameObject enemy = SpawnEnemy(prefabToSpawn, spawnPos, data.speedMultiplier);
-            activeEnemies.Add(enemy);
 
             // 4. Delay between spawns
             if (i < data.enemyCount - 1)
@@ -227,34 +232,47 @@ public class WaveManager : MonoBehaviour
     public GameObject SpawnEnemy(GameObject prefab, Vector3 position, float speedMult = 1f)
     {
         GameObject enemy = null;
+        Debug.Log($"[WaveManager] SpawnEnemy requested for prefab: {prefab?.name} at position: {position}");
 
         // Find the correct pool for this prefab
         ObjectPool pool = enemyPool;
         if (pool == null || pool.prefab != prefab)
         {
+            ObjectPool matchedPool = null;
             ObjectPool[] allPools = FindObjectsByType<ObjectPool>(FindObjectsInactive.Exclude);
             foreach (var p in allPools)
             {
                 if (p.prefab == prefab)
                 {
-                    pool = p;
+                    matchedPool = p;
                     break;
                 }
             }
+            pool = matchedPool;
         }
 
         if (pool != null)
         {
+            Debug.Log($"[WaveManager] Found ObjectPool '{pool.gameObject.name}' for prefab '{prefab.name}'");
             enemy = pool.Get(position, Quaternion.identity);
         }
         else
         {
+            Debug.Log($"[WaveManager] No ObjectPool found for prefab '{prefab.name}', calling Instantiate");
             enemy = Instantiate(prefab, position, Quaternion.identity);
         }
 
         // Apply speed multiplier
         if (enemy != null)
         {
+            Debug.Log($"[WaveManager] Successfully spawned enemy '{enemy.name}', activeSelf={enemy.activeSelf}, position={enemy.transform.position}");
+            // Register enemy in active list if not already there
+            if (!activeEnemies.Contains(enemy))
+            {
+                activeEnemies.Add(enemy);
+                UpdateUI();
+            }
+
             EnemyDrone drone = enemy.GetComponent<EnemyDrone>();
             if (drone != null)
             {
@@ -267,6 +285,10 @@ public class WaveManager : MonoBehaviour
                 hunter.moveSpeed = 3.5f * speedMult;
                 hunter.verticalSpeed = 1.0f * speedMult;
             }
+        }
+        else
+        {
+            Debug.LogError($"[WaveManager] Failed to spawn enemy for prefab '{prefab?.name}'");
         }
 
         return enemy;
@@ -294,6 +316,14 @@ public class WaveManager : MonoBehaviour
         {
             waveStatusText.text = "LEVEL COMPLETED!";
         }
+
+        bool isLevel3 = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name.Contains("Level3");
+        if (isLevel3)
+        {
+            AudioManager.Instance?.StopBGM();
+            AudioManager.Instance?.PlayBGM("bgm_winner", true);
+        }
+
         LevelManager.Instance?.LevelComplete();
     }
 
@@ -310,15 +340,15 @@ public class WaveManager : MonoBehaviour
             case WaveState.Countdown:
                 int displayWave = currentWaveIndex + 1;
                 if (displayWave > waves.Length) displayWave = waves.Length;
-                waveStatusText.text = $"Wave: {displayWave}";
+                waveStatusText.text = $"WAVES: {displayWave}";
                 break;
 
             case WaveState.Battling:
-                waveStatusText.text = $"Enemies: {activeEnemies.Count}";
+                waveStatusText.text = $"ENEMIES: {activeEnemies.Count}";
                 break;
 
             case WaveState.Spawning:
-                waveStatusText.text = $"--- WAVE {currentWaveIndex + 1} ---";
+                waveStatusText.text = $"WAVES: {currentWaveIndex + 1}";
                 break;
 
             case WaveState.LevelComplete:
@@ -337,4 +367,56 @@ public class WaveManager : MonoBehaviour
     public bool IsWaveInProgress() => state == WaveState.Battling || state == WaveState.Spawning;
 
     #endregion
+
+#if UNITY_EDITOR
+    private float autoPlayTimer = 0f;
+    private bool pressedB = false;
+    private bool quitTriggered = false;
+
+    private void AutoPlayDebug()
+    {
+        if (System.Environment.CommandLine.Contains("-autoplay"))
+        {
+            autoPlayTimer += Time.unscaledDeltaTime;
+            if (autoPlayTimer > 3f && !pressedB)
+            {
+                pressedB = true;
+                Debug.Log("[Autoplay] 3 seconds elapsed, pressing B to spawn boss...");
+                StopAllCoroutines();
+                foreach (var enemy in activeEnemies.ToArray())
+                {
+                    if (enemy != null) enemy.SetActive(false);
+                }
+                activeEnemies.Clear();
+                currentWaveIndex = waves.Length - 1;
+                state = WaveState.Countdown;
+                waveCountdown = 0.5f;
+                UpdateUI();
+            }
+
+            if (autoPlayTimer > 8.5f && !bossKilled)
+            {
+                bossKilled = true;
+                Debug.Log("[Autoplay] 8.5 seconds elapsed, killing Boss for music / death sequence test...");
+                foreach (var enemy in activeEnemies.ToArray())
+                {
+                    if (enemy != null)
+                    {
+                        EnemyHealth eh = enemy.GetComponent<EnemyHealth>();
+                        if (eh != null) eh.TakeDamage(9999);
+                    }
+                }
+            }
+
+            if (autoPlayTimer > 15f && !quitTriggered)
+            {
+                quitTriggered = true;
+                Debug.Log("[Autoplay] 15 seconds elapsed, exiting play mode and quitting Unity...");
+                UnityEditor.EditorApplication.isPlaying = false;
+                UnityEditor.EditorApplication.Exit(0);
+            }
+        }
+    }
+    private bool bossKilled = false;
+#endif
 }

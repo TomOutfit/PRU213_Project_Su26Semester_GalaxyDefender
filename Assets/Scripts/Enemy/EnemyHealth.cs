@@ -52,6 +52,11 @@ public class EnemyHealth : MonoBehaviour
 
         OnDeath?.Invoke();
 
+        if (GetComponent<BossController>() != null)
+        {
+            return;
+        }
+
         WaveManager.Instance?.OnEnemyDestroyed(gameObject);
 
         CameraShake.Instance?.Shake(0.15f, 0.1f);

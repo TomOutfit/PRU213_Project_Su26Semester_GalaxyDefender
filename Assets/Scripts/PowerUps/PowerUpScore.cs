@@ -8,4 +8,6 @@ public class PowerUpScore : PowerUp
         if (ScoreManager.Instance != null)
             ScoreManager.Instance.ActivateScoreMultiplier(10f);
     }
+
+    protected override string SFXKey => "sfx_powerup_score";
 }

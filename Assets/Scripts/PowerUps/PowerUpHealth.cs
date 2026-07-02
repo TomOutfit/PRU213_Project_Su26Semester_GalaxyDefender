@@ -6,4 +6,6 @@ public class PowerUpHealth : PowerUp
     {
         ph.AddHealth(30);
     }
+
+    protected override string SFXKey => "sfx_powerup_health";
 }
