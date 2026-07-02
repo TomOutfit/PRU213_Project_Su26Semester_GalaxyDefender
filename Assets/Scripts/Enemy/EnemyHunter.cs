@@ -26,9 +26,40 @@ public class EnemyHunter : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
+    private static readonly string[] ENEMY_SPRITES = new string[]
+    {
+        "Assets/Sprites/Enemies/enemy_drone.png",
+        "Assets/Sprites/Enemies/enemy_hunter.png",
+        "Assets/Sprites/Enemies/enemy_aegis_guardian.png",
+        "Assets/Sprites/Enemies/enemy_harvester_curved.png",
+        "Assets/Sprites/Enemies/enemy_pulse_ray.png",
+        "Assets/Sprites/Enemies/enemy_void_stinger.png"
+    };
+
+    private static readonly int[] ENEMY_POINTS = new int[]
+    {
+        300, // drone
+        600, // hunter
+        1200, // aegis_guardian
+        600, // harvester_curved
+        1500, // pulse_ray
+        2000  // void_stinger
+    };
+
+    private static readonly string[] BULLET_SPRITES = new string[]
+    {
+        "Assets/Sprites/Bullets/bullet_enemy.png",
+        "Assets/Sprites/Bullets/red_energy_spike.png",
+        "Assets/Sprites/Bullets/teal_energy_orb.png",
+        "Assets/Sprites/Bullets/purple_bio-spore.png",
+        "Assets/Sprites/Bullets/cyan_sniper_beam.png",
+        "Assets/Sprites/Bullets/red_energy_spike.png"
+    };
+
+    private int currentSpriteIndex = 0;
+
     private void Start()
     {
-        RuntimeSpriteFixer.EnsureSprite(GetComponent<SpriteRenderer>(), "Assets/Sprites/Enemies/enemy_hunter.png");
         enemyPool = GetComponentInParent<ObjectPool>();
 
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
@@ -48,6 +79,28 @@ public class EnemyHunter : MonoBehaviour
     {
         hasBeenVisible = false;
         _dying = false;
+        
+        SpriteRenderer sr = GetComponent<SpriteRenderer>();
+        Animator anim = GetComponent<Animator>();
+        if (sr != null)
+        {
+            int index = Random.Range(0, ENEMY_SPRITES.Length);
+            currentSpriteIndex = index;
+            string chosenPath = ENEMY_SPRITES[index];
+            RuntimeSpriteFixer.EnsureSprite(sr, chosenPath, true);
+            
+            if (anim != null)
+            {
+                anim.enabled = chosenPath.Contains("enemy_hunter.png");
+            }
+
+            EnemyHealth health = GetComponent<EnemyHealth>();
+            if (health != null)
+            {
+                health.points = ENEMY_POINTS[index];
+            }
+        }
+
         // Dynamically find player in case of respawn
         if (player == null)
         {
@@ -84,7 +137,15 @@ public class EnemyHunter : MonoBehaviour
             yield return new WaitForSeconds(fireInterval);
             if (bulletPool != null && bulletSpawnPoint != null)
             {
-                bulletPool.Get(bulletSpawnPoint.position, Quaternion.identity);
+                GameObject bulletObj = bulletPool.Get(bulletSpawnPoint.position, Quaternion.identity);
+                if (bulletObj != null)
+                {
+                    BulletEnemy bullet = bulletObj.GetComponent<BulletEnemy>();
+                    if (bullet != null)
+                    {
+                        bullet.SetSpritePath(BULLET_SPRITES[currentSpriteIndex]);
+                    }
+                }
             }
         }
     }

@@ -9,5 +9,6 @@ public class PowerUpScore : PowerUp
             ScoreManager.Instance.ActivateScoreMultiplier(50f);
     }
 
+    protected override int ScoreValue => 200;
     protected override string SFXKey => "sfx_powerup_score";
 }

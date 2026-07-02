@@ -2,11 +2,12 @@ using UnityEngine;
 
 public abstract class PowerUp : MonoBehaviour
 {
-    private const float BASE_SCALE = 0.25f;
-    private const float PULSE_AMPLITUDE = 0.08f;
+    private const float BASE_SCALE = 1.6f;
+    private const float PULSE_AMPLITUDE = 0.1f;
     private const float ROTATE_SPEED = 45f;
 
     // Magnet: distance at which power-ups are attracted to player
+    public static float MagnetRadiusMultiplier = 1.0f;
     private const float MAGNET_RADIUS = 2.5f;
     private const float MAGNET_SPEED = 5f;
 
@@ -46,10 +47,11 @@ public abstract class PowerUp : MonoBehaviour
         {
             Vector3 dir = player.transform.position - transform.position;
             float dist = dir.magnitude;
-            if (dist < MAGNET_RADIUS && dist > 0.1f)
+            float effectiveRadius = MAGNET_RADIUS * MagnetRadiusMultiplier;
+            if (dist < effectiveRadius && dist > 0.1f)
             {
                 // Scale pull strength by proximity (stronger when closer)
-                float pull = (1f - dist / MAGNET_RADIUS) * MAGNET_SPEED;
+                float pull = (1f - dist / effectiveRadius) * MAGNET_SPEED;
                 transform.position += dir.normalized * pull * Time.deltaTime;
 
                 // Disable rigidbody velocity while being attracted
@@ -76,6 +78,8 @@ public abstract class PowerUp : MonoBehaviour
     {
     }
 
+    protected virtual int ScoreValue => 50;
+
     protected virtual void OnTriggerEnter2D(Collider2D other)
     {
         if (!other.CompareTag("Player")) return;
@@ -85,7 +89,7 @@ public abstract class PowerUp : MonoBehaviour
 
         ApplyEffect(ph);
         AudioManager.Instance?.PlaySFX(SFXKey);
-        ScoreManager.Instance?.AddScore(50);
+        ScoreManager.Instance?.AddScore(ScoreValue);
         Destroy(gameObject);
     }
 

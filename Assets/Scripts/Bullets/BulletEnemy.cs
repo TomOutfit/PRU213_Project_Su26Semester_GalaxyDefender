@@ -9,7 +9,7 @@ using UnityEngine;
 public class BulletEnemy : MonoBehaviour
 {
     public float speed = 10f;
-    public int damage = 10;
+    public int damage = 50;
     
     private Rigidbody2D rb;
     private ObjectPool pool;
@@ -19,10 +19,32 @@ public class BulletEnemy : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
+    [HideInInspector]
+    public string customBulletSpritePath;
+
+    public void SetSpritePath(string path)
+    {
+        customBulletSpritePath = path;
+        SpriteRenderer sr = GetComponent<SpriteRenderer>();
+        if (sr != null && !string.IsNullOrEmpty(path))
+        {
+            RuntimeSpriteFixer.EnsureSprite(sr, path, true);
+        }
+    }
+
     private void Start()
     {
-        RuntimeSpriteFixer.EnsureSprite(GetComponent<SpriteRenderer>(), "Assets/Sprites/Bullets/bullet_enemy.png");
         pool = GetComponentInParent<ObjectPool>();
+    }
+
+    private void OnEnable()
+    {
+        SpriteRenderer sr = GetComponent<SpriteRenderer>();
+        if (sr != null)
+        {
+            string path = string.IsNullOrEmpty(customBulletSpritePath) ? "Assets/Sprites/Bullets/bullet_enemy.png" : customBulletSpritePath;
+            RuntimeSpriteFixer.EnsureSprite(sr, path, true);
+        }
     }
 
     private void FixedUpdate()
