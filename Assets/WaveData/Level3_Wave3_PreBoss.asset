@@ -10,29 +10,55 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b917d49cffa796a40ab94d673d3b7093, type: 3}
-  m_Name: Level1_Wave2
+  m_Name: Level3_Wave3_PreBoss
   m_EditorClassIdentifier: Assembly-CSharp::WaveData
-  enemyPrefab: {fileID: 3653653387466251481, guid: 01b253af2286c824cb9ad2f82c8269df, type: 3}
+  enemyPrefab: {fileID: 0}
   enemyPrefabs:
   - {fileID: 3653653387466251481, guid: 01b253af2286c824cb9ad2f82c8269df, type: 3}
-  - {fileID: 3653653387466251481, guid: 01b253af2286c824cb9ad2f82c8269df, type: 3}
-  - {fileID: 3653653387466251481, guid: 01b253af2286c824cb9ad2f82c8269df, type: 3}
   - {fileID: 8699029370271392514, guid: 90a751d602e7d05499188a493062f85e, type: 3}
-  - {fileID: 3653653387466251481, guid: 01b253af2286c824cb9ad2f82c8269df, type: 3}
-  - {fileID: 8699029370271392514, guid: 90a751d602e7d05499188a493062f85e, type: 3}
-  enemyCount: 12
+  enemyCount: 42
   spawnPositionsX:
-  - 0.139
-  - 0.269
-  - 0.475
-  - 0.627
-  - 0.728
+  - 0.169
+  - 0.263
+  - 0.413
+  - 0.612
+  - 0.74
+  - 0.824
+  - 0.12
+  - 0.315
+  - 0.416
+  - 0.628
+  - 0.739
   - 0.844
-  - 0.127
+  - 0.181
+  - 0.263
+  - 0.449
+  - 0.569
+  - 0.735
+  - 0.863
+  - 0.166
   - 0.309
-  - 0.485
-  - 0.637
-  - 0.781
-  - 0.823
-  speedMultiplier: 1.2
-  spawnDelay: 0.3
+  - 0.436
+  - 0.604
+  - 0.749
+  - 0.815
+  - 0.183
+  - 0.324
+  - 0.442
+  - 0.601
+  - 0.783
+  - 0.885
+  - 0.189
+  - 0.282
+  - 0.444
+  - 0.615
+  - 0.748
+  - 0.838
+  - 0.153
+  - 0.299
+  - 0.435
+  - 0.609
+  - 0.752
+  - 0.882
+  speedMultiplier: 1.65
+  spawnDelay: 0.2
