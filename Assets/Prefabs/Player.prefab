@@ -178,7 +178,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.2, y: 1.2, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3030884386622909986}
@@ -239,7 +239,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1.354, y: 0.738}
+  m_Size: {x: 3.077, y: 1.677}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -309,8 +309,8 @@ PolygonCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.354, y: 0.738}
-    newSize: {x: 1.354, y: 0.738}
+    oldSize: {x: 3.077, y: 1.677}
+    newSize: {x: 3.077, y: 1.677}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -318,10 +318,10 @@ PolygonCollider2D:
   m_Points:
     m_Paths:
     - - {x: 0, y: 1}
-      - {x: -0.95105654, y: 0.30901697}
-      - {x: -0.5877852, y: -0.80901706}
-      - {x: 0.58778536, y: -0.80901694}
-      - {x: 0.9510565, y: 0.30901712}
+      - {x: -2.162, y: 0.702}
+      - {x: -1.336, y: -1.838}
+      - {x: 1.336, y: -1.838}
+      - {x: 2.162, y: 0.702}
   m_UseDelaunayMesh: 1
 --- !u!95 &284122367864993776
 Animator:
@@ -364,6 +364,25 @@ MonoBehaviour:
   bulletPrefab: {fileID: 5508460709020774732, guid: e24f9bea77fbeec4a9ddcc6c263e3072, type: 3}
   bulletSpawnPoint: {fileID: 3030884386622909986}
   fireRate: 0.15
+  customShipSprite: {fileID: 0}
+  customBulletSprite: {fileID: 0}
+  useRandomShip: 1
+  shipConfigurations:
+  - shipName: Default
+    shipSprite: {fileID: 21300000, guid: 5c182baa006d5ec4b88812df5d242ed5, type: 3}
+    bulletSprite: {fileID: 21300000, guid: 3193e56089773804faade7836d5c9a12, type: 3}
+  - shipName: Iron Vanguard
+    shipSprite: {fileID: 21300000, guid: f89f705d4ba20d9449e1080e8a623b46, type: 3}
+    bulletSprite: {fileID: 21300000, guid: 2243d23f0da049f4ab41c8f927342cb6, type: 3}
+  - shipName: Nova Prism
+    shipSprite: {fileID: 21300000, guid: 6287f3b68cbbb3448bb40ffb3cfc6146, type: 3}
+    bulletSprite: {fileID: 21300000, guid: 0b1797ebdc970d346ac210e7bf2fddf4, type: 3}
+  - shipName: Shadow Wraith
+    shipSprite: {fileID: 21300000, guid: a993d47853336664f95ff525790d2bab, type: 3}
+    bulletSprite: {fileID: 21300000, guid: 83e3cd133591d0d40b11fb21b402c2c0, type: 3}
+  - shipName: Star Swift
+    shipSprite: {fileID: 21300000, guid: 16fb1566d0253474c95e5ae459035f52, type: 3}
+    bulletSprite: {fileID: 21300000, guid: 0831b73aa37795345af191ec588185cc, type: 3}
 --- !u!114 &6281844613495987974
 MonoBehaviour:
   m_ObjectHideFlags: 0
