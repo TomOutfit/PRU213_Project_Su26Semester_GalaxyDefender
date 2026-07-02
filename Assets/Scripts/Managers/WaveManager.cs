@@ -320,7 +320,7 @@ public class WaveManager : MonoBehaviour
         bool isLevel3 = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name.Contains("Level3");
         if (isLevel3)
         {
-            AudioManager.Instance?.StopBGM();
+            AudioManager.Instance?.StopAllLevelSounds();
             AudioManager.Instance?.PlayBGM("bgm_winner", true);
         }
 

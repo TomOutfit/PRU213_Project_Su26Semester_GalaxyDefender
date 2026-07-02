@@ -323,12 +323,12 @@ public class SceneTransitionManager : MonoBehaviour
         string upperText = fullText.ToUpper();
 
         // Header nhỏ kiểu terminal (Cỡ chữ giảm từ 10 xuống còn 4 để đạt ~30% kích thước)
-        const string HEADER = "<line-height=130%><cspace=0.3em><size=4><color=#A3E2F2>" +
+        const string HEADER = "<line-height=130%><cspace=0.3em><size=6><color=#A3E2F2>" +
                               "// ACCESSING SYSTEM LOG //</color></size></cspace>\n\n";
         
         // Body chữ trắng (Cỡ chữ giảm từ 16 xuống còn 6 để đạt ~30% kích thước)
         // Điều chỉnh line-height=140% để phù hợp với size chữ siêu nhỏ
-        const string BODY_OPEN  = "<line-height=140%><cspace=0.15em><size=6><color=#FFFFFF>";
+        const string BODY_OPEN  = "<line-height=140%><cspace=0.15em><size=9><color=#FFFFFF>";
         const string BODY_CLOSE = "</color></size></cspace></line-height>";
 
         const float CHAR_DELAY = 0.025f;
@@ -446,7 +446,7 @@ public class SceneTransitionManager : MonoBehaviour
         _statusText = CreateTMP(root, "StatusText",
             anchorMin: new Vector2(0.04f, 0.04f),
             anchorMax: new Vector2(0.55f, 0.22f),
-            fontSize: 4,
+            fontSize: 8,
             color: new Color(accentCyberColor.r, accentCyberColor.g, accentCyberColor.b, 0.55f),
             alignment: TextAlignmentOptions.BottomLeft,
             fontAsset: _narrativeFont);

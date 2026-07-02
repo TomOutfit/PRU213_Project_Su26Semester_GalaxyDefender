@@ -193,6 +193,32 @@ public class AudioManager : MonoBehaviour
         bgmSource2.Stop();
     }
 
+    public void StopAllLevelSounds()
+    {
+        if (fadeRoutine != null)
+        {
+            StopCoroutine(fadeRoutine);
+            fadeRoutine = null;
+        }
+
+        // Stop our own BGM sources
+        if (bgmSource1 != null) bgmSource1.Stop();
+        if (bgmSource2 != null) bgmSource2.Stop();
+
+        // Stop our own SFX source
+        if (sfxSource != null) sfxSource.Stop();
+
+        // Find all other active AudioSources in the scene and stop them
+        AudioSource[] allSources = FindObjectsByType<AudioSource>(FindObjectsInactive.Exclude);
+        foreach (AudioSource src in allSources)
+        {
+            if (src != null && src != bgmSource1 && src != bgmSource2 && src != sfxSource)
+            {
+                src.Stop();
+            }
+        }
+    }
+
     public void SetBGMVolume(float volume)
     {
         bgmVolume = Mathf.Clamp01(volume);
@@ -226,12 +252,12 @@ public class AudioManager : MonoBehaviour
 
         if (scene.name == "Victory")
         {
-            StopBGM();
+            StopAllLevelSounds();
             PlayBGM("bgm_winner", true);
         }
         else if (scene.name == "GameOver")
         {
-            StopBGM();
+            StopAllLevelSounds();
             PlayBGM("bgm_gameover", true);
         }
         else if (scene.name == "MainMenu")

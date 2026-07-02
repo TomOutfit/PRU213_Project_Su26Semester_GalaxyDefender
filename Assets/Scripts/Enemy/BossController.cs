@@ -332,7 +332,7 @@ public class BossController : MonoBehaviour
         StopAllCoroutines();
 
         // Immediately turn off bgm_boss and play bgm_winner
-        AudioManager.Instance?.StopBGM();
+        AudioManager.Instance?.StopAllLevelSounds();
         AudioManager.Instance?.PlayBGM("bgm_winner", true);
 
         // Award boss points!
