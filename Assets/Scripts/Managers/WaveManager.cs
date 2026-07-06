@@ -251,6 +251,23 @@ public class WaveManager : MonoBehaviour
             pool = matchedPool;
         }
 
+        // Dynamically create pool if not present in the scene, ensuring optimization
+        if (pool == null && prefab != null)
+        {
+            GameObject container = GameObject.Find("ObjectPoolContainer");
+            Transform parentTransform = container != null ? container.transform : null;
+
+            GameObject newPoolGo = new GameObject($"{prefab.name}Pool_Dynamic");
+            if (parentTransform != null)
+            {
+                newPoolGo.transform.SetParent(parentTransform);
+            }
+
+            pool = newPoolGo.AddComponent<ObjectPool>();
+            pool.Initialize(prefab, 20, 5);
+            Debug.Log($"[WaveManager] Dynamically created ObjectPool for '{prefab.name}' to optimize memory and GC allocation.");
+        }
+
         if (pool != null)
         {
             Debug.Log($"[WaveManager] Found ObjectPool '{pool.gameObject.name}' for prefab '{prefab.name}'");
@@ -284,6 +301,12 @@ public class WaveManager : MonoBehaviour
             {
                 hunter.moveSpeed = 3.5f * speedMult;
                 hunter.verticalSpeed = 1.0f * speedMult;
+            }
+
+            ObstacleMine mine = enemy.GetComponent<ObstacleMine>();
+            if (mine != null)
+            {
+                mine.moveSpeed = 1.5f * speedMult;
             }
         }
         else

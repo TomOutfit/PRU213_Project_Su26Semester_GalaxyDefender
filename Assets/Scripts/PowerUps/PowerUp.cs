@@ -2,8 +2,8 @@ using UnityEngine;
 
 public abstract class PowerUp : MonoBehaviour
 {
-    private const float BASE_SCALE = 1.6f;
-    private const float PULSE_AMPLITUDE = 0.1f;
+    private const float BASE_SCALE = 2.0f;
+    private const float PULSE_AMPLITUDE = 0.125f;
     private const float ROTATE_SPEED = 45f;
 
     // Magnet: distance at which power-ups are attracted to player

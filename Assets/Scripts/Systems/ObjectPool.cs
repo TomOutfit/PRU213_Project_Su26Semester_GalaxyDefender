@@ -22,8 +22,21 @@ public class ObjectPool : MonoBehaviour
     private readonly HashSet<GameObject> activeObjects = new HashSet<GameObject>();
     private readonly Queue<GameObject> activeOrder = new Queue<GameObject>();
 
+    private bool isPrewarmed = false;
+
     private void Start()
     {
+        PrewarmPool();
+    }
+
+    /// <summary>
+    /// Programmatically configures and warms up the pool at runtime.
+    /// </summary>
+    public void Initialize(GameObject prefabToManage, int capacity, int size)
+    {
+        prefab = prefabToManage;
+        maxCapacity = capacity;
+        initialSize = size;
         PrewarmPool();
     }
 
@@ -32,10 +45,12 @@ public class ObjectPool : MonoBehaviour
     /// </summary>
     private void PrewarmPool()
     {
+        if (isPrewarmed) return;
         if (prefab == null)
         {
             return;
         }
+        isPrewarmed = true;
 
         int countToSpawn = Mathf.Min(initialSize, maxCapacity);
         for (int i = 0; i < countToSpawn; i++)

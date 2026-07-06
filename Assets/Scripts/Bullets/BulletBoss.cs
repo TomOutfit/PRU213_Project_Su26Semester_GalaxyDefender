@@ -40,8 +40,11 @@ public class BulletBoss : MonoBehaviour
 
     private void Start()
     {
-        ApplyPhase(1);
         pool = GetComponentInParent<ObjectPool>();
+        if (activeSpeed == 0f)
+        {
+            ApplyPhase(currentPhase);
+        }
     }
 
     /// <summary>Call this before or after enabling the bullet to set phase (1-3).</summary>
