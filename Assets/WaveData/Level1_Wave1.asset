@@ -14,11 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WaveData
   enemyPrefab: {fileID: 3653653387466251481, guid: 01b253af2286c824cb9ad2f82c8269df, type: 3}
   enemyPrefabs: []
-  enemyCount: 4
+  enemyCount: 8
   spawnPositionsX:
-  - 0.2
-  - 0.4
-  - 0.6
-  - 0.8
+  - 0.159
+  - 0.305
+  - 0.423
+  - 0.628
+  - 0.722
+  - 0.835
+  - 0.167
+  - 0.316
   speedMultiplier: 1
   spawnDelay: 0.3

@@ -14,7 +14,7 @@ public class BossController : MonoBehaviour
     public static UnityEvent OnBossDeadGlobal = new UnityEvent();
 
     [Header("Stats")]
-    public int maxHP = 300;
+    public int maxHP = 100000;
     public float spawnDuration = 3f;
     public float phase2MoveSpeed = 1.5f;
     public float phase3MoveSpeed = 2.0f;
@@ -23,6 +23,18 @@ public class BossController : MonoBehaviour
     public GameObject bossBulletPrefab;
     public GameObject dronePrefab;
     public Transform bulletSpawnPoint;
+
+    [Header("Bullet Damage (overrides bullet prefab defaults)")]
+    [Tooltip("Override damage dealt per phase. Leave at 0 to use bullet prefab values.")]
+    public int phase1Damage = 0;
+    public int phase2Damage = 0;
+    public int phase3Damage = 0;
+
+    [Header("Bullet Speed (overrides bullet prefab defaults)")]
+    [Tooltip("Override bullet speed per phase. Leave at 0 to use bullet prefab values.")]
+    public float phase1Speed = 0f;
+    public float phase2Speed = 0f;
+    public float phase3Speed = 0f;
 
     [Header("Phase Visuals")]
     [Tooltip("Sprite shown during Phase 1 (full HP).")]
@@ -109,7 +121,7 @@ public class BossController : MonoBehaviour
         if (health != null)
         {
             health.maxHP = maxHP;
-            health.points = 1000;
+            health.points = 50000;
             health.OnHealthChanged.AddListener(OnHealthChanged);
             health.OnDeath.AddListener(Die);
         }
@@ -252,6 +264,8 @@ public class BossController : MonoBehaviour
                 BulletBoss bb = bullet.GetComponent<BulletBoss>();
                 if (bb != null)
                 {
+                    bb.SetPhase(currentPhase);
+                    ApplyBulletOverrides(bb);
                     bb.SetDirection(direction);
                 }
             }
@@ -262,11 +276,32 @@ public class BossController : MonoBehaviour
             BulletBoss bb = bullet.GetComponent<BulletBoss>();
             if (bb != null)
             {
+                bb.SetPhase(currentPhase);
+                ApplyBulletOverrides(bb);
                 bb.SetDirection(direction);
             }
         }
 
         AudioManager.Instance?.PlaySFX("sfx_shoot_boss");
+    }
+
+    /// <summary>Apply per-phase damage/speed overrides from the BossController inspector.</summary>
+    private void ApplyBulletOverrides(BulletBoss bb)
+    {
+        if (bb == null) return;
+        int dmg = currentPhase switch
+        {
+            2 => phase2Damage > 0 ? phase2Damage : bb.phase2Damage,
+            3 => phase3Damage > 0 ? phase3Damage : bb.phase3Damage,
+            _  => phase1Damage > 0 ? phase1Damage : bb.phase1Damage
+        };
+        float spd = currentPhase switch
+        {
+            2 => phase2Speed > 0f ? phase2Speed : bb.phase2Speed,
+            3 => phase3Speed > 0f ? phase3Speed : bb.phase3Speed,
+            _  => phase1Speed > 0f ? phase1Speed : bb.phase1Speed
+        };
+        bb.SetPhaseDamageAndSpeed(currentPhase, dmg, spd);
     }
 
     /// <summary>Advances the boss phase as HP crosses the 66% and 33% thresholds.</summary>

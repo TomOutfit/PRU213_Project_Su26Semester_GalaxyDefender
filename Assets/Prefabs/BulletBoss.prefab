@@ -30,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -84,7 +84,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 5
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: e00b5a076d203b949ae7b3e0288150be, type: 3}
+  m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -92,7 +92,7 @@ SpriteRenderer:
   m_Size: {x: 0.5, y: 0.5}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_SpriteSortPoint: 0
 --- !u!50 &298589689422869933
 Rigidbody2D:
@@ -159,13 +159,13 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 5, y: 5}
+    oldSize: {x: 0.5, y: 0.5}
     newSize: {x: 0.5, y: 0.5}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.5, y: 3.6}
+  m_Size: {x: 0.4, y: 1.0}
   m_EdgeRadius: 0
 --- !u!114 &1050487841243107522
 MonoBehaviour:
@@ -179,6 +179,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c3a1b2d4e5f6a7b8c9d0e1f2a3b4c5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BulletBoss
-  speed: 8
-  damage: 10
-  spritePath: Assets/Sprites/Bullets/bullet_boss.png
+  phase1Speed: 6
+  phase1Damage: 15
+  phase2Speed: 8
+  phase2Damage: 20
+  phase3Speed: 10
+  phase3Damage: 30
+  spritePhase1: Assets/Sprites/Bullets/bullet_boss_phase1.png
+  spritePhase2: Assets/Sprites/Bullets/bullet_boss_phase2.png
+  spritePhase3: Assets/Sprites/Bullets/bullet_boss_phase3.png
+  currentPhase: 1

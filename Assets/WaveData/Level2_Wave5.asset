@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b917d49cffa796a40ab94d673d3b7093, type: 3}
+  m_Name: Level2_Wave5
+  m_EditorClassIdentifier: Assembly-CSharp::WaveData
+  enemyPrefab: {fileID: 0}
+  enemyPrefabs:
+  - {fileID: 3653653387466251481, guid: 01b253af2286c824cb9ad2f82c8269df, type: 3}
+  - {fileID: 8699029370271392514, guid: 90a751d602e7d05499188a493062f85e, type: 3}
+  enemyCount: 30
+  spawnPositionsX:
+  - 0.138
+  - 0.322
+  - 0.44
+  - 0.625
+  - 0.774
+  - 0.858
+  - 0.179
+  - 0.329
+  - 0.438
+  - 0.602
+  - 0.779
+  - 0.879
+  - 0.111
+  - 0.292
+  - 0.411
+  - 0.603
+  - 0.781
+  - 0.857
+  - 0.179
+  - 0.308
+  - 0.479
+  - 0.574
+  - 0.765
+  - 0.863
+  - 0.12
+  - 0.263
+  - 0.411
+  - 0.625
+  - 0.761
+  - 0.829
+  speedMultiplier: 1.45
+  spawnDelay: 0.25

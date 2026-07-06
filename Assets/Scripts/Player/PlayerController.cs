@@ -21,6 +21,20 @@ public class PlayerController : MonoBehaviour
     public Transform bulletSpawnPoint;
     public float fireRate = 0.15f;
 
+    [Header("Custom Ship Visuals")]
+    [Tooltip("Leave empty to use default ship_player sprite")]
+    public Sprite customShipSprite;
+    [Tooltip("Leave empty to use default bullet_player sprite")]
+    public Sprite customBulletSprite;
+
+    [Header("Random Ship Selection")]
+    [Tooltip("If checked, picks a random configuration from shipConfigurations on Start")]
+    public bool useRandomShip = true;
+    public ShipConfig[] shipConfigurations;
+
+    [HideInInspector]
+    public bool isTripleFireActive = false;
+
     [Header("Knockback")]
     public float knockbackSpeed = 8f;
     public float knockbackDuration = 0.1f;
@@ -49,7 +63,25 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        RuntimeSpriteFixer.EnsureSprite(GetComponent<SpriteRenderer>(), "Assets/Sprites/Player/player_ship.png");
+        if (useRandomShip && shipConfigurations != null && shipConfigurations.Length > 0)
+        {
+            int randomIndex = Random.Range(0, shipConfigurations.Length);
+            ShipConfig selected = shipConfigurations[randomIndex];
+            customShipSprite = selected.shipSprite;
+            customBulletSprite = selected.bulletSprite;
+            Debug.Log($"[PlayerController] Selected random ship: {selected.shipName}");
+        }
+
+        SpriteRenderer sr = GetComponent<SpriteRenderer>();
+        if (customShipSprite != null)
+        {
+            sr.sprite = customShipSprite;
+        }
+        else
+        {
+            RuntimeSpriteFixer.EnsureSprite(sr, "Assets/Sprites/Player/player_ship.png");
+        }
+
         Transform thruster = transform.Find("Thruster");
         if (thruster != null)
         {
@@ -84,18 +116,67 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void LateUpdate()
+    {
+        if (customShipSprite != null)
+        {
+            SpriteRenderer sr = GetComponent<SpriteRenderer>();
+            if (sr != null)
+            {
+                sr.sprite = customShipSprite;
+            }
+        }
+    }
+
     private void Shoot()
     {
-        if (bulletPool != null && bulletSpawnPoint != null)
+        if (bulletSpawnPoint != null)
         {
-            bulletPool.Get(bulletSpawnPoint.position, Quaternion.identity);
-        }
-        else if (bulletPrefab != null && bulletSpawnPoint != null)
-        {
-            Instantiate(bulletPrefab, bulletSpawnPoint.position, Quaternion.identity);
+            if (isTripleFireActive)
+            {
+                // Fire center bullet
+                SpawnPlayerBullet(bulletSpawnPoint.position, Quaternion.identity);
+                // Fire left bullet (angled -15 degrees)
+                SpawnPlayerBullet(bulletSpawnPoint.position, Quaternion.Euler(0f, 0f, 15f));
+                // Fire right bullet (angled +15 degrees)
+                SpawnPlayerBullet(bulletSpawnPoint.position, Quaternion.Euler(0f, 0f, -15f));
+            }
+            else
+            {
+                SpawnPlayerBullet(bulletSpawnPoint.position, Quaternion.identity);
+            }
         }
 
         AudioManager.Instance?.PlaySFX("sfx_shoot_player");
+    }
+
+    private void SpawnPlayerBullet(Vector3 position, Quaternion rotation)
+    {
+        GameObject bullet = null;
+        if (bulletPool != null)
+        {
+            bullet = bulletPool.Get(position, rotation);
+        }
+        else if (bulletPrefab != null)
+        {
+            bullet = Instantiate(bulletPrefab, position, rotation);
+        }
+
+        if (bullet != null)
+        {
+            SpriteRenderer bulletSr = bullet.GetComponent<SpriteRenderer>();
+            if (bulletSr != null)
+            {
+                if (customBulletSprite != null)
+                {
+                    bulletSr.sprite = customBulletSprite;
+                }
+                else
+                {
+                    RuntimeSpriteFixer.EnsureSprite(bulletSr, "Assets/Sprites/Bullets/bullet_player.png");
+                }
+            }
+        }
     }
 
     private void FixedUpdate()
@@ -187,4 +268,62 @@ public class PlayerController : MonoBehaviour
         minY = bottomLeft.y + paddingY;
         maxY = middleRight.y - paddingY;
     }
+
+    [System.Serializable]
+    public struct ShipConfig
+    {
+        public string shipName;
+        public Sprite shipSprite;
+        public Sprite bulletSprite;
+    }
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        if (shipConfigurations == null || shipConfigurations.Length == 0)
+        {
+            PopulateDefaultConfigurations();
+        }
+    }
+
+    private void Reset()
+    {
+        PopulateDefaultConfigurations();
+    }
+
+    [ContextMenu("Populate Ship Configurations")]
+    public void PopulateDefaultConfigurations()
+    {
+        string[] shipNames = { "Default", "Iron Vanguard", "Nova Prism", "Shadow Wraith", "Star Swift" };
+        string[] shipPaths = {
+            "Assets/Sprites/Player/player_ship.png",
+            "Assets/Sprites/Player/iron_vanguard.png",
+            "Assets/Sprites/Player/nova_prism.png",
+            "Assets/Sprites/Player/shadow_wraith.png",
+            "Assets/Sprites/Player/star_swift.png"
+        };
+        string[] bulletPaths = {
+            "Assets/Sprites/Bullets/bullet_player.png",
+            "Assets/Sprites/Bullets/player_iron_vanguard_bullet.png",
+            "Assets/Sprites/Bullets/player_nova_prism_bullet.png",
+            "Assets/Sprites/Bullets/player_shadow_wraith_bullet.png",
+            "Assets/Sprites/Bullets/player_star_swift_bullet.png"
+        };
+
+        shipConfigurations = new ShipConfig[shipNames.Length];
+        for (int i = 0; i < shipNames.Length; i++)
+        {
+            Sprite sSprite = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>(shipPaths[i]);
+            Sprite bSprite = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>(bulletPaths[i]);
+            shipConfigurations[i] = new ShipConfig
+            {
+                shipName = shipNames[i],
+                shipSprite = sSprite,
+                bulletSprite = bSprite
+            };
+        }
+        UnityEditor.EditorUtility.SetDirty(this);
+        Debug.Log("[PlayerController] Auto-populated 5 ship configurations!");
+    }
+#endif
 }

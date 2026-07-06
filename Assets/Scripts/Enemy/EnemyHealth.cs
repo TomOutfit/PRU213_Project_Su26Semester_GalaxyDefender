@@ -9,8 +9,8 @@ using UnityEngine.Events;
 public class EnemyHealth : MonoBehaviour
 {
     [Header("Stats")]
-    public int maxHP = 30;
-    public int points = 100;
+    public int maxHP = 50;
+    public int points = 300;
     
     private int currentHP;
     public int CurrentHP => currentHP;

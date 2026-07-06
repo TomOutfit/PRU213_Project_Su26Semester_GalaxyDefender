@@ -25,9 +25,40 @@ public class EnemyDrone : MonoBehaviour
     private bool hasBeenVisible = false;
     private bool _dying = false;
 
+    private static readonly string[] ENEMY_SPRITES = new string[]
+    {
+        "Assets/Sprites/Enemies/enemy_drone.png",
+        "Assets/Sprites/Enemies/enemy_hunter.png",
+        "Assets/Sprites/Enemies/enemy_aegis_guardian.png",
+        "Assets/Sprites/Enemies/enemy_harvester_curved.png",
+        "Assets/Sprites/Enemies/enemy_pulse_ray.png",
+        "Assets/Sprites/Enemies/enemy_void_stinger.png"
+    };
+
+    private static readonly int[] ENEMY_POINTS = new int[]
+    {
+        500, // drone
+        1500, // hunter
+        2000, // aegis_guardian
+        1000, // harvester_curved
+        2500, // pulse_ray
+        3000  // void_stinger
+    };
+
+    private static readonly string[] BULLET_SPRITES = new string[]
+    {
+        "Assets/Sprites/Bullets/bullet_enemy.png",
+        "Assets/Sprites/Bullets/enemy_red_energy_spike.png",
+        "Assets/Sprites/Bullets/enemy_teal_energy_orb.png",
+        "Assets/Sprites/Bullets/enemy_purple_bio-spore.png",
+        "Assets/Sprites/Bullets/enemy_cyan_sniper_beam.png",
+        "Assets/Sprites/Bullets/enemy_red_energy_spike.png"
+    };
+
+    private int currentSpriteIndex = 0;
+
     private void Start()
     {
-        RuntimeSpriteFixer.EnsureSprite(GetComponent<SpriteRenderer>(), "Assets/Sprites/Enemies/enemy_drone.png");
         enemyPool = GetComponentInParent<ObjectPool>();
         
         // Find the specific pool for Enemy Bullets (as dictated by P2's setup)
@@ -42,6 +73,21 @@ public class EnemyDrone : MonoBehaviour
     {
         hasBeenVisible = false;
         _dying = false;
+        
+        SpriteRenderer sr = GetComponent<SpriteRenderer>();
+        if (sr != null)
+        {
+            int index = Random.Range(0, ENEMY_SPRITES.Length);
+            currentSpriteIndex = index;
+            RuntimeSpriteFixer.EnsureSprite(sr, ENEMY_SPRITES[index], true);
+            
+            EnemyHealth health = GetComponent<EnemyHealth>();
+            if (health != null)
+            {
+                health.points = ENEMY_POINTS[index];
+            }
+        }
+        
         StartCoroutine(FireRoutine());
     }
 
@@ -66,7 +112,15 @@ public class EnemyDrone : MonoBehaviour
             yield return new WaitForSeconds(fireInterval);
             if (bulletPool != null && bulletSpawnPoint != null)
             {
-                bulletPool.Get(bulletSpawnPoint.position, Quaternion.identity);
+                GameObject bulletObj = bulletPool.Get(bulletSpawnPoint.position, Quaternion.identity);
+                if (bulletObj != null)
+                {
+                    BulletEnemy bullet = bulletObj.GetComponent<BulletEnemy>();
+                    if (bullet != null)
+                    {
+                        bullet.SetSpritePath(BULLET_SPRITES[currentSpriteIndex]);
+                    }
+                }
             }
         }
     }
