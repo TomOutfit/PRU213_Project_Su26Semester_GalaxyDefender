@@ -256,8 +256,8 @@ public class PlayerController : MonoBehaviour
         if (mainCamera == null) return;
 
         // Padding to keep the ship from going half off-screen
-        float paddingX = 0.5f; 
-        float paddingY = 0.5f; 
+        float paddingX = 0.625f; 
+        float paddingY = 0.625f; 
 
         // Player Y is clamped between bottom 10% and bottom 50% of the screen
         Vector3 bottomLeft = mainCamera.ViewportToWorldPoint(new Vector3(0, 0.1f, mainCamera.nearClipPlane));
