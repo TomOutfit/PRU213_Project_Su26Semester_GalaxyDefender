@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 
 /// <summary>
 /// Controls the gameplay Heads-Up Display (HUD).
@@ -22,6 +23,7 @@ public class HUDController : MonoBehaviour
     public TMP_FontAsset messageFont;
 
     private HUDVfx _vfx;
+    private PlayerHealth playerHealth;
 
     private void Awake()
     {
@@ -43,16 +45,16 @@ public class HUDController : MonoBehaviour
         if (LivesTextTMP != null) _vfx.livesTextRect  = LivesTextTMP.GetComponent<RectTransform>();
 
         // Subscribe to PlayerHealth events
-        PlayerHealth playerHealth = Object.FindAnyObjectByType<PlayerHealth>();
+        playerHealth = Object.FindAnyObjectByType<PlayerHealth>();
         if (playerHealth != null)
         {
             // Auto-resolve components if not set in Inspector
             if (HPSlider == null) HPSlider = transform.Find("HPBar")?.GetComponent<Slider>();
             if (ShieldSlider == null) ShieldSlider = transform.Find("ShieldBar")?.GetComponent<Slider>();
 
-            // Set max values
-            if (HPSlider != null) HPSlider.maxValue = playerHealth.maxHP;
-            if (ShieldSlider != null) ShieldSlider.maxValue = playerHealth.maxShield;
+            // Set max values to 100%
+            if (HPSlider != null) HPSlider.maxValue = 100f;
+            if (ShieldSlider != null) ShieldSlider.maxValue = 100f;
 
             playerHealth.OnHPChanged.AddListener(UpdateHP);
             playerHealth.OnShieldChanged.AddListener(UpdateShield);
@@ -105,6 +107,148 @@ public class HUDController : MonoBehaviour
         // Kick-off count-up animation cho Lives ngay khi scene bắt đầu
         if (GameManager.Instance != null)
             UpdateLives(GameManager.Instance.GetCurrentLives());
+
+        // Hiển thị hướng dẫn điều khiển khi bắt đầu Level 1
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Level1")
+        {
+            ShowTutorialOverlay();
+        }
+    }
+
+    private void ShowTutorialOverlay()
+    {
+        // Tạo Panel chính chứa hướng dẫn điều khiển
+        GameObject tutorialPanel = new GameObject("TutorialPanel", typeof(RectTransform), typeof(CanvasGroup));
+        tutorialPanel.transform.SetParent(transform, false);
+
+        RectTransform panelRect = tutorialPanel.GetComponent<RectTransform>();
+        panelRect.anchoredPosition = Vector2.zero;
+        panelRect.sizeDelta = new Vector2(460f, 280f);
+
+        // Tạo background tối bán trong suốt (xanh đen vũ trụ đậm)
+        GameObject bgObj = new GameObject("Background", typeof(RectTransform), typeof(Image));
+        bgObj.transform.SetParent(tutorialPanel.transform, false);
+        RectTransform bgRect = bgObj.GetComponent<RectTransform>();
+        bgRect.anchorMin = Vector2.zero;
+        bgRect.anchorMax = Vector2.one;
+        bgRect.sizeDelta = Vector2.zero;
+        Image bgImg = bgObj.GetComponent<Image>();
+        bgImg.color = new Color(0.04f, 0.04f, 0.08f, 0.94f);
+        
+        Sprite borderSprite = LoadSpriteRuntime("Assets/Sprites/UI/ui_bar_bg.png");
+        if (borderSprite != null)
+        {
+            bgImg.sprite = borderSprite;
+            bgImg.type = Image.Type.Sliced;
+        }
+
+        // Tạo dải màu trang trí phía trên (neon cyan)
+        GameObject headerObj = new GameObject("HeaderBar", typeof(RectTransform), typeof(Image));
+        headerObj.transform.SetParent(tutorialPanel.transform, false);
+        RectTransform headerRect = headerObj.GetComponent<RectTransform>();
+        headerRect.anchorMin = new Vector2(0f, 1f);
+        headerRect.anchorMax = new Vector2(1f, 1f);
+        headerRect.anchoredPosition = new Vector2(0f, -20f);
+        headerRect.sizeDelta = new Vector2(-40f, 4f);
+        Image headerImg = headerObj.GetComponent<Image>();
+        headerImg.color = new Color(0f, 0.9f, 1f, 0.6f);
+
+        // Tạo tiêu đề CONTROLS
+        GameObject titleObj = new GameObject("TitleText", typeof(RectTransform), typeof(TextMeshProUGUI));
+        titleObj.transform.SetParent(tutorialPanel.transform, false);
+        RectTransform titleRect = titleObj.GetComponent<RectTransform>();
+        titleRect.anchoredPosition = new Vector2(0f, 95f);
+        titleRect.sizeDelta = new Vector2(420f, 40f);
+        TextMeshProUGUI titleText = titleObj.GetComponent<TextMeshProUGUI>();
+        titleText.text = "MISSION BRIEFING";
+        titleText.fontSize = 24;
+        titleText.color = Color.yellow;
+        titleText.alignment = TextAlignmentOptions.Center;
+        titleText.fontStyle = FontStyles.Bold;
+        if (messageFont != null) titleText.font = messageFont;
+
+        // Tạo đường kẻ ngăn cách tiêu đề (Separator)
+        GameObject sepObj = new GameObject("Separator", typeof(RectTransform), typeof(Image));
+        sepObj.transform.SetParent(tutorialPanel.transform, false);
+        RectTransform sepRect = sepObj.GetComponent<RectTransform>();
+        sepRect.anchoredPosition = new Vector2(0f, 65f);
+        sepRect.sizeDelta = new Vector2(400f, 1.5f);
+        Image sepImg = sepObj.GetComponent<Image>();
+        sepImg.color = new Color(1f, 1f, 1f, 0.15f);
+
+        // Hướng dẫn điều khiển chi tiết dạng Rich Text
+        GameObject controlsObj = new GameObject("ControlsText", typeof(RectTransform), typeof(TextMeshProUGUI));
+        controlsObj.transform.SetParent(tutorialPanel.transform, false);
+        RectTransform controlsRect = controlsObj.GetComponent<RectTransform>();
+        controlsRect.anchoredPosition = new Vector2(0f, -5f);
+        controlsRect.sizeDelta = new Vector2(420f, 120f);
+        TextMeshProUGUI controlsText = controlsObj.GetComponent<TextMeshProUGUI>();
+        controlsText.text = "<color=#FFCC00><b>MOVE:</b></color>  WASD or Arrow Keys\n" +
+                            "<color=#FFCC00><b>FIRE:</b></color>  Spacebar\n\n" +
+                            "<color=#00E5FF><i>Dodge obstacles and eliminate invaders!</i></color>";
+        controlsText.fontSize = 16;
+        controlsText.color = Color.white;
+        controlsText.alignment = TextAlignmentOptions.Center;
+        if (messageFont != null) controlsText.font = messageFont;
+
+        // Dòng nhắc ấn nút để bắt đầu
+        GameObject startObj = new GameObject("StartText", typeof(RectTransform), typeof(TextMeshProUGUI));
+        startObj.transform.SetParent(tutorialPanel.transform, false);
+        RectTransform startRect = startObj.GetComponent<RectTransform>();
+        startRect.anchoredPosition = new Vector2(0f, -100f);
+        startRect.sizeDelta = new Vector2(420f, 30f);
+        TextMeshProUGUI startText = startObj.GetComponent<TextMeshProUGUI>();
+        startText.text = "► PRESS ANY KEY TO DEPLOY ◄";
+        startText.fontSize = 14;
+        startText.color = new Color(1f, 0.45f, 0f);
+        startText.alignment = TextAlignmentOptions.Center;
+        startText.fontStyle = FontStyles.Bold;
+        if (messageFont != null) startText.font = messageFont;
+
+        // Hiệu ứng nhấp nháy chữ
+        StartCoroutine(PulsateText(startRect));
+
+        // Bắt đầu chờ tương tác phím để đóng Panel
+        StartCoroutine(DismissTutorialRoutine(tutorialPanel.GetComponent<CanvasGroup>()));
+    }
+
+    private IEnumerator PulsateText(RectTransform rect)
+    {
+        while (rect != null)
+        {
+            float scale = 1f + Mathf.Sin(Time.unscaledTime * 5f) * 0.08f;
+            rect.localScale = new Vector3(scale, scale, 1f);
+            yield return null;
+        }
+    }
+
+    private IEnumerator DismissTutorialRoutine(CanvasGroup group)
+    {
+        float oldTimeScale = Time.timeScale;
+        Time.timeScale = 0f;
+
+        yield return null;
+
+        while (!Input.anyKeyDown)
+        {
+            yield return null;
+        }
+
+        Time.timeScale = oldTimeScale;
+
+        float elapsed = 0f;
+        float duration = 0.3f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            if (group != null) group.alpha = 1f - (elapsed / duration);
+            yield return null;
+        }
+
+        if (group != null)
+        {
+            Destroy(group.gameObject);
+        }
     }
 
     private void EnsureHUDSprites(Slider slider, string fillPath)
@@ -179,12 +323,20 @@ public class HUDController : MonoBehaviour
 
     private void UpdateHP(int hp)
     {
-        if (HPSlider != null) HPSlider.value = hp;
+        if (HPSlider != null)
+        {
+            float maxHP = playerHealth != null ? playerHealth.maxHP : 100f;
+            HPSlider.value = (maxHP > 0) ? ((float)hp / maxHP) * 100f : 0f;
+        }
     }
 
     private void UpdateShield(int shield)
     {
-        if (ShieldSlider != null) ShieldSlider.value = shield;
+        if (ShieldSlider != null)
+        {
+            float maxShield = playerHealth != null ? playerHealth.maxShield : 100f;
+            ShieldSlider.value = (maxShield > 0) ? ((float)shield / maxShield) * 100f : 0f;
+        }
     }
 
     private void UpdateScore(int score)

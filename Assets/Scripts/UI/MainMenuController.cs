@@ -37,18 +37,8 @@ public class MainMenuController : MonoBehaviour
             }
         }
 
-        // Populate high score labels
-        int[] scores = SaveManager.Instance != null ? SaveManager.Instance.GetHighScores() : new int[5];
-        if (SaveManager.Instance == null)
-        {
-            for (int i = 0; i < 5; i++) scores[i] = PlayerPrefs.GetInt("HighScore_" + i, 0);
-        }
-
-        for (int i = 0; i < highScoreLabels.Length; i++)
-        {
-            if (highScoreLabels[i] != null)
-                highScoreLabels[i].text = $"{i + 1}. {scores[i]:N0}";
-        }
+        // Populate high score labels dynamically
+        RefreshMenuScores();
 
         // Show level indicator
         if (levelIndicatorText != null)
@@ -186,7 +176,27 @@ public class MainMenuController : MonoBehaviour
     {
         if (highScorePanel != null)
         {
-            highScorePanel.SetActive(!highScorePanel.activeSelf);
+            bool nextState = !highScorePanel.activeSelf;
+            highScorePanel.SetActive(nextState);
+            if (nextState)
+            {
+                RefreshMenuScores();
+            }
+        }
+    }
+
+    private void RefreshMenuScores()
+    {
+        int[] scores = SaveManager.Instance != null ? SaveManager.Instance.GetHighScores() : new int[5];
+        if (SaveManager.Instance == null)
+        {
+            for (int i = 0; i < 5; i++) scores[i] = PlayerPrefs.GetInt("HighScore_" + i, 0);
+        }
+
+        for (int i = 0; i < highScoreLabels.Length; i++)
+        {
+            if (highScoreLabels[i] != null)
+                highScoreLabels[i].text = $"{i + 1}. {scores[i]:N0}";
         }
     }
 

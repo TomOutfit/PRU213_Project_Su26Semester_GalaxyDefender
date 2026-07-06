@@ -33,7 +33,7 @@ public class BossHUDController : MonoBehaviour
             if (bossHPSlider != null)
             {
                 bossHPSlider.value = Mathf.Lerp(bossHPSlider.value, targetHPNormalized, Time.deltaTime * hpLerpSpeed);
-                if (Mathf.Abs(bossHPSlider.value - targetHPNormalized) < 0.001f)
+                if (Mathf.Abs(bossHPSlider.value - targetHPNormalized) < 0.1f)
                 {
                     bossHPSlider.value = targetHPNormalized;
                 }
@@ -45,7 +45,7 @@ public class BossHUDController : MonoBehaviour
                 if (damageBufferSlider.value > bossHPSlider.value)
                 {
                     damageBufferSlider.value = Mathf.Lerp(damageBufferSlider.value, bossHPSlider.value, Time.deltaTime * bufferLerpSpeed);
-                    if (damageBufferSlider.value - bossHPSlider.value < 0.001f)
+                    if (damageBufferSlider.value - bossHPSlider.value < 0.1f)
                     {
                         damageBufferSlider.value = bossHPSlider.value;
                     }
@@ -56,8 +56,8 @@ public class BossHUDController : MonoBehaviour
                 }
             }
 
-            // Pulsate Boss HUD if low health
-            if (bossHPSlider != null && targetHPNormalized < 0.25f)
+            // Pulsate Boss HUD if low health (less than 25%)
+            if (bossHPSlider != null && targetHPNormalized < 25f)
             {
                 float pulse = 1.0f + Mathf.Sin(Time.time * 10f) * 0.02f;
                 bossHUDPanel.transform.localScale = new Vector3(pulse, pulse, 1f);
@@ -101,8 +101,11 @@ public class BossHUDController : MonoBehaviour
                 bossHealth.OnHealthChanged.RemoveListener(UpdateHP);
                 bossHealth.OnHealthChanged.AddListener(UpdateHP);
                 
-                // Initialize health values for bars
-                targetHPNormalized = (float)bossHealth.CurrentHP / bossHealth.maxHP;
+                // Initialize health values for bars to percentage (0 -> 100)
+                if (bossHPSlider != null) bossHPSlider.maxValue = 100f;
+                if (damageBufferSlider != null) damageBufferSlider.maxValue = 100f;
+
+                targetHPNormalized = ((float)bossHealth.CurrentHP / bossHealth.maxHP) * 100f;
                 if (bossHPSlider != null) bossHPSlider.value = targetHPNormalized;
                 if (damageBufferSlider != null) damageBufferSlider.value = targetHPNormalized;
             }
@@ -123,7 +126,7 @@ public class BossHUDController : MonoBehaviour
         if (bossHealth != null)
         {
             float prevHP = targetHPNormalized;
-            targetHPNormalized = (float)hp / bossHealth.maxHP;
+            targetHPNormalized = ((float)hp / bossHealth.maxHP) * 100f;
 
             // If damage taken, pulse the whole HUD panel
             if (targetHPNormalized < prevHP)

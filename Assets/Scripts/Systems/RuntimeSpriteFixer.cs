@@ -115,6 +115,10 @@ public static class RuntimeSpriteFixer
     private static float GetPPUForPath(string path)
     {
         string p = path.Replace('\\', '/');
+        if (p.Contains("Obstacles/"))
+        {
+            return 250f;
+        }
         if (p.Contains("Player/"))
         {
             if (p.Contains("player_ship.png") || p.Contains("player_thruster_sheet.png"))
