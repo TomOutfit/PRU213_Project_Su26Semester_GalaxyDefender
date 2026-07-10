@@ -180,11 +180,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BulletBoss
   phase1Speed: 6
-  phase1Damage: 15
+  phase1Damage: 10000
   phase2Speed: 8
-  phase2Damage: 20
+  phase2Damage: 12000
   phase3Speed: 10
-  phase3Damage: 30
+  phase3Damage: 15000
   spritePhase1: Assets/Sprites/Bullets/bullet_boss_phase1.png
   spritePhase2: Assets/Sprites/Bullets/bullet_boss_phase2.png
   spritePhase3: Assets/Sprites/Bullets/bullet_boss_phase3.png

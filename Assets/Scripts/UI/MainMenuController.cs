@@ -29,11 +29,23 @@ public class MainMenuController : MonoBehaviour
         if (optionsPanel == null) optionsPanel = GameObject.Find("OptionsPanel");
         if (highScorePanel == null) highScorePanel = GameObject.Find("HighScorePanel");
 
-        for (int i = 0; i < 5; i++)
+        if (highScorePanel != null)
         {
-            if (highScoreLabels[i] == null)
+            TMP_Text[] allTexts = highScorePanel.GetComponentsInChildren<TMP_Text>(true);
+            for (int i = 0; i < 5; i++)
             {
-                highScoreLabels[i] = GameObject.Find($"highScore{i + 1}")?.GetComponent<TMP_Text>();
+                if (highScoreLabels[i] == null)
+                {
+                    string targetName = $"highScore{i + 1}";
+                    foreach (var txt in allTexts)
+                    {
+                        if (txt.gameObject.name.Equals(targetName, System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            highScoreLabels[i] = txt;
+                            break;
+                        }
+                    }
+                }
             }
         }
 

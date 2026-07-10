@@ -23,6 +23,6 @@ public class PowerUpSpeedBolt : PowerUp
         }
     }
 
-    protected override int ScoreValue => 50;
+    protected override int ScoreValue => 10000;
     protected override string SFXKey => "sfx_player_dash";
 }

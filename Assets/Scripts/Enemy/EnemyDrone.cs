@@ -37,12 +37,12 @@ public class EnemyDrone : MonoBehaviour
 
     private static readonly int[] ENEMY_POINTS = new int[]
     {
-        500, // drone
-        1500, // hunter
-        2000, // aegis_guardian
-        1000, // harvester_curved
-        2500, // pulse_ray
-        3000  // void_stinger
+        10000, // drone
+        20000, // hunter
+        30000, // aegis_guardian
+        15000, // harvester_curved
+        40000, // pulse_ray
+        50000  // void_stinger
     };
 
     private static readonly string[] BULLET_SPRITES = new string[]
@@ -84,7 +84,7 @@ public class EnemyDrone : MonoBehaviour
             EnemyHealth health = GetComponent<EnemyHealth>();
             if (health != null)
             {
-                health.points = ENEMY_POINTS[index];
+                health.ResetHealth(20000, ENEMY_POINTS[index]);
             }
         }
         

@@ -38,12 +38,12 @@ public class EnemyHunter : MonoBehaviour
 
     private static readonly int[] ENEMY_POINTS = new int[]
     {
-        300, // drone
-        600, // hunter
-        1200, // aegis_guardian
-        600, // harvester_curved
-        1500, // pulse_ray
-        2000  // void_stinger
+        15000, // drone
+        25000, // hunter
+        40000, // aegis_guardian
+        20000, // harvester_curved
+        50000, // pulse_ray
+        60000  // void_stinger
     };
 
     private static readonly string[] BULLET_SPRITES = new string[]
@@ -97,7 +97,7 @@ public class EnemyHunter : MonoBehaviour
             EnemyHealth health = GetComponent<EnemyHealth>();
             if (health != null)
             {
-                health.points = ENEMY_POINTS[index];
+                health.ResetHealth(30000, ENEMY_POINTS[index]);
             }
         }
 

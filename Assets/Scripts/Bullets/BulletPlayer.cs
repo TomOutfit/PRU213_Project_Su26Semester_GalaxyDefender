@@ -9,7 +9,7 @@ using UnityEngine;
 public class BulletPlayer : MonoBehaviour
 {
     public float speed = 12f;
-    public int damage = 100;
+    public int damage = 15000;
     
     private Rigidbody2D rb;
     private ObjectPool pool;
@@ -21,6 +21,7 @@ public class BulletPlayer : MonoBehaviour
 
     private void Start()
     {
+        damage = 15000;
         SpriteRenderer sr = GetComponent<SpriteRenderer>();
         if (sr != null && sr.sprite == null)
         {

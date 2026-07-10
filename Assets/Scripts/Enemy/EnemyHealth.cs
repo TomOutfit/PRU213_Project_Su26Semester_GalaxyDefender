@@ -107,4 +107,13 @@ public class EnemyHealth : MonoBehaviour
             gameObject.SetActive(false);
         }
     }
+
+    /// <summary>Forces health and points initialization from script code, bypassing prefab overrides.</summary>
+    public void ResetHealth(int hp, int pts)
+    {
+        maxHP = hp;
+        points = pts;
+        currentHP = hp;
+        OnHealthChanged?.Invoke(currentHP);
+    }
 }
