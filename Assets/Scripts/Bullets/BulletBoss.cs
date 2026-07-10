@@ -9,15 +9,15 @@ public class BulletBoss : MonoBehaviour
 {
     [Header("Phase 1 — Single aimed shot")]
     public float phase1Speed = 6f;
-    public int phase1Damage = 15;
+    public int phase1Damage = 10000;
 
     [Header("Phase 2 — Faster, stronger")]
     public float phase2Speed = 8f;
-    public int phase2Damage = 20;
+    public int phase2Damage = 12000;
 
     [Header("Phase 3 — Fastest, hardest")]
     public float phase3Speed = 10f;
-    public int phase3Damage = 30;
+    public int phase3Damage = 15000;
 
     [Header("Sprites")]
     public string spritePhase1 = "Assets/Sprites/Bullets/bullet_boss_phase1.png";
@@ -40,6 +40,10 @@ public class BulletBoss : MonoBehaviour
 
     private void Start()
     {
+        phase1Damage = 10000;
+        phase2Damage = 12000;
+        phase3Damage = 15000;
+
         pool = GetComponentInParent<ObjectPool>();
         if (activeSpeed == 0f)
         {

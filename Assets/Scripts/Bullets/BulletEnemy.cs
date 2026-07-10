@@ -9,7 +9,7 @@ using UnityEngine;
 public class BulletEnemy : MonoBehaviour
 {
     public float speed = 10f;
-    public int damage = 50;
+    public int damage = 8000;
     
     private Rigidbody2D rb;
     private ObjectPool pool;
@@ -34,6 +34,7 @@ public class BulletEnemy : MonoBehaviour
 
     private void Start()
     {
+        damage = 8000;
         pool = GetComponentInParent<ObjectPool>();
     }
 
