@@ -180,4 +180,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BulletPlayer
   speed: 12
-  damage: 10
+  damage: 15000

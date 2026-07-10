@@ -245,8 +245,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26a492b7e93278f47a75782049b9854b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
-  maxHP: 300
-  points: 1000
+  maxHP: 300000
+  points: 1000000
   OnDeath:
     m_PersistentCalls:
       m_Calls: []
@@ -265,7 +265,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b5884ff4b24b8641b05bfc283b99548, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BossController
-  maxHP: 300
+  maxHP: 300000
   spawnDuration: 3
   phase2MoveSpeed: 1.5
   phase3MoveSpeed: 2

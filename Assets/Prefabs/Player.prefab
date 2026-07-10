@@ -395,8 +395,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37050efe110312a449dd0100984b7614, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
-  maxHP: 100
-  maxShield: 50
+  maxHP: 100000
+  maxShield: 50000
   isDashing: 0
   OnDeath:
     m_PersistentCalls:

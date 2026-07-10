@@ -180,4 +180,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BulletEnemy
   speed: 10
-  damage: 10
+  damage: 8000
