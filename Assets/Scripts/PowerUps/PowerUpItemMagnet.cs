@@ -15,6 +15,6 @@ public class PowerUpItemMagnet : PowerUp
         PowerUp.MagnetRadiusMultiplier = 1f;
     }
 
-    protected override int ScoreValue => 60;
+    protected override int ScoreValue => 10000;
     protected override string SFXKey => "sfx_powerup_shield";
 }

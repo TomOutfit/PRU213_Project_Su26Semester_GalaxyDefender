@@ -22,6 +22,6 @@ public class PowerUpTripleFire : PowerUp
         }
     }
 
-    protected override int ScoreValue => 120;
+    protected override int ScoreValue => 10000;
     protected override string SFXKey => "sfx_powerup_score";
 }

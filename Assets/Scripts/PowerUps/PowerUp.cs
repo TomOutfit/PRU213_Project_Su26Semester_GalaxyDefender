@@ -78,7 +78,7 @@ public abstract class PowerUp : MonoBehaviour
     {
     }
 
-    protected virtual int ScoreValue => 50;
+    protected virtual int ScoreValue => 10000;
 
     protected virtual void OnTriggerEnter2D(Collider2D other)
     {
