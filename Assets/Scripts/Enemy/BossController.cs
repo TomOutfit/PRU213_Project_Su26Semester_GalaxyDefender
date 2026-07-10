@@ -13,8 +13,8 @@ public class BossController : MonoBehaviour
 {
     public static UnityEvent OnBossDeadGlobal = new UnityEvent();
 
-    [Header("Stats")]
-    public int maxHP = 100000;
+    [Header("Boss Stats")]
+    public int maxHP = 300000;
     public float spawnDuration = 3f;
     public float phase2MoveSpeed = 1.5f;
     public float phase3MoveSpeed = 2.0f;
@@ -120,8 +120,7 @@ public class BossController : MonoBehaviour
 
         if (health != null)
         {
-            health.maxHP = maxHP;
-            health.points = 50000;
+            health.ResetHealth(maxHP, 1000000);
             health.OnHealthChanged.AddListener(OnHealthChanged);
             health.OnDeath.AddListener(Die);
         }
