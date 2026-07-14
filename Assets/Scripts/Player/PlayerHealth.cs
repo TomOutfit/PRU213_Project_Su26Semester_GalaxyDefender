@@ -9,8 +9,8 @@ using UnityEngine.Events;
 public class PlayerHealth : MonoBehaviour
 {
     [Header("Stats")]
-    public int maxHP = 100000;
-    public int maxShield = 5000;
+    public int maxHP = 1000000;
+    public int maxShield = 1000000;
 
     public int currentHP { get; private set; }
     public int currentShield { get; private set; }
@@ -26,11 +26,17 @@ public class PlayerHealth : MonoBehaviour
 
     private Animator animator;
 
+    private void Awake()
+    {
+        maxHP = 1000000;
+        maxShield = 1000000;
+    }
+
     private void Start()
     {
         animator = GetComponent<Animator>();
         currentHP = maxHP;
-        currentShield = 0; // Shield only restores via Shield power-up
+        currentShield = maxShield; // Starts with a full shield!
         
         OnHPChanged?.Invoke(currentHP);
         OnShieldChanged?.Invoke(currentShield);
@@ -155,12 +161,19 @@ public class PlayerHealth : MonoBehaviour
         GetComponent<Collider2D>().enabled = false;
         isDashing = true; // i-frames during respawn
 
-        yield return new WaitForSeconds(1f);
+        Time.timeScale = 0.3f; // Enter slow-motion for dramatic death
+
+        yield return new WaitForSecondsRealtime(0.8f);
+
+        Time.timeScale = 1.0f; // Restore normal speed
 
         // Reset position to bottom center
         transform.position = new Vector3(0, -4f, 0);
         currentHP = maxHP;
         currentShield = 0;
+
+        PlayerController pc = GetComponent<PlayerController>();
+        if (pc != null) pc.ResetWeapon();
         
         OnHPChanged?.Invoke(currentHP);
         OnShieldChanged?.Invoke(currentShield);

@@ -11,15 +11,15 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [Header("Movement")]
-    public float moveSpeed = 5f;
-    public float dashSpeed = 15f;
+    public float moveSpeed = 12f;
+    public float dashSpeed = 18f;
     public float dashDuration = 0.15f;
-    public float dashCooldown = 2.0f;
+    public float dashCooldown = 1.5f;
 
     [Header("Shooting")]
     public GameObject bulletPrefab;
     public Transform bulletSpawnPoint;
-    public float fireRate = 0.15f;
+    public float fireRate = 0.05f;
 
     [Header("Custom Ship Visuals")]
     [Tooltip("Leave empty to use default ship_player sprite")]
@@ -32,8 +32,8 @@ public class PlayerController : MonoBehaviour
     public bool useRandomShip = true;
     public ShipConfig[] shipConfigurations;
 
-    [HideInInspector]
-    public bool isTripleFireActive = false;
+    [Header("Weapon Upgrade System")]
+    public int bulletCount = 3;
 
     [Header("Knockback")]
     public float knockbackSpeed = 8f;
@@ -63,6 +63,8 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
+        bulletCount = 3;
+        transform.rotation = Quaternion.identity; // Point straight up
         if (useRandomShip && shipConfigurations != null && shipConfigurations.Length > 0)
         {
             int randomIndex = Random.Range(0, shipConfigurations.Length);
@@ -92,6 +94,40 @@ public class PlayerController : MonoBehaviour
         {
             bulletPool = poolObj.GetComponent<ObjectPool>();
         }
+
+        // Add a premium trail effect for artistic performance
+        TrailRenderer trail = gameObject.GetComponent<TrailRenderer>();
+        if (trail == null)
+        {
+            trail = gameObject.AddComponent<TrailRenderer>();
+            trail.time = 0.4f;
+            trail.startWidth = 0.25f;
+            trail.endWidth = 0.0f;
+            trail.sortingOrder = 3;
+            
+            // Create a gorgeous cyan to transparent gradient
+            Gradient gradient = new Gradient();
+            gradient.SetKeys(
+                new GradientColorKey[] { 
+                    new GradientColorKey(new Color(0f, 0.8f, 1f, 1f), 0f), 
+                    new GradientColorKey(new Color(0f, 0.2f, 1f, 0.4f), 0.5f),
+                    new GradientColorKey(new Color(0f, 0.05f, 0.5f, 0f), 1f) 
+                },
+                new GradientAlphaKey[] { 
+                    new GradientAlphaKey(0.8f, 0f), 
+                    new GradientAlphaKey(0.4f, 0.5f),
+                    new GradientAlphaKey(0f, 1f) 
+                }
+            );
+            trail.colorGradient = gradient;
+            
+            // Set trail material using Sprites/Default shader
+            Shader spriteShader = Shader.Find("Sprites/Default");
+            if (spriteShader != null)
+            {
+                trail.material = new Material(spriteShader);
+            }
+        }
     }
 
     private void Update()
@@ -100,12 +136,20 @@ public class PlayerController : MonoBehaviour
 
         inputVector = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
 
+        // Rotate ship to face the direction of movement smoothly
+        if (inputVector != Vector2.zero)
+        {
+            float targetAngle = Mathf.Atan2(inputVector.y, inputVector.x) * Mathf.Rad2Deg - 90f;
+            Quaternion targetRotation = Quaternion.Euler(0f, 0f, targetAngle);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 15f * Time.deltaTime);
+        }
+
         if (Input.GetKeyDown(KeyCode.LeftShift) && Time.time >= lastDashTime + dashCooldown)
         {
             StartCoroutine(DashRoutine());
         }
 
-        // Shooting logic
+        // Shooting logic (supports Space)
         if (GameManager.Instance != null && GameManager.Instance.CurrentState == GameManager.State.Playing)
         {
             if (Input.GetKey(KeyCode.Space) && Time.time >= nextFireTime)
@@ -132,18 +176,26 @@ public class PlayerController : MonoBehaviour
     {
         if (bulletSpawnPoint != null)
         {
-            if (isTripleFireActive)
+            if (bulletCount <= 1)
             {
-                // Fire center bullet
-                SpawnPlayerBullet(bulletSpawnPoint.position, Quaternion.identity);
-                // Fire left bullet (angled -15 degrees)
-                SpawnPlayerBullet(bulletSpawnPoint.position, Quaternion.Euler(0f, 0f, 15f));
-                // Fire right bullet (angled +15 degrees)
-                SpawnPlayerBullet(bulletSpawnPoint.position, Quaternion.Euler(0f, 0f, -15f));
+                SpawnPlayerBullet(bulletSpawnPoint.position, transform.rotation);
+                CameraShake.Instance?.Shake(0.015f, 0.04f); // Minor shake for base weapon
             }
             else
             {
-                SpawnPlayerBullet(bulletSpawnPoint.position, Quaternion.identity);
+                float totalArc = Mathf.Min(160f, (bulletCount - 1) * 15f);
+                float startAngle = -totalArc / 2f;
+                float angleStep = totalArc / (bulletCount - 1);
+
+                for (int j = 0; j < bulletCount; j++)
+                {
+                    float angle = startAngle + j * angleStep;
+                    SpawnPlayerBullet(bulletSpawnPoint.position, transform.rotation * Quaternion.Euler(0f, 0f, -angle));
+                }
+
+                // Shake intensity scales with bullet tier
+                float shakeIntensity = bulletCount == 3 ? 0.03f : (bulletCount == 9 ? 0.06f : 0.12f);
+                CameraShake.Instance?.Shake(shakeIntensity, 0.05f);
             }
         }
 
@@ -249,6 +301,19 @@ public class PlayerController : MonoBehaviour
         }
 
         isKnockback = false;
+    }
+
+    public void UpgradeWeapon()
+    {
+        bulletCount = Mathf.Min(27, bulletCount * 3);
+        Debug.Log($"[PlayerController] Weapon upgraded! Bullet count: {bulletCount}");
+    }
+
+    public void ResetWeapon()
+    {
+        bulletCount = 3;
+        transform.rotation = Quaternion.identity; // Reset rotation to straight up
+        Debug.Log("[PlayerController] Weapon reset to starting level.");
     }
 
     private void UpdateScreenBounds()
