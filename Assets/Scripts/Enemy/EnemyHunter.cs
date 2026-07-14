@@ -28,35 +28,29 @@ public class EnemyHunter : MonoBehaviour
 
     private static readonly string[] ENEMY_SPRITES = new string[]
     {
-        "Assets/Sprites/Enemies/enemy_drone.png",
         "Assets/Sprites/Enemies/enemy_hunter.png",
-        "Assets/Sprites/Enemies/enemy_aegis_guardian.png",
-        "Assets/Sprites/Enemies/enemy_harvester_curved.png",
         "Assets/Sprites/Enemies/enemy_pulse_ray.png",
         "Assets/Sprites/Enemies/enemy_void_stinger.png"
     };
 
     private static readonly int[] ENEMY_POINTS = new int[]
     {
-        15000, // drone
         25000, // hunter
-        40000, // aegis_guardian
-        20000, // harvester_curved
         50000, // pulse_ray
         60000  // void_stinger
     };
 
     private static readonly string[] BULLET_SPRITES = new string[]
     {
-        "Assets/Sprites/Bullets/bullet_enemy.png",
         "Assets/Sprites/Bullets/enemy_red_energy_spike.png",
-        "Assets/Sprites/Bullets/enemy_teal_energy_orb.png",
-        "Assets/Sprites/Bullets/enemy_purple_bio-spore.png",
         "Assets/Sprites/Bullets/enemy_cyan_sniper_beam.png",
         "Assets/Sprites/Bullets/enemy_red_energy_spike.png"
     };
 
     private int currentSpriteIndex = 0;
+    private float randomPhase;
+    private float swoopFrequency;
+    private float swoopAmplitude;
 
     private void Start()
     {
@@ -77,6 +71,10 @@ public class EnemyHunter : MonoBehaviour
 
     private void OnEnable()
     {
+        randomPhase = Random.Range(0f, Mathf.PI * 2f);
+        swoopFrequency = Random.Range(2.0f, 4.0f);
+        swoopAmplitude = Random.Range(1.0f, 2.0f);
+
         hasBeenVisible = false;
         _dying = false;
         
@@ -117,15 +115,26 @@ public class EnemyHunter : MonoBehaviour
 
     private void FixedUpdate()
     {
+        float prevX = rb.position.x;
         float targetX = rb.position.x;
         if (player != null && player.gameObject.activeInHierarchy)
         {
             targetX = player.position.x;
         }
 
-        float newX = Mathf.MoveTowards(rb.position.x, targetX, moveSpeed * Time.fixedDeltaTime);
+        // Swoop motion: add a sine wave offset relative to the tracking direction
+        float swoopOffset = Mathf.Sin(Time.time * swoopFrequency + randomPhase) * swoopAmplitude;
+        float baseNewX = Mathf.MoveTowards(rb.position.x, targetX, moveSpeed * Time.fixedDeltaTime);
+        float newX = baseNewX + swoopOffset;
+
         float newY = rb.position.y - verticalSpeed * Time.fixedDeltaTime;
         rb.MovePosition(new Vector2(newX, newY));
+
+        // Tilt based on horizontal movement direction
+        float deltaX = newX - prevX;
+        float tiltAngle = -deltaX * 20f / (moveSpeed * Time.fixedDeltaTime + 0.001f);
+        tiltAngle = Mathf.Clamp(tiltAngle, -30f, 30f);
+        transform.rotation = Quaternion.Euler(0f, 0f, tiltAngle);
     }
 
     /// <summary>Fires a pooled enemy bullet on a fixed interval for the hunter's lifetime.</summary>

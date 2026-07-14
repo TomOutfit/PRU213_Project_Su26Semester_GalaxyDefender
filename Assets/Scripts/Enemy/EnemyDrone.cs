@@ -28,34 +28,29 @@ public class EnemyDrone : MonoBehaviour
     private static readonly string[] ENEMY_SPRITES = new string[]
     {
         "Assets/Sprites/Enemies/enemy_drone.png",
-        "Assets/Sprites/Enemies/enemy_hunter.png",
         "Assets/Sprites/Enemies/enemy_aegis_guardian.png",
-        "Assets/Sprites/Enemies/enemy_harvester_curved.png",
-        "Assets/Sprites/Enemies/enemy_pulse_ray.png",
-        "Assets/Sprites/Enemies/enemy_void_stinger.png"
+        "Assets/Sprites/Enemies/enemy_harvester_curved.png"
     };
 
     private static readonly int[] ENEMY_POINTS = new int[]
     {
         10000, // drone
-        20000, // hunter
         30000, // aegis_guardian
-        15000, // harvester_curved
-        40000, // pulse_ray
-        50000  // void_stinger
+        15000  // harvester_curved
     };
 
     private static readonly string[] BULLET_SPRITES = new string[]
     {
         "Assets/Sprites/Bullets/bullet_enemy.png",
-        "Assets/Sprites/Bullets/enemy_red_energy_spike.png",
         "Assets/Sprites/Bullets/enemy_teal_energy_orb.png",
-        "Assets/Sprites/Bullets/enemy_purple_bio-spore.png",
-        "Assets/Sprites/Bullets/enemy_cyan_sniper_beam.png",
-        "Assets/Sprites/Bullets/enemy_red_energy_spike.png"
+        "Assets/Sprites/Bullets/enemy_purple_bio-spore.png"
     };
 
     private int currentSpriteIndex = 0;
+    private float startX;
+    private float randomPhase;
+    private float swayFrequency;
+    private float swayAmplitude;
 
     private void Start()
     {
@@ -71,6 +66,11 @@ public class EnemyDrone : MonoBehaviour
 
     private void OnEnable()
     {
+        startX = rb != null ? rb.position.x : transform.position.x;
+        randomPhase = Random.Range(0f, Mathf.PI * 2f);
+        swayFrequency = Random.Range(1.5f, 3.5f);
+        swayAmplitude = Random.Range(1.0f, 2.5f);
+
         hasBeenVisible = false;
         _dying = false;
         
@@ -98,7 +98,16 @@ public class EnemyDrone : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.MovePosition(rb.position + Vector2.down * moveSpeed * Time.fixedDeltaTime);
+        float prevX = rb.position.x;
+        float newX = startX + Mathf.Sin(Time.time * swayFrequency + randomPhase) * swayAmplitude;
+        float newY = rb.position.y - moveSpeed * Time.fixedDeltaTime;
+        rb.MovePosition(new Vector2(newX, newY));
+
+        // Tilt based on horizontal movement direction
+        float deltaX = newX - prevX;
+        float tiltAngle = -deltaX * 15f / (swayAmplitude * swayFrequency * Time.fixedDeltaTime + 0.001f);
+        tiltAngle = Mathf.Clamp(tiltAngle, -25f, 25f);
+        transform.rotation = Quaternion.Euler(0f, 0f, tiltAngle);
     }
 
     /// <summary>Fires a pooled enemy bullet on a fixed interval for the drone's lifetime.</summary>

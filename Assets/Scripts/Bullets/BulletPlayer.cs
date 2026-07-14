@@ -9,19 +9,59 @@ using UnityEngine;
 public class BulletPlayer : MonoBehaviour
 {
     public float speed = 12f;
-    public int damage = 15000;
+    public int damage = 100000;
     
     private Rigidbody2D rb;
     private ObjectPool pool;
+    private TrailRenderer trail;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+
+        // Add a neon-trail for artistic player bullets
+        trail = GetComponent<TrailRenderer>();
+        if (trail == null)
+        {
+            trail = gameObject.AddComponent<TrailRenderer>();
+            trail.time = 0.15f;
+            trail.startWidth = 0.12f;
+            trail.endWidth = 0.0f;
+            trail.sortingOrder = 4;
+            
+            // Bright neon yellow/orange trail gradient
+            Gradient gradient = new Gradient();
+            gradient.SetKeys(
+                new GradientColorKey[] { 
+                    new GradientColorKey(new Color(1f, 0.9f, 0.2f, 1f), 0f), 
+                    new GradientColorKey(new Color(1f, 0.5f, 0f, 0.3f), 1f) 
+                },
+                new GradientAlphaKey[] { 
+                    new GradientAlphaKey(0.8f, 0f), 
+                    new GradientAlphaKey(0f, 1f) 
+                }
+            );
+            trail.colorGradient = gradient;
+            
+            Shader spriteShader = Shader.Find("Sprites/Default");
+            if (spriteShader != null)
+            {
+                trail.material = new Material(spriteShader);
+            }
+        }
+    }
+
+    private void OnEnable()
+    {
+        if (trail != null)
+        {
+            trail.Clear();
+        }
     }
 
     private void Start()
     {
-        damage = 15000;
+        damage = 100000;
         SpriteRenderer sr = GetComponent<SpriteRenderer>();
         if (sr != null && sr.sprite == null)
         {

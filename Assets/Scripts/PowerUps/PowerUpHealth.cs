@@ -4,7 +4,7 @@ public class PowerUpHealth : PowerUp
 {
     public override void ApplyEffect(PlayerHealth ph)
     {
-        ph.AddHealth(50000);
+        ph.AddHealth(ph.maxHP - ph.currentHP);
     }
 
     protected override int ScoreValue => 10000;

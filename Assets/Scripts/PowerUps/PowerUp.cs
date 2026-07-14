@@ -90,7 +90,57 @@ public abstract class PowerUp : MonoBehaviour
         ApplyEffect(ph);
         AudioManager.Instance?.PlaySFX(SFXKey);
         ScoreManager.Instance?.AddScore(ScoreValue);
+
+        // Spawn a beautiful pickup spark VFX
+        GameObject hitEffectPool = GameObject.Find("HitEffectPool");
+        if (hitEffectPool != null)
+        {
+            ObjectPool pPool = hitEffectPool.GetComponent<ObjectPool>();
+            if (pPool != null)
+            {
+                pPool.Get(ph.transform.position, Quaternion.identity);
+            }
+        }
+
+        // Damage the Boss on collecting any power-up (excluding direct killing blow)
+        DamageBossOnPickup();
+
         Destroy(gameObject);
+    }
+
+    private void DamageBossOnPickup()
+    {
+        BossController boss = Object.FindAnyObjectByType<BossController>();
+        if (boss != null && boss.gameObject.activeInHierarchy && !boss.isSpawning && !boss.isDying)
+        {
+            EnemyHealth bossHealth = boss.GetComponent<EnemyHealth>();
+            if (bossHealth != null && bossHealth.CurrentHP > 0)
+            {
+                // Boss has 30,000,000 HP. Let's make each power-up deal 5% of max HP (1,500,000 damage)
+                int dmg = (int)(bossHealth.maxHP * 0.05f);
+                if (dmg <= 0) dmg = 1500000; // Fallback to 1.5 million damage if maxHP is small
+                
+                // Shake screen on Boss hit by powerup
+                CameraShake.Instance?.Shake(0.25f, 0.2f);
+
+                // "Ko trực tiếp diệt Boss" - If the damage would kill the Boss, clamp Boss health to 1.
+                if (bossHealth.CurrentHP - dmg <= 0)
+                {
+                    // Deal exactly enough damage to leave Boss with 1 HP
+                    int safeDmg = bossHealth.CurrentHP - 1;
+                    if (safeDmg > 0)
+                    {
+                        bossHealth.TakeDamage(safeDmg);
+                        Debug.Log($"[PowerUp] Power-up pickup damaged Boss. Left Boss with 1 HP!");
+                    }
+                }
+                else
+                {
+                    bossHealth.TakeDamage(dmg);
+                    Debug.Log($"[PowerUp] Power-up pickup dealt {dmg} damage to Boss. Current Boss HP: {bossHealth.CurrentHP}");
+                }
+            }
+        }
     }
 
     public abstract void ApplyEffect(PlayerHealth ph);
