@@ -14,7 +14,7 @@ public class BossController : MonoBehaviour
     public static UnityEvent OnBossDeadGlobal = new UnityEvent();
 
     [Header("Boss Stats")]
-    public int maxHP = 300000;
+    public int maxHP = 30000000;
     public float spawnDuration = 3f;
     public float phase2MoveSpeed = 1.5f;
     public float phase3MoveSpeed = 2.0f;
@@ -183,6 +183,7 @@ public class BossController : MonoBehaviour
 
     private void UpdateMovement()
     {
+        float prevX = rb.position.x;
         Vector2 pos = rb.position;
         if (currentPhase == 1)
         {
@@ -207,6 +208,20 @@ public class BossController : MonoBehaviour
 
             Vector2 targetPos = new Vector2(targetSpawnPosition.x + xOffset, targetSpawnPosition.y);
             rb.position = Vector2.MoveTowards(pos, targetPos, phase3MoveSpeed * Time.deltaTime);
+        }
+
+        // Banking tilt logic for the Boss to match the enemies
+        float deltaX = rb.position.x - prevX;
+        float speedUsed = currentPhase == 2 ? phase2MoveSpeed : phase3MoveSpeed;
+        if (speedUsed > 0 && Time.deltaTime > 0 && currentPhase > 1)
+        {
+            float tiltAngle = -deltaX * 12f / (speedUsed * Time.deltaTime + 0.001f);
+            tiltAngle = Mathf.Clamp(tiltAngle, -15f, 15f);
+            transform.rotation = Quaternion.Euler(0f, 0f, tiltAngle);
+        }
+        else
+        {
+            transform.rotation = Quaternion.identity;
         }
     }
 
@@ -424,6 +439,8 @@ public class BossController : MonoBehaviour
 
     private IEnumerator DeathSequence()
     {
+        Time.timeScale = 0.25f; // Slow motion for final explosion!
+
         ApplyDeathExplosionForce();
 
         GameObject poolObj = GameObject.Find("ExplosionLargePool");
@@ -437,11 +454,14 @@ public class BossController : MonoBehaviour
                 explosionPool.Get(transform.position + randomOffset, Quaternion.identity);
             }
 
+            CameraShake.Instance?.Shake(0.3f, 0.2f); // Rattle screen on each blast!
             AudioManager.Instance?.PlaySFX("sfx_explosion_large");
-            yield return new WaitForSeconds(0.25f);
+            yield return new WaitForSecondsRealtime(0.25f);
         }
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSecondsRealtime(0.5f);
+
+        Time.timeScale = 1.0f; // Restore normal time scale
 
         BossHUDController bossHUD = Object.FindAnyObjectByType<BossHUDController>();
         if (bossHUD != null)
