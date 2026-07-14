@@ -171,6 +171,7 @@ public class WaveManager : MonoBehaviour
         }
 
         // Spawn each enemy in sequence
+        // Spawn each enemy in sequence
         for (int i = 0; i < data.enemyCount; i++)
         {
             // 1. Choose prefab
@@ -188,6 +189,11 @@ public class WaveManager : MonoBehaviour
             {
                 pctX = data.spawnPositionsX[i];
                 if (pctX > 1f) pctX /= 100f;
+            }
+            else
+            {
+                // Spawning extra enemies randomly across screen width
+                pctX = Random.Range(0.05f, 0.95f);
             }
 
             float worldX;

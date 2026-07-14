@@ -131,10 +131,7 @@ public class LevelManager : MonoBehaviour
         }
 
         yield return new WaitForSeconds(3f);
-
-        SaveManager.Instance?.SaveHighScore(ScoreManager.Instance?.currentScore ?? 0);
         
-        // Removed automatic transition to MainMenu. 
-        // The Victory scene now handles its own transition via VictoryController.
+        // Removed duplicate SaveHighScore call, as VictoryController handles it.
     }
 }

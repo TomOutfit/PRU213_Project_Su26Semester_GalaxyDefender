@@ -4,7 +4,23 @@ using System.Collections.Generic;
 
 public class SaveManager : MonoBehaviour
 {
-    public static SaveManager Instance { get; private set; }
+    private static SaveManager _instance;
+    public static SaveManager Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = FindObjectOfType<SaveManager>();
+                if (_instance == null)
+                {
+                    GameObject go = new GameObject("SaveManager");
+                    _instance = go.AddComponent<SaveManager>();
+                }
+            }
+            return _instance;
+        }
+    }
 
     private const string KEY_LAST_LEVEL = "LastLevel";
     private const string KEY_LAST_SCORE = "LastScore";
@@ -13,13 +29,15 @@ public class SaveManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null && Instance != this)
+        if (_instance == null)
+        {
+            _instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else if (_instance != this)
         {
             Destroy(gameObject);
-            return;
         }
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 
     public void SaveGame(int levelBuildIndex, int score)
@@ -36,6 +54,9 @@ public class SaveManager : MonoBehaviour
 
         if (ScoreManager.Instance != null)
             ScoreManager.Instance.currentScore = savedScore;
+
+        if (GameManager.Instance != null)
+            GameManager.Instance.SetState(GameManager.State.Playing);
 
         UnityEngine.SceneManagement.SceneManager.LoadScene(savedLevel);
     }
@@ -69,5 +90,14 @@ public class SaveManager : MonoBehaviour
             scores[i] = PlayerPrefs.GetInt(KEY_HIGH_SCORE_PREFIX + i, 0);
         }
         return scores;
+    }
+
+    public void ClearHighScores()
+    {
+        for (int i = 0; i < HIGH_SCORE_COUNT; i++)
+        {
+            PlayerPrefs.DeleteKey(KEY_HIGH_SCORE_PREFIX + i);
+        }
+        PlayerPrefs.Save();
     }
 }

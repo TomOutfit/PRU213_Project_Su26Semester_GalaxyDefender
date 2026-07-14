@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
     public UnityEvent<int> OnLivesChanged;
 
     [Header("Session Stats")]
-    public int startingLives = 3;
+    public int startingLives = 100;
     private int currentLives;
 
     [HideInInspector]

@@ -322,23 +322,42 @@ public class SceneTransitionManager : MonoBehaviour
         // Chuyển toàn bộ text thành chữ in hoa do font Kenney Space hiển thị đẹp nhất ở dạng IN HOA
         string upperText = fullText.ToUpper();
 
-        // Header nhỏ kiểu terminal (Cỡ chữ giảm từ 10 xuống còn 4 để đạt ~30% kích thước)
-        const string HEADER = "<line-height=130%><cspace=0.3em><size=6><color=#A3E2F2>" +
+        // Header nhỏ kiểu terminal
+        const string HEADER = "<line-height=130%><cspace=0.25em><size=7><color=#A3E2F2>" +
                               "// ACCESSING SYSTEM LOG //</color></size></cspace>\n\n";
         
-        // Body chữ trắng (Cỡ chữ giảm từ 16 xuống còn 6 để đạt ~30% kích thước)
-        // Điều chỉnh line-height=140% để phù hợp với size chữ siêu nhỏ
-        const string BODY_OPEN  = "<line-height=140%><cspace=0.15em><size=9><color=#FFFFFF>";
+        // Body chữ trắng: Cân chỉnh cỡ chữ nhỏ gọn (size=8), khoảng cách chữ khít hơn (cspace=0.08em)
+        // và khoảng cách dòng thông thoáng (line-height=150%) để đoạn văn dài hiển thị đẹp đẽ, cân đối.
+        const string BODY_OPEN  = "<line-height=150%><cspace=0.08em><size=8><color=#FFFFFF>";
         const string BODY_CLOSE = "</color></size></cspace></line-height>";
 
         const float CHAR_DELAY = 0.025f;
 
-        for (int i = 0; i <= upperText.Length; i++)
+        // Tag-aware typewriter loop to prevent raw Rich Text tags from flashing on the screen
+        int charIndex = 0;
+        System.Text.StringBuilder typedText = new System.Text.StringBuilder();
+        
+        while (charIndex < upperText.Length)
         {
-            string typed  = upperText.Substring(0, i);
+            if (upperText[charIndex] == '<')
+            {
+                // Copy the entire tag at once (e.g. <COLOR=#FF3333> or </COLOR>)
+                int tagCloseIndex = upperText.IndexOf('>', charIndex);
+                if (tagCloseIndex != -1)
+                {
+                    typedText.Append(upperText.Substring(charIndex, tagCloseIndex - charIndex + 1));
+                    charIndex = tagCloseIndex + 1;
+                    continue; // Skip delay, process tags instantly
+                }
+            }
+            
+            typedText.Append(upperText[charIndex]);
+            charIndex++;
+            
             // Con trỏ nhấp nháy kiểu terminal
-            string cursor = (i < upperText.Length && i % 2 == 0) ? "<color=#00FFFF>_</color>" : "";
-            _narrativeText.text = HEADER + BODY_OPEN + typed + cursor + BODY_CLOSE;
+            string cursor = (charIndex < upperText.Length && charIndex % 2 == 0) ? "<color=#00FFFF>_</color>" : "";
+            _narrativeText.text = HEADER + BODY_OPEN + typedText.ToString() + cursor + BODY_CLOSE;
+            
             yield return new WaitForSecondsRealtime(CHAR_DELAY);
         }
 
@@ -399,13 +418,13 @@ public class SceneTransitionManager : MonoBehaviour
 
     private static string GetNarrative(string sceneName)
     {
-        if (sceneName.Contains("Level1"))   return "The invasion has begun. Take off immediately. The galaxy needs a defender.";
-        if (sceneName.Contains("Level2"))   return "The swarm grows denser. Sensors detect hunter class vessels ahead. Steel your resolve.";
-        if (sceneName.Contains("Level3"))   return "WARNING: Colossal alien bio-signature detected. Prepare for the final confrontation.";
-        if (sceneName.Contains("Victory"))  return "The threat has been neutralized. The galaxy is safe once more... for now.";
-        if (sceneName.Contains("GameOver")) return "Our defender has fallen. The stars fade into darkness.";
-        if (sceneName.Contains("MainMenu")) return "Welcome back, Commander. Awaiting your instructions.";
-        return "Establishing hyper-link to the next sector...";
+        if (sceneName.Contains("Level1"))   return "Warning: <color=#FF3333>HOSTILE ALIEN ARMADA</color> detected entering <color=#00FFFF>SECTOR FOUR</color>. Outer planetary defense lines have collapsed. All pilots launch immediately. You are the <color=#33FF33>FINAL DEFENDER</color>.";
+        if (sceneName.Contains("Level2"))   return "The alien swarm grows denser. Scanners detect <color=#FFBB00>ELITE HUNTER-CLASS STARFIGHTERS</color> intercepting our vector. <color=#FF6600>HEAVY ASTEROID</color> presence ahead. Steel your resolve, pilot.";
+        if (sceneName.Contains("Level3"))   return "Critical alert: <color=#FF0055>MASSIVE BIO-MECHANICAL SIGNATURE</color> detected ahead. Energy readings surpass all known databases. Engage all weapon systems. Prepare for the <color=#FF0099>FINAL CONFRONTATION</color>.";
+        if (sceneName.Contains("Victory"))  return "<color=#33FF33>MISSION ACCOMPLISHED</color>. The enemy fleet has been neutralized. Planetary systems are secured. The galaxy is <color=#00FFFF>SAFE ONCE MORE</color>... for now. Return to base for maintenance.";
+        if (sceneName.Contains("GameOver")) return "<color=#FF3333>HULL INTEGRITY COMPROMISED</color>. Escape pod launch failed. System offline. The <color=#888888>DEFENDER HAS FALLEN</color>, and the stars slowly fade into absolute darkness...";
+        if (sceneName.Contains("MainMenu")) return "Main systems online. <color=#00FFFF>QUANTUM LINK</color> established. Welcome back, Commander. Awaiting sector selection and combat orders.";
+        return "Initiating <color=#FFBB00>HYPERSPACE JUMP</color>. Calculating warp vector. Establishing secure link to the adjacent combat zone...";
     }
 
     // ──────────────────────────────────────────────
