@@ -13,10 +13,42 @@ public class BulletEnemy : MonoBehaviour
     
     private Rigidbody2D rb;
     private ObjectPool pool;
+    private TrailRenderer trail;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+
+        // Add a neon-trail for artistic enemy bullets
+        trail = GetComponent<TrailRenderer>();
+        if (trail == null)
+        {
+            trail = gameObject.AddComponent<TrailRenderer>();
+            trail.time = 0.15f;
+            trail.startWidth = 0.1f;
+            trail.endWidth = 0.0f;
+            trail.sortingOrder = 4;
+            
+            // Bright neon red/purple trail gradient
+            Gradient gradient = new Gradient();
+            gradient.SetKeys(
+                new GradientColorKey[] { 
+                    new GradientColorKey(new Color(1f, 0.2f, 0.2f, 1f), 0f), 
+                    new GradientColorKey(new Color(0.8f, 0f, 0.8f, 0.3f), 1f) 
+                },
+                new GradientAlphaKey[] { 
+                    new GradientAlphaKey(0.8f, 0f), 
+                    new GradientAlphaKey(0f, 1f) 
+                }
+            );
+            trail.colorGradient = gradient;
+            
+            Shader spriteShader = Shader.Find("Sprites/Default");
+            if (spriteShader != null)
+            {
+                trail.material = new Material(spriteShader);
+            }
+        }
     }
 
     [HideInInspector]
@@ -40,6 +72,10 @@ public class BulletEnemy : MonoBehaviour
 
     private void OnEnable()
     {
+        if (trail != null)
+        {
+            trail.Clear();
+        }
         SpriteRenderer sr = GetComponent<SpriteRenderer>();
         if (sr != null)
         {
