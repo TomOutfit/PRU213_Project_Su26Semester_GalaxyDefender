@@ -8,6 +8,7 @@ public class VerticalParallaxManager : MonoBehaviour
         public Transform layerTransform; // Object của layer này
         public float speedMultiplier;    // Hệ số tốc độ (Ví dụ: 1 = nhanh, 0.2 = rất chậm ở xa)
         [HideInInspector] public float imageHeight; // Chiều cao tự động tính
+        [HideInInspector] public SpriteRenderer spriteRenderer; // Cached SpriteRenderer
     }
 
     [Header("Cấu hình chung")]
@@ -24,6 +25,7 @@ public class VerticalParallaxManager : MonoBehaviour
             if (parallaxLayers[i].layerTransform != null)
             {
                 SpriteRenderer spriteRenderer = parallaxLayers[i].layerTransform.GetComponent<SpriteRenderer>();
+                parallaxLayers[i].spriteRenderer = spriteRenderer;
                 if (spriteRenderer != null)
                 {
                     parallaxLayers[i].imageHeight = (spriteRenderer.sprite.texture.height / spriteRenderer.sprite.pixelsPerUnit) * spriteRenderer.transform.localScale.y;
@@ -56,6 +58,21 @@ public class VerticalParallaxManager : MonoBehaviour
             {
                 // Bù trừ sai số khung hình để không bị hở
                 layer.layerTransform.position += new Vector3(0, layer.imageHeight, 0);
+            }
+
+            // 3. Hiệu ứng lung linh ánh sáng vũ trụ (Color Shimmer)
+            if (layer.spriteRenderer != null)
+            {
+                float cycleSpeed = 0.25f + i * 0.08f;
+                float sinVal = Mathf.Sin(Time.time * cycleSpeed);
+                float cosVal = Mathf.Cos(Time.time * (cycleSpeed * 0.7f) + i);
+
+                // Dịch chuyển nhẹ màu sắc qua lại giữa các tông xanh neon, tím violet cực đẹp
+                float r = Mathf.Lerp(0.75f, 1.0f, (sinVal + 1f) / 2f);
+                float g = Mathf.Lerp(0.70f, 0.95f, (cosVal + 1f) / 2f);
+                float b = Mathf.Lerp(0.85f, 1.0f, (sinVal + 1f) / 2f);
+
+                layer.spriteRenderer.color = new Color(r, g, b, layer.spriteRenderer.color.a);
             }
         }
     }

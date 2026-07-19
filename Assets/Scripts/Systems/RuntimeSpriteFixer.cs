@@ -11,16 +11,26 @@ public static class RuntimeSpriteFixer
         if (sr == null) return;
         if (sr.sprite != null && !force) return;
 
-#if UNITY_EDITOR
-        // 1. Try native AssetDatabase load first
         Sprite loadedSprite = null;
-        var subAssets = AssetDatabase.LoadAllAssetsAtPath(spritePath);
-        foreach (var asset in subAssets)
+
+        // 1. Try SpriteDatabase first (Works in both Editor and Standalone Build!)
+        if (SpriteDatabase.Instance != null)
         {
-            if (asset is Sprite spr)
+            loadedSprite = SpriteDatabase.Instance.GetSprite(spritePath);
+        }
+
+#if UNITY_EDITOR
+        // 2. Editor Fallback: Try native AssetDatabase load
+        if (loadedSprite == null)
+        {
+            var subAssets = AssetDatabase.LoadAllAssetsAtPath(spritePath);
+            foreach (var asset in subAssets)
             {
-                loadedSprite = spr;
-                break;
+                if (asset is Sprite spr)
+                {
+                    loadedSprite = spr;
+                    break;
+                }
             }
         }
 
@@ -38,7 +48,7 @@ public static class RuntimeSpriteFixer
                 AssetDatabase.ImportAsset(spritePath, ImportAssetOptions.ForceSynchronousImport);
             }
             
-            subAssets = AssetDatabase.LoadAllAssetsAtPath(spritePath);
+            var subAssets = AssetDatabase.LoadAllAssetsAtPath(spritePath);
             foreach (var asset in subAssets)
             {
                 if (asset is Sprite spr)
@@ -49,7 +59,7 @@ public static class RuntimeSpriteFixer
             }
         }
 
-        // 2. Fallback: Load raw file bytes and create sprite on the fly (guaranteed to work in Play Mode)
+        // 3. Secondary Editor Fallback: Load raw file bytes and create sprite on the fly
         if (loadedSprite == null)
         {
             if (System.IO.File.Exists(spritePath))
@@ -100,6 +110,7 @@ public static class RuntimeSpriteFixer
                 }
             }
         }
+#endif
 
         if (loadedSprite != null)
         {
@@ -107,9 +118,8 @@ public static class RuntimeSpriteFixer
         }
         else
         {
-            Debug.LogError($"[RuntimeSpriteFixer] Failed to load sprite at '{spritePath}' even with fallback.");
+            Debug.LogError($"[RuntimeSpriteFixer] Failed to load sprite at '{spritePath}' even with SpriteDatabase.");
         }
-#endif
     }
 
     private static float GetPPUForPath(string path)
