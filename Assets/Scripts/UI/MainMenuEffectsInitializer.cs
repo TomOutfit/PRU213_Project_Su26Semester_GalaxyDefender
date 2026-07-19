@@ -58,6 +58,20 @@ public class MainMenuEffectsInitializer : MonoBehaviour
             TMP_Text[] allTexts = Object.FindObjectsByType<TMP_Text>(FindObjectsInactive.Include);
             foreach (TMP_Text txt in allTexts)
             {
+                // Skip text components inside the Showroom/Codex panel
+                Transform curr = txt.transform;
+                bool isShowroomText = false;
+                while (curr != null)
+                {
+                    if (curr.name == "ShowroomPanel" || curr.GetComponent<ShowroomController>() != null)
+                    {
+                        isShowroomText = true;
+                        break;
+                    }
+                    curr = curr.parent;
+                }
+                if (isShowroomText) continue;
+
                 string lower = txt.text.ToLower();
                 if (lower.Contains("galaxy") || lower.Contains("defender"))
                 {
@@ -79,11 +93,12 @@ public class MainMenuEffectsInitializer : MonoBehaviour
             SetupButtonEffect(menuController.loadButton);
             SetupButtonEffect(menuController.optionsButton);
             SetupButtonEffect(menuController.highScoreButton);
+            SetupButtonEffect(menuController.showroomButton);
             SetupButtonEffect(menuController.exitButton);
         }
 
         // Fallback or double-check buttons by name
-        string[] buttonNames = { "StartButton", "LoadButton", "OptionsButton", "HighScoreButton", "ExitButton" };
+        string[] buttonNames = { "StartButton", "LoadButton", "OptionsButton", "HighScoreButton", "ShowroomButton", "ExitButton" };
         foreach (string btnName in buttonNames)
         {
             GameObject btnGO = GameObject.Find(btnName);
