@@ -1,0 +1,151 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7da3281c7c0025a49b1a9ebe538519f3, type: 3}
+  m_Name: SpriteDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::SpriteDatabase
+  entries:
+  - pathOrName: Assets/Sprites/Backgrounds/bg_canyon_far.png
+    sprite: {fileID: 21300000, guid: bd58aa70ceca8e341ad3150ca2479bd8, type: 3}
+  - pathOrName: Assets/Sprites/Backgrounds/bg_menu.jpg
+    sprite: {fileID: 21300000, guid: 90dbfcc99577f0442ade8512665708b9, type: 3}
+  - pathOrName: Assets/Sprites/Backgrounds/bg_nebula_l1.png
+    sprite: {fileID: 21300000, guid: 1d1544d181a909e43a44cfcaff876335, type: 3}
+  - pathOrName: Assets/Sprites/Backgrounds/bg_nebula_l2.png
+    sprite: {fileID: 21300000, guid: 702cd0e9a32321149a33608f5751ef02, type: 3}
+  - pathOrName: Assets/Sprites/Backgrounds/bg_nebula_l3.png
+    sprite: {fileID: 21300000, guid: d064dd3bd45138e469fbdf57a6824f5a, type: 3}
+  - pathOrName: Assets/Sprites/Backgrounds/bg_stars_far.png
+    sprite: {fileID: 21300000, guid: a34d507bab6ca144da356d477827a8c4, type: 3}
+  - pathOrName: Assets/Sprites/Backgrounds/bg_stars_mid.png
+    sprite: {fileID: 21300000, guid: 77ec9dad29d2cc749bbabb820fd5d096, type: 3}
+  - pathOrName: Assets/Sprites/Backgrounds/bg_story_gameover.png
+    sprite: {fileID: 21300000, guid: a2756441fdd876544a8c17e7ec69e686, type: 3}
+  - pathOrName: Assets/Sprites/Backgrounds/bg_story_l1.png
+    sprite: {fileID: 21300000, guid: 138ae0fb45862bb4f97a6f8e3d50ae24, type: 3}
+  - pathOrName: Assets/Sprites/Backgrounds/bg_story_l2.png
+    sprite: {fileID: 21300000, guid: 562939b0cd5cce149ba32860eb8d54d5, type: 3}
+  - pathOrName: Assets/Sprites/Backgrounds/bg_story_l3.png
+    sprite: {fileID: 21300000, guid: 913ed00bdf26daf48970cb7b5add9825, type: 3}
+  - pathOrName: Assets/Sprites/Backgrounds/bg_story_victory.png
+    sprite: {fileID: 21300000, guid: d1148c62914054b4fa16a85a6837dd3a, type: 3}
+  - pathOrName: Assets/Sprites/Bullets/bullet_boss_phase1.png
+    sprite: {fileID: 21300000, guid: fe02af5809fcaed43a4e04a0d5bf2a35, type: 3}
+  - pathOrName: Assets/Sprites/Bullets/bullet_boss_phase2.png
+    sprite: {fileID: 21300000, guid: e00b5a076d203b949ae7b3e0288150be, type: 3}
+  - pathOrName: Assets/Sprites/Bullets/bullet_boss_phase3.png
+    sprite: {fileID: 21300000, guid: 2a9027660437b014eaee8b585de665ce, type: 3}
+  - pathOrName: Assets/Sprites/Bullets/bullet_enemy.png
+    sprite: {fileID: 21300000, guid: 95c138d3eb67a42469d8659069f14efa, type: 3}
+  - pathOrName: Assets/Sprites/Bullets/bullet_player.png
+    sprite: {fileID: 21300000, guid: 3193e56089773804faade7836d5c9a12, type: 3}
+  - pathOrName: Assets/Sprites/Bullets/enemy_cyan_sniper_beam.png
+    sprite: {fileID: 21300000, guid: dffa9f5948a0361499aa28dc3fae30c7, type: 3}
+  - pathOrName: Assets/Sprites/Bullets/enemy_purple_bio-spore.png
+    sprite: {fileID: 21300000, guid: bde60751887e31f4dab55409a4255f7b, type: 3}
+  - pathOrName: Assets/Sprites/Bullets/enemy_red_energy_spike.png
+    sprite: {fileID: 21300000, guid: c98f95e787311ee45a4c20707555b158, type: 3}
+  - pathOrName: Assets/Sprites/Bullets/enemy_teal_energy_orb.png
+    sprite: {fileID: 21300000, guid: 65cca655b36e8944faa9d5a0d4286398, type: 3}
+  - pathOrName: Assets/Sprites/Bullets/player_iron_vanguard_bullet.png
+    sprite: {fileID: 21300000, guid: 2243d23f0da049f4ab41c8f927342cb6, type: 3}
+  - pathOrName: Assets/Sprites/Bullets/player_nova_prism_bullet.png
+    sprite: {fileID: 21300000, guid: 0b1797ebdc970d346ac210e7bf2fddf4, type: 3}
+  - pathOrName: Assets/Sprites/Bullets/player_shadow_wraith_bullet.png
+    sprite: {fileID: 21300000, guid: 83e3cd133591d0d40b11fb21b402c2c0, type: 3}
+  - pathOrName: Assets/Sprites/Bullets/player_star_swift_bullet.png
+    sprite: {fileID: 21300000, guid: 0831b73aa37795345af191ec588185cc, type: 3}
+  - pathOrName: Assets/Sprites/Effects/Aegis_Guardian_Effect.png
+    sprite: {fileID: 21300000, guid: a09fb89ffc2cf624b9ff903eb0dc3aa6, type: 3}
+  - pathOrName: Assets/Sprites/Effects/Bio_Harvester_Effect.png
+    sprite: {fileID: 21300000, guid: 18449eb2c8f6a884d914daccfe847ad0, type: 3}
+  - pathOrName: Assets/Sprites/Effects/effect_hit_sheet.png
+    sprite: {fileID: 1064984978091113497, guid: c8a4e6f6561f1774c9a2fbf689498699, type: 3}
+  - pathOrName: Assets/Sprites/Effects/explosion_large_sheet.png
+    sprite: {fileID: -5040301854315900437, guid: 10b499e921fad05498f09da761424664, type: 3}
+  - pathOrName: Assets/Sprites/Effects/explosion_small_sheet.png
+    sprite: {fileID: -5457873311219451687, guid: 4a0402bbe7dc33d4c92a72c6100b23ee, type: 3}
+  - pathOrName: Assets/Sprites/Effects/Pulse_Ray_Effect.png
+    sprite: {fileID: 21300000, guid: b4fd8d5135961ef4d8bd8de36089e6df, type: 3}
+  - pathOrName: Assets/Sprites/Effects/Void_Stinger_Effect.png
+    sprite: {fileID: 21300000, guid: 13b039aa5c17164439e846dc8f0ef804, type: 3}
+  - pathOrName: Assets/Sprites/Enemies/enemy_aegis_guardian.png
+    sprite: {fileID: 21300000, guid: c8f5d26e47729d445b126e4e14ac9570, type: 3}
+  - pathOrName: Assets/Sprites/Enemies/enemy_boss.png
+    sprite: {fileID: 21300000, guid: e87dbe486412c62448abeb59751d97b2, type: 3}
+  - pathOrName: Assets/Sprites/Enemies/enemy_boss_phase2.png
+    sprite: {fileID: 21300000, guid: 2cec14ba8f925cd4a82c545c581564c5, type: 3}
+  - pathOrName: Assets/Sprites/Enemies/enemy_boss_phase3.png
+    sprite: {fileID: 21300000, guid: df01c3aaf999557439725f1a145ee82e, type: 3}
+  - pathOrName: Assets/Sprites/Enemies/enemy_drone.png
+    sprite: {fileID: 21300000, guid: ceeacec592d8d9e4b81c6db45a71e905, type: 3}
+  - pathOrName: Assets/Sprites/Enemies/enemy_drone_sheet.png
+    sprite: {fileID: 5949222829789273093, guid: f52c7c1674bd1cf4ca9c93597309e296, type: 3}
+  - pathOrName: Assets/Sprites/Enemies/enemy_harvester_curved.png
+    sprite: {fileID: 21300000, guid: 4322692dbf08d294e83dabbb9481dca8, type: 3}
+  - pathOrName: Assets/Sprites/Enemies/enemy_hunter.png
+    sprite: {fileID: 21300000, guid: 9b5f275d4210a3140a4e801550ab073e, type: 3}
+  - pathOrName: Assets/Sprites/Enemies/enemy_hunter_sheet.png
+    sprite: {fileID: 1242878038388592197, guid: 6a9cfaba2db97e44e84e8d374d0c167a, type: 3}
+  - pathOrName: Assets/Sprites/Enemies/enemy_pulse_ray.png
+    sprite: {fileID: 21300000, guid: 202fce700d6f7ea439bef4bcf9221957, type: 3}
+  - pathOrName: Assets/Sprites/Enemies/enemy_void_stinger.png
+    sprite: {fileID: 21300000, guid: ecef8a5f3f6be3745a6d6ca2799a5fba, type: 3}
+  - pathOrName: Assets/Sprites/Obstacles/obstacle_mine_sheet.png
+    sprite: {fileID: -908451180, guid: 3d33b448dbb78f24e9b0bd7e50245abe, type: 3}
+  - pathOrName: Assets/Sprites/Player/iron_vanguard.png
+    sprite: {fileID: 21300000, guid: f89f705d4ba20d9449e1080e8a623b46, type: 3}
+  - pathOrName: Assets/Sprites/Player/nova_prism.png
+    sprite: {fileID: 21300000, guid: 6287f3b68cbbb3448bb40ffb3cfc6146, type: 3}
+  - pathOrName: Assets/Sprites/Player/player_ship.png
+    sprite: {fileID: 21300000, guid: 5c182baa006d5ec4b88812df5d242ed5, type: 3}
+  - pathOrName: Assets/Sprites/Player/player_thruster_sheet.png
+    sprite: {fileID: -2831607787321233805, guid: 21f959ff87a439e45895452551952fcb, type: 3}
+  - pathOrName: Assets/Sprites/Player/shadow_wraith.png
+    sprite: {fileID: 21300000, guid: a993d47853336664f95ff525790d2bab, type: 3}
+  - pathOrName: Assets/Sprites/Player/star_swift.png
+    sprite: {fileID: 21300000, guid: 16fb1566d0253474c95e5ae459035f52, type: 3}
+  - pathOrName: Assets/Sprites/PowerUps/glow_ring.png
+    sprite: {fileID: 21300000, guid: 79c8fe865f6d110498bb910f546d52dc, type: 3}
+  - pathOrName: Assets/Sprites/PowerUps/powerup_health.png
+    sprite: {fileID: 21300000, guid: 64928f620836c994a922ef9dfcb04fa8, type: 3}
+  - pathOrName: Assets/Sprites/PowerUps/powerup_itemmagnet.png
+    sprite: {fileID: 21300000, guid: ceaedc34cd9d9f047a9b8c1b0e579e47, type: 3}
+  - pathOrName: Assets/Sprites/PowerUps/powerup_megabomb.png
+    sprite: {fileID: 21300000, guid: c20654fd12ca7d541a4efdf91bd36a56, type: 3}
+  - pathOrName: Assets/Sprites/PowerUps/powerup_score.png
+    sprite: {fileID: 21300000, guid: 1f9846e2a6c15d8419b9f19166ba993d, type: 3}
+  - pathOrName: Assets/Sprites/PowerUps/powerup_shield.png
+    sprite: {fileID: 21300000, guid: 7dd11da620846ad44b4466676b607092, type: 3}
+  - pathOrName: Assets/Sprites/PowerUps/powerup_speedbolt.png
+    sprite: {fileID: 21300000, guid: 64eabeb72d02c2e488c37046dd8f15fb, type: 3}
+  - pathOrName: Assets/Sprites/PowerUps/powerup_triplefire.png
+    sprite: {fileID: 21300000, guid: f0128ae0822f02d4d91002ed1dd5c586, type: 3}
+  - pathOrName: Assets/Sprites/Tiles/tiles_asteroid.png
+    sprite: {fileID: -130420944, guid: b1bed5ff39c34b045a193f115c8a35c6, type: 3}
+  - pathOrName: Assets/Sprites/Tiles/tiles_decor.png
+    sprite: {fileID: -454469542, guid: 1a664bdda5c36fe4ab87a671f031c766, type: 3}
+  - pathOrName: Assets/Sprites/Tiles/tiles_deepspace.png
+    sprite: {fileID: -2058045237, guid: a8ddaab6eb1d86643bc9d562fcf30c4b, type: 3}
+  - pathOrName: Assets/Sprites/Tiles/tiles_station.png
+    sprite: {fileID: -899876523, guid: d09c8054fff318d479d19a03d3945ec5, type: 3}
+  - pathOrName: Assets/Sprites/UI/ui_bar_bg.png
+    sprite: {fileID: 21300000, guid: 2c108977430f26a4baa9d3ea0bc79508, type: 3}
+  - pathOrName: Assets/Sprites/UI/ui_button_normal.png
+    sprite: {fileID: 21300000, guid: 2a7c466ab3e444747a50b9c399622c17, type: 3}
+  - pathOrName: Assets/Sprites/UI/ui_button_pressed.png
+    sprite: {fileID: 21300000, guid: 2f5ee127e483f604a975eb6f0c35497f, type: 3}
+  - pathOrName: Assets/Sprites/UI/ui_healthbar_fill.png
+    sprite: {fileID: 21300000, guid: 275942d1d3e1f624fa86d6b5cc0ce9cd, type: 3}
+  - pathOrName: Assets/Sprites/UI/ui_panel.png
+    sprite: {fileID: 21300000, guid: e2b14be3c253dc94d8a3043da1735093, type: 3}
+  - pathOrName: Assets/Sprites/UI/ui_shieldbar_fill.png
+    sprite: {fileID: 21300000, guid: 6ff65ff445c2a5b448a6a13948b35566, type: 3}
