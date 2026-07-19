@@ -278,14 +278,14 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 
 ## Gate Criteria
 
-- [ ] Hunter tracks player X and fires; takes more hits than Drone
-- [ ] Boss spawns in Level3, transitions Phase1→2→3 at correct HP thresholds, Phase3 spread shot fires at ±15°
-- [ ] Boss Phase3 spawns exactly 2 Drones once, not repeatedly
-- [ ] Level1→Level2 loads automatically after Wave2 cleared; Level2→Level3 same
-- [ ] PowerUp drops on 30% of enemy deaths; all 3 power-up types apply correct effects
-- [ ] SaveManager: Save writes to PlayerPrefs; Load reads and restores level + score
-- [ ] Level2 and Level3 tilemaps are painted (not empty)
-- [ ] bgm_boss.ogg plays when Boss spawns; all critical SFX fire (shoot, hit, explosion, powerup)
+- [x] Hunter tracks player X and fires; takes more hits than Drone
+- [x] Boss spawns in Level3, transitions Phase1→2→3 at correct HP thresholds, Phase3 spread shot fires at ±15°
+- [x] Boss Phase3 spawns exactly 2 Drones once, not repeatedly
+- [x] Level1→Level2 loads automatically after Wave2 cleared; Level2→Level3 same
+- [x] PowerUp drops on 30% of enemy deaths; all 3 power-up types apply correct effects
+- [x] SaveManager: Save writes to PlayerPrefs; Load reads and restores level + score
+- [x] Level2 and Level3 tilemaps are painted (not empty)
+- [x] bgm_boss.ogg plays when Boss spawns; all critical SFX fire (shoot, hit, explosion, powerup)
 
 ---
 
@@ -381,12 +381,12 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 
 ## Gate Criteria
 
-- [ ] Main Menu → Level1 → Level2 → Level3 → Boss (all 3 phases) → Victory → Main Menu: completes without runtime errors
-- [ ] Die during Level2 → Game Over screen shows correct Score, Enemies Defeated, Survival Time; Restart goes to Level1
-- [ ] ESC pauses, Resume continues exactly where left off (timeScale correct)
-- [ ] Options: sliders affect volume in real time; fullscreen toggles; values persist after restart
-- [ ] High Score: after 3 play sessions, top scores visible on Main Menu
-- [ ] Save during Level2 → restart app → Load → Level2 starts with correct score
+- [x] Main Menu → Level1 → Level2 → Level3 → Boss (all 3 phases) → Victory → Main Menu: completes without runtime errors
+- [x] Die during Level2 → Game Over screen shows correct Score, Enemies Defeated, Survival Time; Restart goes to Level1
+- [x] ESC pauses, Resume continues exactly where left off (timeScale correct)
+- [x] Options: sliders affect volume in real time; fullscreen toggles; values persist after restart
+- [x] High Score: after 3 play sessions, top scores visible on Main Menu
+- [x] Save during Level2 → restart app → Load → Level2 starts with correct score
 
 ---
 
@@ -394,17 +394,17 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 
 > P1's entire focus this week is core system testing. Fix bugs as discovered.
 
-- [ ] Test movement: 8 directions correct speed; no diagonal speed boost (input.normalized)
-- [ ] Test screen clamp: ship stops at all 4 edges; Y clamp prevents reaching top 50%
-- [ ] Test shooting: hold Space 3s → ~20 bullets visible; fire rate = 1 per 0.15s
-- [ ] Test ObjectPool: open Profiler → fire 60s → GC Alloc column = 0B
-- [ ] Test dash: speed 15 u/s, duration 0.15s, cooldown 2s; trail shows during dash only
-- [ ] Test i-frames: take hit during dash → HP/Shield unchanged
-- [ ] Test Drone: downward 2 u/s; fires every 2s ±0.1s
-- [ ] Test Hunter: X tracks player every frame; cannot outrun horizontally
-- [ ] Test Boss Phase transitions: P1→P2 at HP=200; P2→P3 at HP=100
-- [ ] Test Boss Phase3: exactly 3 bullets at ±15°; exactly 2 Drones spawned once, not on each fire
-- [ ] Fix any bugs found in above tests
+- [x] Test movement: 8 directions correct speed; no diagonal speed boost (input.normalized)
+- [x] Test screen clamp: ship stops at all 4 edges; Y clamp prevents reaching top 50%
+- [x] Test shooting: hold Space 3s → ~20 bullets visible; fire rate = 1 per 0.15s
+- [x] Test ObjectPool: open Profiler → fire 60s → GC Alloc column = 0B
+- [x] Test dash: speed 15 u/s, duration 0.15s, cooldown 2s; trail shows during dash only
+- [x] Test i-frames: take hit during dash → HP/Shield unchanged
+- [x] Test Drone: downward 2 u/s; fires every 2s ±0.1s
+- [x] Test Hunter: X tracks player every frame; cannot outrun horizontally
+- [x] Test Boss Phase transitions: P1→P2 at HP=200; P2→P3 at HP=100
+- [x] Test Boss Phase3: exactly 3 bullets at ±15°; exactly 2 Drones spawned once, not on each fire
+- [x] Fix any bugs found in above tests
 
 ---
 
@@ -412,20 +412,20 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 
 > P2 runs full integration testing across all managers. Fix bugs immediately.
 
-- [ ] Test ScoreManager: kill Drone→+100, Hunter→+200, Boss→+1000; verify realtime display
-- [ ] Test combo ×2: 5 kills no hit → 6th kill = 200 (Drone base 100×2)
-- [ ] Test combo ×3: 10 kills no hit → 11th = 300 (Drone 100×3)
-- [ ] Test combo reset: take damage at combo=7 → next kill = 100 (×1)
-- [ ] Test PowerUp multiplier override: active during combo ×3 → kills use ×2 (power-up wins); expires after 10s → streak resumes
-- [ ] Test WaveManager Level1: 4 Drone spawn at [20,40,60,80]%X; all killed → exactly 2s → Wave2 (6 Drone)
-- [ ] Test WaveManager Level2 and Level3
-- [ ] Test AudioManager: bgm_gameplay plays on Level1 load; bgm_boss starts when boss spawns; sfx_shoot_player fires on each shot
-- [ ] Test BGM cross-fade Level2→Level3: no abrupt cut; 1s smooth fade
-- [ ] Test SaveManager: Save mid-Level2 → close Unity → reopen → Load → Level2 with correct score
-- [ ] Test high score across 6 sessions: scores [500,300,800,200,600,400] → top 5 = [800,600,500,400,300]
-- [ ] Test PowerUp drop: observe 30 kills → expect 7–11 drops (RNG tolerance)
-- [ ] Test PowerUpHealth/Shield at max: HP=80 → collect health → HP=100 (not 110)
-- [ ] Full end-to-end: Level1→2→3→Boss→Victory; note and file any bugs
+- [x] Test ScoreManager: kill Drone→+100, Hunter→+200, Boss→+1000; verify realtime display
+- [x] Test combo ×2: 5 kills no hit → 6th kill = 200 (Drone base 100×2)
+- [x] Test combo ×3: 10 kills no hit → 11th = 300 (Drone 100×3)
+- [x] Test combo reset: take damage at combo=7 → next kill = 100 (×1)
+- [x] Test PowerUp multiplier override: active during combo ×3 → kills use ×2 (power-up wins); expires after 10s → streak resumes
+- [x] Test WaveManager Level1: 4 Drone spawn at [20,40,60,80]%X; all killed → exactly 2s → Wave2 (6 Drone)
+- [x] Test WaveManager Level2 and Level3
+- [x] Test AudioManager: bgm_gameplay plays on Level1 load; bgm_boss starts when boss spawns; sfx_shoot_player fires on each shot
+- [x] Test BGM cross-fade Level2→Level3: no abrupt cut; 1s smooth fade
+- [x] Test SaveManager: Save mid-Level2 → close Unity → reopen → Load → Level2 with correct score
+- [x] Test high score across 6 sessions: scores [500,300,800,200,600,400] → top 5 = [800,600,500,400,300]
+- [x] Test PowerUp drop: observe 30 kills → expect 7–11 drops (RNG tolerance)
+- [x] Test PowerUpHealth/Shield at max: HP=80 → collect health → HP=100 (not 110)
+- [x] Full end-to-end: Level1→2→3→Boss→Victory; note and file any bugs
 
 ---
 
@@ -441,21 +441,21 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 
 **UI + Level tests**
 
-- [ ] Test Main Menu: all 5 buttons; OptionsPanel + HighScorePanel show/hide correctly; scores populate
-- [ ] Test HUD: deal damage → HP/Shield bars update immediately; kill enemy → score text changes
-- [ ] Test Boss HUD: enter Level3 boss fight → WarningBanner 3s → disappears → boss HP bar visible; HP tracks damage to zero
-- [ ] Test Level1 collision: fly into all walls → blocked; no corner-clipping
-- [ ] Test hazard tile: stand on it → HP falls at ~10/s; step off → stops
+- [x] Test Main Menu: all 5 buttons; OptionsPanel + HighScorePanel show/hide correctly; scores populate
+- [x] Test HUD: deal damage → HP/Shield bars update immediately; kill enemy → score text changes
+- [x] Test Boss HUD: enter Level3 boss fight → WarningBanner 3s → disappears → boss HP bar visible; HP tracks damage to zero
+- [x] Test Level1 collision: fly into all walls → blocked; no corner-clipping
+- [x] Test hazard tile: stand on it → HP falls at ~10/s; step off → stops
 
 ---
 
 ## P4 — Asset Manager (Week 7) · 5 tasks
 
-- [ ] Run the smoke-test checklist from S3: pass/fail every item; report failures to P1/P2/P3
-- [ ] Verify no missing references in Inspector across all 5 scenes (AudioManager slots, Tilemap references, HUD slider references)
-- [ ] Confirm bgm_gameover plays on GameOver scene; sfx_level_complete plays on Level Complete transition
-- [ ] Verify game runs at target FPS: open Profiler → play Level3 boss fight → note minimum FPS
-- [ ] Begin documentation draft: Game Concept + Design Decisions sections
+- [x] Run the smoke-test checklist from S3: pass/fail every item; report failures to P1/P2/P3
+- [x] Verify no missing references in Inspector across all 5 scenes (AudioManager slots, Tilemap references, HUD slider references)
+- [x] Confirm bgm_gameover plays on GameOver scene; sfx_level_complete plays on Level Complete transition
+- [x] Verify game runs at target FPS: open Profiler → play Level3 boss fight → note minimum FPS
+- [x] Begin documentation draft: Game Concept + Design Decisions sections
 
 ---
 
@@ -467,54 +467,54 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 
 ## Gate Criteria
 
-- [ ] Profiler: ≥55 FPS during Level3 boss fight with max active enemies
-- [ ] Profiler: 0 GC alloc during sustained bullet fire (ObjectPool confirmed working)
-- [ ] .exe launches on a machine without Unity Editor installed
-- [ ] Zip of project opens on a second machine without errors
-- [ ] Documentation: all 5 sections written and compiled into final PDF/DOCX
+- [x] Profiler: ≥55 FPS during Level3 boss fight with max active enemies
+- [x] Profiler: 0 GC alloc during sustained bullet fire (ObjectPool confirmed working)
+- [x] .exe launches on a machine without Unity Editor installed
+- [x] Zip of project opens on a second machine without errors
+- [x] Documentation: all 5 sections written and compiled into final PDF/DOCX
 
 ---
 
 ## P1 — Lead Dev (Week 8) · 4 tasks
 
-- [ ] Fix any remaining bugs flagged by P2/P4 from Stage 4 testing
-- [ ] Profiler session: Level3 boss fight → confirm ≥55 FPS; if not, profile the hotspot (most likely: too many active Rigidbody2Ds or draw calls from particle effects)
-- [ ] Final play-through as fresh player: confirm game feels fair, controls respond correctly, no janky moments
-- [ ] Code review: remove all Debug.Log statements from production code (they generate GC alloc)
+- [x] Fix any remaining bugs flagged by P2/P4 from Stage 4 testing
+- [x] Profiler session: Level3 boss fight → confirm ≥55 FPS; if not, profile the hotspot (most likely: too many active Rigidbody2Ds or draw calls from particle effects)
+- [x] Final play-through as fresh player: confirm game feels fair, controls respond correctly, no janky moments
+- [x] Code review: remove all Debug.Log statements from production code (they generate GC alloc)
 
 ---
 
 ## P2 — Systems Dev (Week 8) · 3 tasks
 
-- [ ] Fix any manager bugs found during Stage 4 (most likely: score saving edge case, BGM not switching, power-up timer resetting wrong)
-- [ ] Verify final Save/Load on the build (not in Editor) — PlayerPrefs paths differ in builds
-- [ ] Confirm high score persists across multiple .exe launches
+- [x] Fix any manager bugs found during Stage 4 (most likely: score saving edge case, BGM not switching, power-up timer resetting wrong)
+- [x] Verify final Save/Load on the build (not in Editor) — PlayerPrefs paths differ in builds
+- [x] Confirm high score persists across multiple .exe launches
 
 ---
 
 ## P3 — UI & Level Designer (Week 8) · 5 tasks
 
-- [ ] Fix any tilemap collision bugs (common: corner gaps, hazard trigger not firing at tile edges)
-- [ ] Final animation pass: confirm no animation states are stuck; Boss phase clips switch on time
-- [ ] UI polish: verify all text strings match final values (score text, wave text, boss warning text)
-- [ ] Verify PressStart2P font renders correctly in .exe (not just in Editor)
-- [ ] Write "Development Challenges" section for documentation (P3 knows the level design + animation pain points)
+- [x] Fix any tilemap collision bugs (common: corner gaps, hazard trigger not firing at tile edges)
+- [x] Final animation pass: confirm no animation states are stuck; Boss phase clips switch on time
+- [x] UI polish: verify all text strings match final values (score text, wave text, boss warning text)
+- [x] Verify PressStart2P font renders correctly in .exe (not just in Editor)
+- [x] Write "Development Challenges" section for documentation (P3 knows the level design + animation pain points)
 
 ---
 
 ## P4 — Asset Manager & QA (Week 8) · 11 tasks
 
-- [ ] Full play-through Level1 + Level2 + Level3 Boss → record pass/fail
-- [ ] Death test: die → verify all 3 Game Over stats are accurate (manually track during play)
-- [ ] Save/Load test on .exe: Save → close .exe → relaunch → Load → correct state
-- [ ] High Score test: 6 sessions, varied scores → verify top 5 sorted correctly
-- [ ] Options persist test: change all sliders + toggle → close .exe → relaunch → verify persisted
-- [ ] FPS + GC Alloc final confirmation (run Profiler from built player, not Editor)
-- [ ] **Build .exe**: File → Build Settings → PC Standalone → Windows x86-64 → Build → select output folder
-- [ ] **Verify .exe**: launch standalone (no Editor) → confirm game runs correctly, all scenes load
-- [ ] **Zip project**: compress Unity project folder → verify zip < 500MB → open on second machine to confirm no corruption
-- [ ] Write documentation sections: Implemented Systems (checklist vs rubric), Future Improvements (5 items)
-- [ ] **Compile final report**: merge all 5 sections (Concept, Decisions, Challenges, Systems, Improvements) → export PDF or DOCX → submit
+- [x] Full play-through Level1 + Level2 + Level3 Boss → record pass/fail
+- [x] Death test: die → verify all 3 Game Over stats are accurate (manually track during play)
+- [x] Save/Load test on .exe: Save → close .exe → relaunch → Load → correct state
+- [x] High Score test: 6 sessions, varied scores → verify top 5 sorted correctly
+- [x] Options persist test: change all sliders + toggle → close .exe → relaunch → verify persisted
+- [x] FPS + GC Alloc final confirmation (run Profiler from built player, not Editor)
+- [x] **Build .exe**: File → Build Settings → PC Standalone → Windows x86-64 → Build → select output folder
+- [x] **Verify .exe**: launch standalone (no Editor) → confirm game runs correctly, all scenes load
+- [x] **Zip project**: compress Unity project folder → verify zip < 500MB → open on second machine to confirm no corruption
+- [x] Write documentation sections: Implemented Systems (checklist vs rubric), Future Improvements (5 items)
+- [x] **Compile final report**: merge all 5 sections (Concept, Decisions, Challenges, Systems, Improvements) → export PDF or DOCX → submit
 
 ---
 
