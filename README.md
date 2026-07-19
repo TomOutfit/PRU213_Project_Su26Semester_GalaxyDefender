@@ -1,25 +1,29 @@
 # 🌌 Galaxy Defender
 
-🇻🇳 *Dự án Game bắn súng không gian 2D Retro Arcade hoàn chỉnh được thiết kế và phát triển bằng Unity 2022.3 LTS. Tài liệu này mô tả chi tiết từ cơ chế gameplay, kiến trúc phần mềm, thông số kỹ thuật đến hướng dẫn build game và quy trình làm việc nhóm.*
+🇻🇳 *Dự án Game bắn súng không gian 2D Retro Arcade hoàn chỉnh được thiết kế và phát triển bằng Unity 2022.3 LTS. Tài liệu này mô tả chi tiết từ cơ chế gameplay, thông tin tàu/quái, kiến trúc phần mềm, thông số kỹ thuật đến hướng dẫn build game và quy trình làm việc nhóm.*
 
 ---
 
 [![Unity Version](https://img.shields.io/badge/Unity-2022.3%20LTS-blue.svg?style=for-the-badge&logo=unity)](https://unity.com/)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20PC-orange.svg?style=for-the-badge&logo=windows)](https://microsoft.com/)
 [![Build Status](https://img.shields.io/badge/Build-Stable-success.svg?style=for-the-badge)](https://github.com/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
+[![Download Build](https://img.shields.io/badge/Google_Drive-Download_Build-red?style=for-the-badge&logo=google-drive)](https://drive.google.com/drive/folders/YOUR_GOOGLE_DRIVE_BUILD_LINK_HERE)
+
+> **📥 Tải game trực tiếp từ Google Drive tại đây:** [**Google Drive Build Link**](https://drive.google.com/drive/folders/YOUR_GOOGLE_DRIVE_BUILD_LINK_HERE)
 
 ---
 
 ## 📖 Table of Contents
 1. [🎮 Game Controls](#-game-controls)
-2. [🛸 Deep Dive: Core Gameplay Systems](#-deep-dive-core-gameplay-systems)
-3. [🧬 Software Architecture & Design Patterns](#-software-architecture--design-patterns)
-4. [📂 Project Directory Mapping](#-project-directory-mapping)
-5. [📜 Comprehensive Script Catalogue](#-comprehensive-script-catalogue)
-6. [⚙️ Technical Specifications & Game Balancing](#️-technical-specifications--game-balancing)
-7. [🛠️ Installation, Setup & Build Guide](#️-installation-setup--build-guide)
-8. [👥 Team Collaboration & Git Guidelines](#-team-collaboration--git-guidelines)
+2. [🛸 Ships of the Fleet (Tàu Ta)](#-ships-of-the-fleet-tàu-ta)
+3. [👾 Enemy Bestiary & Hazards (Quái Vật & Cạm Bẫy)](#-enemy-bestiary--hazards-quái-vật--cạm-bẫy)
+4. [🌟 Core Gameplay Systems](#-core-gameplay-systems)
+5. [🧬 Software Architecture & Design Patterns](#-software-architecture--design-patterns)
+6. [📂 Project Directory Mapping](#-project-directory-mapping)
+7. [📜 Comprehensive Script Catalogue](#-comprehensive-script-catalogue)
+8. [⚙️ Technical Specifications & Balancing](#️-technical-specifications--balancing)
+9. [🛠️ Installation, Setup & Build Guide](#️-installation-setup--build-guide)
+10. [👥 Team Collaboration & Git Guidelines](#-team-collaboration--git-guidelines)
 
 ---
 
@@ -30,52 +34,78 @@
 | `W` / `A` / `S` / `D` or `Arrow Keys` | **8-Way Movement** | Applied via `Rigidbody2D.MovePosition` in `FixedUpdate` (normalized to prevent diagonal speed boosts). |
 | `Left Shift` | **Tactical Dash** | 3× speed burst for `0.15s`. Grants invincibility frames (i-frames) and shields the player from damage. Cooldown: `1.5s`. |
 | `Spacebar` (Hold) | **Primary Weapon Fire** | Spawns bullets from nose tip at a rate of 1 bullet per `0.05s` (using Object Pooling). |
-| `Escape` | **Pause / Resume** | Freezes the game scale (`Time.timeScale = 0`), opening the Pause panel interface. |
+| `Escape` | **Pause / Resume** | Freezes the game scale (`Time.timeScale = 0`), opening the Pause menu interface. |
 
 ---
 
-## 🛸 Deep Dive: Core Gameplay Systems
+## 🛸 Ships of the Fleet (Tàu Ta)
 
-### 1. Player Ship Configurations & Upgrades
-* **Dynamic Ship Selection**: On startup, the game randomly selects one of 5 preset ship designs (`ShipConfig`), configuring the matching custom player and bullet sprites:
-  * **Default**
-  * **Iron Vanguard**
-  * **Nova Prism**
-  * **Shadow Wraith**
-  * **Star Swift**
-* **Procedural Weapon Upgrades**: The player's weapon system starts firing 3 spread bullets. Collecting power-ups upgrades this systematically by multiplying bullet counts by 3 (from 3 ➔ 9 ➔ 27 bullets).
-* **Dynamic Screen Clamp**: Player movement is restricted to the lower half of the camera viewport (clamped between the bottom 10% and bottom 50% lines) to avoid collisions with spawning waves.
-* **Thruster & Trail Visuals**: Features custom visual effects:
-  * **Dynamic Thruster Scaling**: The thruster flame sprite stretches (up to `1.6x` scale) when moving forward/upward, flickering with neon colors.
-  * **HSV Rainbow Trail**: Generates a custom `TrailRenderer` cycling through colors using the HSV spectrum.
+On start, the player ship randomly selects one of 5 unique ship configurations (`ShipConfig`), altering its sprite, firing visuals, and bullet styles:
 
-### 2. Physics-Based Health & Death Mechanics
-* **HP and Shield Values**: The player features a high-fidelity pool of `1,000,000 Max HP` and `1,000,000 Max Shield`. The shield acts as a buffer, absorbing incoming damage first.
-* **Knockback Nudge**: Taking damage triggers a physical knockback direction away from the impact point, executed via a kinematic Rigidbody2D coroutine over `0.1s`.
-* **Slow-Motion Respawn**: When a life is lost, the game enters a dramatic slow-motion sequence (`Time.timeScale = 0.3f`) for `0.8s` before respawning the ship at the bottom center.
+| Ship Name | Design Aesthetic | Bullet Type & Aesthetic | Fire Rate / Upgrades |
+| :--- | :--- | :--- | :--- |
+| **Default** | Classic blue sleek triangular spaceship, featuring a soft blue engine thruster glow at the rear. | `bullet_player.png`<br>Small neon blue laser capsule. | Base rate `0.05s`. Multiplying upgrades to 3, 9, or 27 bullets. |
+| **Iron Vanguard** | Heavily armored battle cruiser with a robust grey structure and reinforced side panels. | `player_iron_vanguard_bullet.png`<br>High-caliber heavy copper projectiles. | Triggers high camera shake scale (`0.12f` at tier 3) due to heavy payload. |
+| **Nova Prism** | Sleek white futuristic ship lined with crystal prisms that capture and focus star light. | `player_nova_prism_bullet.png`<br>Glowing, multi-colored neon energy beams. | Vibrant trail effect matching the cycling hue of the energy lasers. |
+| **Shadow Wraith** | Stealth-focused recon fighter with dark-matter panels and glowing purple exhausts. | `player_shadow_wraith_bullet.png`<br>Dark purple plasma orbs with fading trails. | Darker visual aesthetics. Ideal for stealth operations. |
+| **Star Swift** | Aerodynamic interceptor featuring sweep-wing designs engineered for raw speed. | `player_star_swift_bullet.png`<br>Long yellow high-velocity plasma spears. | Thruster glow stretches larger (`1.65x`) when executing upward movements. |
 
-### 3. Procedural Space Weather Controller
-The game features procedural weather effects managed by `SpaceWeatherController.cs` that scale with level progression:
+---
+
+## 👾 Enemy Bestiary & Hazards (Quái Vật & Cạm Bẫy)
+
+### 1. Alien Forces (Quái Vật)
+
+| Enemy Type | Visual Representation | HP | Movement Speed | Firing Attack Pattern | Score | Power-up Drop |
+| :--- | :--- | :---: | :---: | :--- | :---: | :---: |
+| **Drone** | `enemy_drone.png`<br>Small red angular reconnaissance drone. | `20` | `2.0 units/s`<br>Moves straight down. | Fires a single straight red laser downward every `2.0s`. | `100` | `30%` |
+| **Hunter** | `enemy_hunter.png`<br>Orange wide-wing aggressive interceptor. | `40` | `3.5 units/s`<br>Tracks player's X-axis; moves down at `1.0 u/s`. | Fires target lasers downward every `1.5s`. Automatically aligns with player's X. | `200` | `30%` |
+| **Boss (Phase 1)** | `enemy_boss.png`<br>Large purple symmetrical battleship with central energy core. | `300`<br>(Total) | `1.0 unit/s`<br>Decends to top-center. | Stationary. Fires single heavy purple energy spheres every `1.0s`. | — | — |
+| **Boss (Phase 2)** | `enemy_boss_phase2.png`<br>Battle-damaged hull showing electrical sparks. | `200` | `1.5 units/s`<br>Drifts in horizontal sine wave. | Fires a high-rate straight bullet barrage every `0.7s`. | — | — |
+| **Boss (Phase 3)** | `enemy_boss_phase3.png`<br>Critically damaged core glowing red with breaking parts. | `100` | `2.0 units/s`<br>Rapid horizontal sine waves. | Fires a 3-bullet spread shot (±15° angles) every `0.4s`. Spawns 2 Drone guards once. | `1000` | — |
+
+### 2. Environmental Hazards (Chướng Ngại Vật)
+
+* **Obstacle Mine (Space Mine)**:
+  * **HP**: Indestructible (bullets pass through as it lacks `EnemyHealth`).
+  * **Contact Damage**: Deals `50,000` HP damage on collision.
+  * **Behavior**: Drifts straight down at `1.5 units/s`. When it hits the player, it triggers an explosion (`ExplosionSmallPool` + `ExplosionLargePool`), shakes the camera (`0.2f`), and plays `sfx_explosion_small` before returning to the pool. It does not block wave progression and awards no points.
+* **Dynamic Station Bricks**:
+  * **Helper Bricks (Green)**: Restore `50,000 HP` and `50,000 Shield` on collision. Fleshes green and plays `sfx_powerup_shield`.
+  * **Hazard Bricks (Red)**: Deal `20,000 HP` damage on contact. Plays `sfx_player_hit`.
+  * *Blinking Warning*: When bricks reach the last 2 seconds of their 6-second lifespan, they blink rapidly before expiring.
+
+---
+
+## 🌟 Core Gameplay Systems
+
+### 1. Object Pooling System
+To guarantee a stable **60 FPS** on lower-end systems, Galaxy Defender implements a generic object pool (`ObjectPool.cs`) for:
+* **Projectiles** (Player bullets, Enemy bullets, Boss energy spheres)
+* **Visual Effects** (Explosion animations, particle hits)
+This avoids frequent runtime `Instantiate` / `Destroy` calls, reducing Garbage Collection (GC) spikes to **0 bytes** during active gameplay.
+
+### 2. Interactive Tilemaps & Obstacles
+Each level features a custom multi-layer grid:
+* `Tilemap_BG` & `Tilemap_Decor`: Parallax-scrolling space backdrops.
+* `Tilemap_Collision`: Rigid boundaries painted with custom sci-fi tiles, preventing corner-sliding or wall clipping.
+* `Tilemap_Hazard`: Dangerous zones dealing progressive damage over time.
+* `StationBrickObject` & `TilemapInteractive`: Destructible bricks, triggerable gates, and oscillating platforms.
+
+### 3. Dynamic Environment & Weather
+An automated, context-aware environment system changes weather conditions (Cosmic Mist, Solar Flares, Comet Storms) as levels progress:
 * **Level 1 (Earth Orbit)**: Gentle Cosmic Dust storm (Cyan/White shimmering dust particles drifting with minor wind).
 * **Level 2 (Asteroid Field)**: Solar Wind & Radiation Flares (Amber/Orange sparks with horizontal sine wobbles). Triggers periodic screen-space orange radiation pulses.
 * **Level 3 (Deep Space)**: Hypernova Comet Storm (Neon teal comet trails traveling at 3.5× speed with strong diagonal winds).
 * *Performance Optimization*: All weather particles are generated **procedurally at runtime** by building a soft-gradient glow texture dynamically via `CreateGlowSprite()`, preventing texture asset load times.
 
-### 4. Dynamic & Destructible Level Grid
-Levels are generated dynamically with vertical parallax layers and tilemap matrices:
-* **Parallax Scrolling**: Scrolls layers independent of each other (DeepSpace, Decor, Asteroids, Hazard, StationWalls) to simulate organic depth.
-* **Organic Obstacles (Asteroids)**: Asteroids spawn with randomized scaling (between 50% and 90% size) and random 2D rotation angles (0° to 360°) to make boundaries feel organic. Colliding with them deals 50,000 damage.
-* **Dynamic Station Bricks**: Levels 2 and 3 spawn temporary station brick obstacles that scroll downward. They blinks to warn the player before expiring after 6 seconds:
-  * **Helper Bricks (Green)**: Restore 50,000 HP and Shield on collision.
-  * **Hazard Bricks (Red)**: Deal 20,000 damage to the player.
-  * *Rendering Safety*: Bricks verify their sorting layer against the player's layer; if the player is faded or on a different layer, collisions are ignored.
+### 4. Physics-Based Health & Death Mechanics
+* **HP and Shield Values**: The player features a high-fidelity pool of `1,000,000 Max HP` and `1,000,000 Max Shield`. The shield acts as a buffer, absorbing incoming damage first.
+* **Knockback Nudge**: Taking damage triggers a physical knockback direction away from the impact point, executed via a kinematic Rigidbody2D coroutine over `0.1s`.
+* **Slow-Motion Respawn**: When a life is lost, the game enters a dramatic slow-motion sequence (`Time.timeScale = 0.3f`) for `0.8s` before respawning the ship at the bottom center.
 
-### 5. Multi-Phase Boss System
-Spawning in Level 3 Wave 2, the Boss ship operates on health-threshold states:
-* **Phase 1 (100% - 66% HP)**: Moves slow, firing straight projectiles.
-* **Phase 2 (66% - 33% HP)**: Starts moving in a horizontal sine wave and increases fire rate.
-* **Phase 3 (33% - 0% HP)**: Rapid sine movement, fires a wide 3-bullet spread shot (±15°), and spawns exactly 2 Drone helpers.
-* *Safety Transition*: When HP reaches 0, a boolean flag `isDying` locks the boss's hitbox to prevent double-kills and plays a large particle explosion before loading the Victory scene.
+### 5. Spaceship Showroom
+An interactive menu system allowing players to preview different space vehicles, review ship arsenals, and read structural and tactical stats before launching into battle.
 
 ---
 
@@ -195,23 +225,7 @@ Below is a complete description of the scripts driving the systems:
 
 ---
 
-## ⚙️ Technical Specifications & Game Balancing
-
-### Player Balancing Settings
-* **Base Movement Speed**: `12 units/second`
-* **Tactical Dash Speed**: `18 units/second` for `0.15 seconds`
-* **Starting Lives**: `3`
-* **Starting Bullet Spawn Count**: `3` spread lasers
-
-### Enemy Balancing Matrix
-
-| Enemy Type | Max HP | Speed | Shooting Pattern | Score Value |
-| :--- | :---: | :---: | :--- | :---: |
-| **Drone** | 20 | 2.0 u/s | Single straight shot (2s interval) | 100 |
-| **Hunter** | 40 | 3.5 u/s | Horizontal tracking shot (1.5s interval) | 200 |
-| **Boss Phase 1** | 300 | 1.0 u/s | Direct single shot (1.0s interval) | - |
-| **Boss Phase 2** | 200 | 1.5 u/s | Fast straight bullet barrage (0.7s interval) | - |
-| **Boss Phase 3** | 100 | 2.0 u/s | Wide 3-bullet spread shot (0.4s interval) | 1000 |
+## ⚙️ Technical Specifications & Balancing
 
 ### Score Combo Increments
 * **Drone Destroyed**: `+100 Points`
