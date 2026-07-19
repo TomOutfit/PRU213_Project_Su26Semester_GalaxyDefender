@@ -57,6 +57,39 @@ public class AudioManager : MonoBehaviour
         InitializeSources();
     }
 
+    private void Start()
+    {
+        // Load initial volume settings from PlayerPrefs (default to 1.0f)
+        float masterVolume = PlayerPrefs.GetFloat("Volume_Master", 1f);
+        float musicVolume = PlayerPrefs.GetFloat("Volume_Music", 1f);
+        float sfxVolumeVal = PlayerPrefs.GetFloat("Volume_SFX", 1f);
+
+        // Apply volumes internally to AudioManager
+        SetBGMVolume(musicVolume);
+        SetSFXVolume(sfxVolumeVal);
+
+        // Apply to AudioMixer if available
+        AudioMixer mixer = null;
+        if (bgmMixerGroup != null) mixer = bgmMixerGroup.audioMixer;
+        else if (sfxMixerGroup != null) mixer = sfxMixerGroup.audioMixer;
+
+        if (mixer != null)
+        {
+            float masterDb = Mathf.Log10(Mathf.Max(masterVolume, 0.0001f)) * 20f;
+            float musicDb = Mathf.Log10(Mathf.Max(musicVolume, 0.0001f)) * 20f;
+            float sfxDb = Mathf.Log10(Mathf.Max(sfxVolumeVal, 0.0001f)) * 20f;
+
+            mixer.SetFloat("MasterVolume", masterDb);
+            mixer.SetFloat("MusicVolume", musicDb);
+            mixer.SetFloat("SFXVolume", sfxDb);
+        }
+        else
+        {
+            // Fallback for direct audio output
+            AudioListener.volume = masterVolume;
+        }
+    }
+
     public void MergeClips(List<NamedAudioClip> newSfx, List<NamedAudioClip> newBgm)
     {
         if (newSfx != null)
@@ -193,6 +226,65 @@ public class AudioManager : MonoBehaviour
         bgmSource2.Stop();
     }
 
+    /// <summary>
+    /// Phát BGM một lần duy nhất (không loop). Dùng cho End Credit.
+    /// Trả về thời lượng clip (giây), -1 nếu không tìm thấy key.
+    /// </summary>
+    public float PlayBGMOnce(string key)
+    {
+        AudioClip clip = null;
+        if (!bgmMap.TryGetValue(key, out clip))
+        {
+            // Dự phòng: Tự động load từ thư mục Resources để tránh bị strip khi build game
+            if (key == "bgm_endcredit" || key == "endcredit_music")
+            {
+                clip = Resources.Load<AudioClip>("endcredit_music");
+            }
+
+            if (clip == null)
+            {
+                Debug.LogWarning($"[AudioManager] PlayBGMOnce: key '{key}' not found in bgmMap and Resources.");
+                return -1f;
+            }
+        }
+
+        if (fadeRoutine != null) { StopCoroutine(fadeRoutine); fadeRoutine = null; }
+        bgmSource1.Stop();
+        bgmSource2.Stop();
+
+        bgmSource1.clip   = clip;
+        bgmSource1.loop   = false;  // Chơi đúng 1 lần
+        bgmSource1.volume = bgmVolume;
+        bgmSource1.Play();
+        isSource1Active = true;
+        return clip.length;
+    }
+
+    /// <summary>
+    /// Fade volume BGM hi\u1ec7n t\u1ea1i t\u1eeb <from> xu\u1ed1ng <to> trong <duration> gi\u00e2y (SmoothStep).
+    /// D\u00f9ng \u0111\u1ec3 fade out nh\u1ea1c End Credit.
+    /// </summary>
+    public Coroutine FadeBGMOut(float from, float to, float duration)
+    {
+        return StartCoroutine(FadeBGMVolumeRoutine(from, to, duration));
+    }
+
+    private IEnumerator FadeBGMVolumeRoutine(float from, float to, float duration)
+    {
+        if (bgmSource1 == null) yield break;
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t  = Mathf.Clamp01(elapsed / duration);
+            float st = t * t * (3f - 2f * t); // SmoothStep
+            bgmSource1.volume = Mathf.Lerp(from, to, st);
+            yield return null;
+        }
+        bgmSource1.volume = to;
+        if (to <= 0f) bgmSource1.Stop(); // D\u1ecdn s\u1ea1ch sau fade
+    }
+
     public void StopAllLevelSounds()
     {
         if (fadeRoutine != null)
@@ -250,10 +342,11 @@ public class AudioManager : MonoBehaviour
     {
         if (Instance != this) return;
 
+        // Victory: Giữ nguyên nhạc đang phát từ cốt truyện chuyển cảnh,
+        // KHÔNG tự động đổi BGM. Nhạc sẽ chỉ bị dừng khi người chơi bấm Ending.
         if (scene.name == "Victory")
         {
-            StopAllLevelSounds();
-            PlayBGM("bgm_winner", true);
+            // Intentionally blank — music carries over from story transition
         }
         else if (scene.name == "GameOver")
         {
