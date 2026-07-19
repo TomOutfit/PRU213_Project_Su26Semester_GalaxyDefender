@@ -249,6 +249,21 @@ public class PauseMenuController : MonoBehaviour
     public void OnMainMenuClick()
     {
         Time.timeScale = 1f;
+
+        // Save current level, score AND wave index để Continue có thể khôi phục đúng wave
+        if (SaveManager.Instance != null)
+        {
+            int currentLevelIndex = SceneManager.GetActiveScene().buildIndex;
+            int currentScore      = ScoreManager.Instance != null ? ScoreManager.Instance.currentScore : 0;
+            // GetCurrentWaveIndex() trả về 0-based index; -1 nếu WaveManager chưa có → clamp về 0
+            int currentWaveIndex  = WaveManager.Instance != null
+                                        ? Mathf.Max(0, WaveManager.Instance.GetCurrentWaveIndex())
+                                        : 0;
+
+            SaveManager.Instance.SaveGame(currentLevelIndex, currentScore, currentWaveIndex);
+            Debug.Log($"[PauseMenu] Saved → Level={currentLevelIndex} Score={currentScore} Wave={currentWaveIndex}");
+        }
+
         if (SceneTransitionManager.Instance != null)
             SceneTransitionManager.Instance.LoadScene("MainMenu");
         else
