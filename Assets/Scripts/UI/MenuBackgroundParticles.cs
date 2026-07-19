@@ -181,7 +181,22 @@ public class MenuBackgroundParticles : MonoBehaviour
                 }
             }
 
-            baseCol.a = alpha;
+            if (!isShootingStar)
+            {
+                // Twinkle cycle: oscillate alpha and slightly change color hue for shimmers
+                float twinkle = 0.5f + 0.5f * Mathf.Sin(Time.time * 4f + (pRect.anchoredPosition.x * 0.05f));
+                baseCol.a = alpha * twinkle;
+                
+                // Color shimmer: slight glow shifts (cyan/yellowish twinkle)
+                float colorShimmer = (Mathf.Sin(Time.time * 2f + pRect.anchoredPosition.y) + 1f) / 2f;
+                baseCol.r = Mathf.Lerp(0.85f, 1f, colorShimmer);
+                baseCol.g = Mathf.Lerp(0.9f, 1f, colorShimmer);
+                baseCol.b = Mathf.Lerp(0.95f, 1f, colorShimmer);
+            }
+            else
+            {
+                baseCol.a = alpha;
+            }
             pImg.color = baseCol;
 
             yield return null;
