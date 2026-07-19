@@ -41,6 +41,12 @@ public class WaveManager : MonoBehaviour
     private int currentWaveIndex = -1;
     private float waveCountdown;
 
+    /// <summary>
+    /// Được SaveManager.LoadGame() đặt trước khi load scene để WaveManager biết
+    /// phải bắt đầu từ wave nào (0-based). Đặt -1 = bắt đầu bình thường từ Wave 1.
+    /// </summary>
+    public static int pendingResumeWave = -1;
+
     private readonly List<GameObject> activeEnemies = new List<GameObject>();
 
     private void Awake()
@@ -62,8 +68,32 @@ public class WaveManager : MonoBehaviour
 
             waveCountdown = timeBetweenWaves;
             state = WaveState.Countdown;
-            currentWaveIndex = 0;
+
+            // Khôi phục wave từ checkpoint nếu có (Continue)
+            int resumeWave = pendingResumeWave;
+            pendingResumeWave = -1; // Tiêu thụ flag ngay — chỉ áp dụng 1 lần
+
+            if (resumeWave > 0 && resumeWave < waves.Length)
+            {
+                // Nhảy thẳng tới wave đã lưu, bỏ qua các wave trước
+                currentWaveIndex = resumeWave;
+                Debug.Log($"[WaveManager] ⇨ RESUME từ wave index {resumeWave} (Wave {resumeWave + 1})");
+            }
+            else
+            {
+                currentWaveIndex = 0;
+            }
+
             UpdateUI();
+
+            // Kết nối với LevelTilemapSpawner để đặt level index đúng
+            LevelTilemapSpawner spawner = FindAnyObjectByType<LevelTilemapSpawner>();
+            if (spawner != null)
+            {
+                string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+                spawner.levelIndex = sceneName.Contains("3") ? 3 : sceneName.Contains("2") ? 2 : 1;
+                Debug.Log($"[WaveManager] TilemapSpawner levelIndex set to {spawner.levelIndex}");
+            }
         }
     }
 
@@ -130,6 +160,15 @@ public class WaveManager : MonoBehaviour
         state = WaveState.Countdown;
         waveCountdown = timeBetweenWaves;
         currentWaveIndex++;
+
+        // Tăng tốc độ tilemap theo tiến độ wave (wave đầu = 1.0x, wave cuối = 1.6x)
+        if (waves.Length > 1)
+        {
+            float waveProgress = (float)currentWaveIndex / (waves.Length - 1); // 0..1
+            float speedScale   = Mathf.Lerp(1.0f, 1.6f, waveProgress);
+            LevelTilemapSpawner spawner = FindAnyObjectByType<LevelTilemapSpawner>();
+            spawner?.SetDifficultyScale(speedScale);
+        }
 
         if (currentWaveIndex >= waves.Length)
         {
@@ -390,10 +429,11 @@ public class WaveManager : MonoBehaviour
 
     #region Public API
 
-    public WaveState GetState() => state;
-    public int GetCurrentWave() => currentWaveIndex + 1;
-    public int GetActiveEnemyCount() => activeEnemies.Count;
-    public bool IsWaveInProgress() => state == WaveState.Battling || state == WaveState.Spawning;
+    public WaveState GetState()           => state;
+    public int GetCurrentWave()           => currentWaveIndex + 1;       // 1-based (cho UI)
+    public int GetCurrentWaveIndex()      => currentWaveIndex;            // 0-based (cho save)
+    public int GetActiveEnemyCount()      => activeEnemies.Count;
+    public bool IsWaveInProgress()        => state == WaveState.Battling || state == WaveState.Spawning;
 
     #endregion
 
