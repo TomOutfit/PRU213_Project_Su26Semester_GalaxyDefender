@@ -30,6 +30,13 @@ public class ObstacleMine : MonoBehaviour
     {
         // Find parent pool if instantiated via ObjectPool
         minePool = GetComponentInParent<ObjectPool>();
+
+        // Programmatically guarantee points are a clean multiple of 1,000
+        EnemyHealth health = GetComponent<EnemyHealth>();
+        if (health != null)
+        {
+            health.points = 5000;
+        }
     }
 
     private void OnEnable()

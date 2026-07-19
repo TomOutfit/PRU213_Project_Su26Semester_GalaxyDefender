@@ -10,7 +10,7 @@ public class EnemyHealth : MonoBehaviour
 {
     [Header("Stats")]
     public int maxHP = 50;
-    public int points = 300;
+    public int points = 5000;
     
     private int currentHP;
     public int CurrentHP => currentHP;
