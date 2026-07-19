@@ -537,7 +537,7 @@ TilemapRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: -2
   m_MaskInteraction: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
@@ -2926,7 +2926,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -10
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: bd58aa70ceca8e341ad3150ca2479bd8, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 0.9}
@@ -3841,6 +3841,9 @@ MonoBehaviour:
   - {fileID: 60020001, guid: d0fd8353b6efd334093f768e97f21010, type: 3}
   - {fileID: 60030001, guid: bb4dcab4355fd1842b1f88df55c96910, type: 3}
   - {fileID: 60040001, guid: e043ba179d40c5243bfe8c72eb6e02e3, type: 3}
+  enableRandomSpawning: 1
+  minSpawnInterval: 1
+  maxSpawnInterval: 3
 --- !u!4 &673982166
 Transform:
   m_ObjectHideFlags: 0
@@ -4065,7 +4068,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: -8
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: 1d1544d181a909e43a44cfcaff876335, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 0.9}
@@ -4450,6 +4453,8 @@ MonoBehaviour:
   - key: sfx_wave_clear
     clip: {fileID: 8300000, guid: 4de550093ec1c4042867d10c53ef480b, type: 3}
   bgmClips:
+  - key: bgm_endcredit
+    clip: {fileID: 8300000, guid: d6de3e15d3ffb274eb648c1128b10bb5, type: 3}
   - key: bgm_gameplay
     clip: {fileID: 8300000, guid: 7064ab22ddad91349bc1c73e9ae41fe7, type: 3}
   - key: bgm_boss
@@ -4463,8 +4468,8 @@ MonoBehaviour:
   bgmSource1: {fileID: 0}
   bgmSource2: {fileID: 0}
   sfxSource: {fileID: 0}
-  bgmMixerGroup: {fileID: 0}
-  sfxMixerGroup: {fileID: 0}
+  bgmMixerGroup: {fileID: -9051639719354199888, guid: f961e50c566544e4ba3bc007344a55ab, type: 2}
+  sfxMixerGroup: {fileID: 3460428106944059030, guid: f961e50c566544e4ba3bc007344a55ab, type: 2}
   bgmVolume: 1
   sfxVolume: 1
 --- !u!4 &953633842
@@ -4653,12 +4658,15 @@ MonoBehaviour:
   - layerTransform: {fileID: 563009529}
     speedMultiplier: 0.1
     imageHeight: 0
+    spriteRenderer: {fileID: 0}
   - layerTransform: {fileID: 1931692678}
     speedMultiplier: 0.3
     imageHeight: 0
+    spriteRenderer: {fileID: 0}
   - layerTransform: {fileID: 775033819}
     speedMultiplier: 0.6
     imageHeight: 0
+    spriteRenderer: {fileID: 0}
 --- !u!4 &1036841331
 Transform:
   m_ObjectHideFlags: 0
@@ -4675,6 +4683,62 @@ Transform:
   - {fileID: 563009529}
   - {fileID: 1931692678}
   - {fileID: 775033819}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1108661640
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1108661642}
+  - component: {fileID: 1108661641}
+  m_Layer: 0
+  m_Name: LevelTilemapSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1108661641
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1108661640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 569afaf100f5362448757b18c5183a42, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LevelTilemapSpawner
+  tileSetData: {fileID: 11400000, guid: deee77e31771d0e4cb19364a143fe169, type: 2}
+  mapWidth: 12
+  mapHeight: 40
+  speedDeepSpace: 0.8
+  speedStation: 2
+  speedDecor: 2.5
+  speedAsteroid: 3.5
+  speedHazard: 3
+  speedGround: 2
+  speedPlatform: 2.2
+  levelIndex: 1
+  randomSeed: 0
+--- !u!4 &1108661642
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1108661640}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1140855044
@@ -5247,6 +5311,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b327e2d274a064f45bb8c574432d5c45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TilemapHazard
+  damagePerSecond: 10000
+  damageInterval: 0.5
 --- !u!19719996 &1363780717
 TilemapCollider2D:
   m_ObjectHideFlags: 0
@@ -5810,7 +5876,7 @@ TilemapRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -7
   m_MaskInteraction: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
@@ -14373,7 +14439,13 @@ MonoBehaviour:
   _bgLevel3: {fileID: 21300000, guid: 913ed00bdf26daf48970cb7b5add9825, type: 3}
   _bgVictory: {fileID: 21300000, guid: d1148c62914054b4fa16a85a6837dd3a, type: 3}
   _bgGameOver: {fileID: 21300000, guid: a2756441fdd876544a8c17e7ec69e686, type: 3}
+  _bgEndCredit: {fileID: 0}
+  _endCreditBgmKey: bgm_endcredit
   _narrativeFont: {fileID: 11400000, guid: 574f8c819d12c3148ad9d190445cedd1, type: 2}
+  _beepSound: {fileID: 0}
+  _beepVolume: 0.12
+  _beepPitchMin: 0.93
+  _beepPitchMax: 1.07
 --- !u!1 &1589904401
 GameObject:
   m_ObjectHideFlags: 0
@@ -15137,7 +15209,7 @@ TilemapRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 3
+  m_SortingOrder: -1
   m_MaskInteraction: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
@@ -15263,7 +15335,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: -9
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: 77ec9dad29d2cc749bbabb820fd5d096, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 0.9}
@@ -15807,3 +15879,4 @@ SceneRoots:
   - {fileID: 2004577644}
   - {fileID: 673982166}
   - {fileID: 1551621093}
+  - {fileID: 1108661642}
