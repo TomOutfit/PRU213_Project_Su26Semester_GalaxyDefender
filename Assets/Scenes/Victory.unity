@@ -634,7 +634,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: MENU
+  m_text: ENDING
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 574f8c819d12c3148ad9d190445cedd1, type: 2}
   m_sharedMaterial: {fileID: 3387489023945274930, guid: 574f8c819d12c3148ad9d190445cedd1, type: 2}
@@ -727,7 +727,7 @@ GameObject:
   - component: {fileID: 1023980033}
   - component: {fileID: 1023980032}
   m_Layer: 0
-  m_Name: Button_Menu
+  m_Name: Button_Ending
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
