@@ -59,6 +59,10 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
         
         currentLives = startingLives;
+
+        // Optimization: Lock frame rate and enable VSync to prevent micro-stuttering/tearing on external displays, TV screens and projectors.
+        QualitySettings.vSyncCount = 1;
+        Application.targetFrameRate = 60;
     }
 
     private void Start()

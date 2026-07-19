@@ -76,6 +76,13 @@ public class LevelManager : MonoBehaviour
         {
             Victory();
         }
+
+        // Spawn ambient space weather and environment effects in gameplay levels
+        if (scene.name.Contains("Level"))
+        {
+            GameObject envGo = new GameObject("GameplayEnvironmentEffects_Dynamic");
+            envGo.AddComponent<GameplayEnvironmentEffects>();
+        }
     }
 
     // Score to carry over to the next scene
@@ -104,7 +111,21 @@ public class LevelManager : MonoBehaviour
         _pendingScore = currentScore;
 
         int nextIndex = GetSceneIndex(nextScene);
-        SaveManager.Instance?.SaveGame(nextIndex, currentScore);
+
+        // Lưu level HIỆN TẠI (không phải level tiếp theo) để indicator hiện đúng
+        // Nếu level tiếp theo là Victory → đánh dấu cleared, không ghi đè LastLevel
+        bool nextIsVictory = nextScene.Equals("Victory", System.StringComparison.OrdinalIgnoreCase);
+        if (nextIsVictory)
+        {
+            // Ghi điểm cuối + flag cleared; LastLevel giữ nguyên (= Level3)
+            SaveManager.Instance?.SaveVictory(currentScore);
+        }
+        else
+        {
+            // Lưu build index của level HIỆN TẠI (không phải nextIndex)
+            int currentIndex = GetCurrentSceneIndex();
+            SaveManager.Instance?.SaveGame(currentIndex, currentScore);
+        }
 
         // Use cinematic fade transition
         if (SceneTransitionManager.Instance != null)
