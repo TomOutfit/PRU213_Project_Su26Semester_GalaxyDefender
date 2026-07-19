@@ -102,11 +102,17 @@ public abstract class PowerUp : MonoBehaviour
             }
         }
 
-        // Damage the Boss on collecting any power-up (excluding direct killing blow)
-        DamageBossOnPickup();
+        // Only damage Boss if this specific PowerUp type should damage Boss
+        if (ShouldDamageBoss())
+        {
+            DamageBossOnPickup();
+        }
 
         Destroy(gameObject);
     }
+
+    /// <summary>Override in subclasses to determine if this PowerUp should damage Boss when picked up.</summary>
+    protected virtual bool ShouldDamageBoss() => false;
 
     private void DamageBossOnPickup()
     {

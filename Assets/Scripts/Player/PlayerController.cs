@@ -52,6 +52,12 @@ public class PlayerController : MonoBehaviour
     private float nextFireTime = 0f;
 
     private float minX, maxX, minY, maxY;
+    private int lastScreenWidth = -1;
+    private int lastScreenHeight = -1;
+
+    private Transform thrusterTransform;
+    private SpriteRenderer thrusterRenderer;
+    private TrailRenderer playerTrail;
 
     private void Awake()
     {
@@ -87,7 +93,9 @@ public class PlayerController : MonoBehaviour
         Transform thruster = transform.Find("Thruster");
         if (thruster != null)
         {
-            RuntimeSpriteFixer.EnsureSprite(thruster.GetComponent<SpriteRenderer>(), "Assets/Sprites/Player/player_thruster_sheet.png");
+            thrusterTransform = thruster;
+            thrusterRenderer = thruster.GetComponent<SpriteRenderer>();
+            RuntimeSpriteFixer.EnsureSprite(thrusterRenderer, "Assets/Sprites/Player/player_thruster_sheet.png");
         }
         GameObject poolObj = GameObject.Find("BulletPlayerPool");
         if (poolObj != null)
@@ -96,14 +104,14 @@ public class PlayerController : MonoBehaviour
         }
 
         // Add a premium trail effect for artistic performance
-        TrailRenderer trail = gameObject.GetComponent<TrailRenderer>();
-        if (trail == null)
+        playerTrail = gameObject.GetComponent<TrailRenderer>();
+        if (playerTrail == null)
         {
-            trail = gameObject.AddComponent<TrailRenderer>();
-            trail.time = 0.4f;
-            trail.startWidth = 0.25f;
-            trail.endWidth = 0.0f;
-            trail.sortingOrder = 3;
+            playerTrail = gameObject.AddComponent<TrailRenderer>();
+            playerTrail.time = 0.4f;
+            playerTrail.startWidth = 0.25f;
+            playerTrail.endWidth = 0.0f;
+            playerTrail.sortingOrder = 3;
             
             // Create a gorgeous cyan to transparent gradient
             Gradient gradient = new Gradient();
@@ -119,19 +127,21 @@ public class PlayerController : MonoBehaviour
                     new GradientAlphaKey(0f, 1f) 
                 }
             );
-            trail.colorGradient = gradient;
+            playerTrail.colorGradient = gradient;
             
             // Set trail material using Sprites/Default shader
             Shader spriteShader = Shader.Find("Sprites/Default");
             if (spriteShader != null)
             {
-                trail.material = new Material(spriteShader);
+                playerTrail.material = new Material(spriteShader);
             }
         }
     }
 
     private void Update()
     {
+        AnimateThrusterAndTrail();
+
         if (isDashing || isKnockback) return;
 
         inputVector = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
@@ -320,6 +330,11 @@ public class PlayerController : MonoBehaviour
     {
         if (mainCamera == null) return;
 
+        // Optimization: Only compute viewport boundaries when screen resolution changes
+        if (Screen.width == lastScreenWidth && Screen.height == lastScreenHeight) return;
+        lastScreenWidth = Screen.width;
+        lastScreenHeight = Screen.height;
+
         // Padding to keep the ship from going half off-screen
         float paddingX = 0.625f; 
         float paddingY = 0.625f; 
@@ -391,4 +406,93 @@ public class PlayerController : MonoBehaviour
         Debug.Log("[PlayerController] Auto-populated 5 ship configurations!");
     }
 #endif
+
+    private void AnimateThrusterAndTrail()
+    {
+        // 1. Thruster scale & color flicker
+        if (thrusterTransform != null)
+        {
+            float targetScaleY = 1.0f;
+            float targetScaleX = 1.0f;
+
+            // If player is moving, make thruster larger
+            if (inputVector != Vector2.zero)
+            {
+                // Moving forward/upwards makes thruster stretch longer
+                if (inputVector.y > 0.1f)
+                {
+                    targetScaleY = 1.6f + Mathf.PingPong(Time.time * 25f, 0.25f);
+                    targetScaleX = 1.1f + Mathf.PingPong(Time.time * 20f, 0.1f);
+                }
+                else
+                {
+                    targetScaleY = 1.2f + Mathf.PingPong(Time.time * 25f, 0.2f);
+                    targetScaleX = 1.0f + Mathf.PingPong(Time.time * 20f, 0.1f);
+                }
+            }
+            else
+            {
+                // Idle flicker
+                targetScaleY = 0.85f + Mathf.PingPong(Time.time * 15f, 0.15f);
+                targetScaleX = 0.9f + Mathf.PingPong(Time.time * 18f, 0.1f);
+            }
+
+            thrusterTransform.localScale = new Vector3(targetScaleX, targetScaleY, 1f);
+
+            // Flickering opacity
+            if (thrusterRenderer != null)
+            {
+                Color c = thrusterRenderer.color;
+                c.a = 0.8f + Mathf.PingPong(Time.time * 30f, 0.2f);
+                
+                // Add a cool neon shift to the thruster color based on speed
+                if (inputVector != Vector2.zero)
+                {
+                    c.r = Mathf.Lerp(c.r, 0.2f, 10f * Time.deltaTime);
+                    c.g = Mathf.Lerp(c.g, 0.9f, 10f * Time.deltaTime);
+                    c.b = Mathf.Lerp(c.b, 1.0f, 10f * Time.deltaTime);
+                }
+                else
+                {
+                    c.r = Mathf.Lerp(c.r, 0.5f, 5f * Time.deltaTime);
+                    c.g = Mathf.Lerp(c.g, 0.7f, 5f * Time.deltaTime);
+                    c.b = Mathf.Lerp(c.b, 1.0f, 5f * Time.deltaTime);
+                }
+                thrusterRenderer.color = c;
+            }
+        }
+
+        // 2. Trail color and width pulsing
+        if (playerTrail != null)
+        {
+            // Cycle trail color dynamically using HSV spectrum for a rich multi-color rainbow look
+            float speedMultiplier = 0.5f;
+            float hueStart = (Time.time * speedMultiplier) % 1f;
+            float hueMid = (Time.time * speedMultiplier + 0.25f) % 1f;
+            float hueEnd = (Time.time * speedMultiplier + 0.5f) % 1f;
+
+            Color colorStart = Color.HSVToRGB(hueStart, 0.95f, 1f);
+            Color colorMid = Color.HSVToRGB(hueMid, 0.9f, 0.9f);
+            Color colorEnd = Color.HSVToRGB(hueEnd, 0.85f, 0.7f);
+
+            Gradient gradient = new Gradient();
+            gradient.SetKeys(
+                new GradientColorKey[] { 
+                    new GradientColorKey(colorStart, 0f), 
+                    new GradientColorKey(colorMid, 0.5f),
+                    new GradientColorKey(colorEnd, 1f) 
+                },
+                new GradientAlphaKey[] { 
+                    new GradientAlphaKey(0.85f, 0f), 
+                    new GradientAlphaKey(0.45f, 0.5f),
+                    new GradientAlphaKey(0.0f, 1f) 
+                }
+            );
+            playerTrail.colorGradient = gradient;
+
+            // Pulsating width
+            float pulseWidth = 0.25f + 0.05f * Mathf.Sin(Time.time * 15f);
+            playerTrail.startWidth = pulseWidth;
+        }
+    }
 }

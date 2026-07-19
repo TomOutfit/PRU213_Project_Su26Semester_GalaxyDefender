@@ -14,4 +14,7 @@ public class PowerUpTripleFire : PowerUp
 
     protected override int ScoreValue => 10000;
     protected override string SFXKey => "sfx_powerup_score";
+    
+    /// <summary>Triple Fire power-up damages Boss as it increases player offensive capability</summary>
+    protected override bool ShouldDamageBoss() => true;
 }
