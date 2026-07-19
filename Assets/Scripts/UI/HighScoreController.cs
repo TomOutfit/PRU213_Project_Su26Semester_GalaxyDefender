@@ -2,8 +2,22 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+// Medal colors for Top 1 / 2 / 3
+// Easily adjustable here without touching the Inspector.
+
 public class HighScoreController : MonoBehaviour
 {
+    // ── Medal colour palette ──────────────────────────────────────────────
+    private static readonly Color ColorGold   = new Color(1.00f, 0.84f, 0.00f, 1f); // #FFD700
+    private static readonly Color ColorSilver = new Color(0.75f, 0.75f, 0.75f, 1f); // #C0C0C0
+    private static readonly Color ColorBronze = new Color(0.80f, 0.50f, 0.20f, 1f); // #CC8033
+
+    // Panel background tint (25 % alpha so the original art still shows)
+    private static readonly Color BgGold   = new Color(1.00f, 0.84f, 0.00f, 0.18f);
+    private static readonly Color BgSilver = new Color(0.75f, 0.75f, 0.75f, 0.18f);
+    private static readonly Color BgBronze = new Color(0.80f, 0.50f, 0.20f, 0.18f);
+    // ─────────────────────────────────────────────────────────────────────
+
     [Header("Score Panels")]
     public GameObject scoreTop1Panel;
     public GameObject scoreTop2Panel;
@@ -20,6 +34,7 @@ public class HighScoreController : MonoBehaviour
 
     [Header("Navigation")]
     public Button backButton;
+    public Button clearButton;
 
     private UIPanelEffects panelEffects;
 
@@ -66,6 +81,18 @@ public class HighScoreController : MonoBehaviour
             backButton.onClick.RemoveListener(GoBack);
             backButton.onClick.AddListener(GoBack);
         }
+
+        if (clearButton == null)
+        {
+            Transform clearT = transform.Find("ClearButton");
+            if (clearT != null) clearButton = clearT.GetComponent<Button>();
+        }
+
+        if (clearButton != null)
+        {
+            clearButton.onClick.RemoveListener(ClearScores);
+            clearButton.onClick.AddListener(ClearScores);
+        }
     }
 
     private TMP_Text GetLabel(GameObject panel, string labelName)
@@ -96,11 +123,38 @@ public class HighScoreController : MonoBehaviour
         }
 
         TMP_Text[] labels = new TMP_Text[] { highScore1, highScore2, highScore3, highScore4, highScore5 };
+        GameObject[] panels = new GameObject[] { scoreTop1Panel, scoreTop2Panel, scoreTop3Panel, scoreTop4Panel, scoreTop5Panel };
+
         for (int i = 0; i < labels.Length; i++)
         {
             if (labels[i] != null)
             {
                 labels[i].text = $"{i + 1}.  {scores[i]:N0}";
+
+                // Apply medal colour to text (Top 1 / 2 / 3 only)
+                switch (i)
+                {
+                    case 0: labels[i].color = ColorGold;   break;
+                    case 1: labels[i].color = ColorSilver; break;
+                    case 2: labels[i].color = ColorBronze; break;
+                    default: labels[i].color = Color.white; break;
+                }
+            }
+
+            // Apply subtle background tint to the panel Image
+            if (panels[i] != null)
+            {
+                Image panelImg = panels[i].GetComponent<Image>();
+                if (panelImg != null)
+                {
+                    switch (i)
+                    {
+                        case 0: panelImg.color = BgGold;   break;
+                        case 1: panelImg.color = BgSilver; break;
+                        case 2: panelImg.color = BgBronze; break;
+                        // Top 4 & 5: leave unchanged
+                    }
+                }
             }
         }
     }
@@ -115,5 +169,24 @@ public class HighScoreController : MonoBehaviour
         {
             gameObject.SetActive(false);
         }
+    }
+
+    public void ClearScores()
+    {
+        if (SaveManager.Instance != null)
+        {
+            SaveManager.Instance.ClearHighScores();
+        }
+        else
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                PlayerPrefs.DeleteKey("HighScore_" + i);
+            }
+            PlayerPrefs.Save();
+        }
+
+        RefreshScores();
+        Debug.Log("High Scores Cleared!");
     }
 }

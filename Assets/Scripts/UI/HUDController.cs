@@ -44,18 +44,18 @@ public class HUDController : MonoBehaviour
         if (WaveTextTMP  != null) _vfx.waveTextRect  = WaveTextTMP.GetComponent<RectTransform>();
         if (LivesTextTMP != null) _vfx.livesTextRect  = LivesTextTMP.GetComponent<RectTransform>();
 
+        // Auto-resolve components if not set in Inspector
+        if (HPSlider == null) HPSlider = transform.Find("HPBar")?.GetComponent<Slider>();
+        if (ShieldSlider == null) ShieldSlider = transform.Find("ShieldBar")?.GetComponent<Slider>();
+
+        // Set max values to 100% unconditionally
+        if (HPSlider != null) HPSlider.maxValue = 100f;
+        if (ShieldSlider != null) ShieldSlider.maxValue = 100f;
+
         // Subscribe to PlayerHealth events
         playerHealth = Object.FindAnyObjectByType<PlayerHealth>();
         if (playerHealth != null)
         {
-            // Auto-resolve components if not set in Inspector
-            if (HPSlider == null) HPSlider = transform.Find("HPBar")?.GetComponent<Slider>();
-            if (ShieldSlider == null) ShieldSlider = transform.Find("ShieldBar")?.GetComponent<Slider>();
-
-            // Set max values to 100%
-            if (HPSlider != null) HPSlider.maxValue = 100f;
-            if (ShieldSlider != null) ShieldSlider.maxValue = 100f;
-
             playerHealth.OnHPChanged.AddListener(UpdateHP);
             playerHealth.OnShieldChanged.AddListener(UpdateShield);
 
@@ -107,6 +107,21 @@ public class HUDController : MonoBehaviour
         // Kick-off count-up animation cho Lives ngay khi scene bắt đầu
         if (GameManager.Instance != null)
             UpdateLives(GameManager.Instance.GetCurrentLives());
+
+        // Fallback for PlayerHealth in case it was null during Awake
+        if (playerHealth == null)
+        {
+            playerHealth = Object.FindAnyObjectByType<PlayerHealth>();
+            if (playerHealth != null)
+            {
+                playerHealth.OnHPChanged.RemoveListener(UpdateHP);
+                playerHealth.OnShieldChanged.RemoveListener(UpdateShield);
+                playerHealth.OnHPChanged.AddListener(UpdateHP);
+                playerHealth.OnShieldChanged.AddListener(UpdateShield);
+                UpdateHP(playerHealth.currentHP);
+                UpdateShield(playerHealth.currentShield);
+            }
+        }
 
         // Hiển thị hướng dẫn điều khiển khi bắt đầu Level 1
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Level1")
@@ -298,6 +313,15 @@ public class HUDController : MonoBehaviour
 
     private Sprite LoadSpriteRuntime(string relativePath)
     {
+        // 1. Try loading from the centralized SpriteDatabase first
+        if (SpriteDatabase.Instance != null)
+        {
+            Sprite loaded = SpriteDatabase.Instance.GetSprite(relativePath);
+            if (loaded != null) return loaded;
+        }
+
+#if UNITY_EDITOR
+        // 2. Editor Fallback: Load raw file bytes from disk
         string fullPath = System.IO.Path.Combine(Application.dataPath, relativePath.Replace("Assets/", ""));
         if (System.IO.File.Exists(fullPath))
         {
@@ -318,6 +342,7 @@ public class HUDController : MonoBehaviour
                 Debug.LogError("[HUDController] Dynamic sprite load failed: " + e.Message);
             }
         }
+#endif
         return null;
     }
 
@@ -325,6 +350,7 @@ public class HUDController : MonoBehaviour
     {
         if (HPSlider != null)
         {
+            if (playerHealth == null) playerHealth = Object.FindAnyObjectByType<PlayerHealth>();
             float maxHP = playerHealth != null ? playerHealth.maxHP : 100f;
             HPSlider.value = (maxHP > 0) ? ((float)hp / maxHP) * 100f : 0f;
         }
@@ -334,6 +360,7 @@ public class HUDController : MonoBehaviour
     {
         if (ShieldSlider != null)
         {
+            if (playerHealth == null) playerHealth = Object.FindAnyObjectByType<PlayerHealth>();
             float maxShield = playerHealth != null ? playerHealth.maxShield : 100f;
             ShieldSlider.value = (maxShield > 0) ? ((float)shield / maxShield) * 100f : 0f;
         }
