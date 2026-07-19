@@ -47,11 +47,11 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 
 ## Gate Criteria (must ALL be true to exit Stage 1)
 
-- [ ] Unity project on Git; everyone has cloned and opened it without errors
-- [ ] Player moves in 8 directions, clamped to screen, at correct speed
-- [ ] Dash fires at correct speed/duration/cooldown; no diagonal speed boost bug
-- [ ] All physics layers created and collision matrix configured
-- [ ] P4: every sprite (AI-generated + downloaded), every SFX, every BGM file exists locally and is correctly named
+- [x] Unity project on Git; everyone has cloned and opened it without errors
+- [x] Player moves in 8 directions, clamped to screen, at correct speed
+- [x] Dash fires at correct speed/duration/cooldown; no diagonal speed boost bug
+- [x] All physics layers created and collision matrix configured
+- [x] P4: every sprite (AI-generated + downloaded), every SFX, every BGM file exists locally and is correctly named
 
 ---
 
@@ -73,7 +73,7 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 - [x] `ObjectPool.cs` — Generic pool, Get()/Release(), hard caps (20 player bullets, 30 enemy bullets), auto-return oldest at cap
 - [x] `PlayerController.cs` — WASD/Arrow input, `rb.MovePosition()` in FixedUpdate, screen viewport clamp, Shift → dash coroutine
 - [x] `PlayerHealth.cs` — maxHP=100, maxShield=50, TakeDamage() checks isDashing first, shield absorbs before HP, OnDeath/OnHPChanged/OnShieldChanged events
-- [ ] Quick play test: place Player prefab in temp scene → confirm movement, clamp, dash all work
+- [x] Quick play test: place Player prefab in temp scene → confirm movement, clamp, dash all work
 
 > **Handoff to P2 at end of Week 1:** Folder structure + Git repo must exist so P2 can create GameManager simultaneously.
 
@@ -166,13 +166,13 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 
 ## Gate Criteria
 
-- [ ] Player bullet spawns from pool, flies upward, hits Drone, Drone dies with explosion
-- [ ] Score increments by 100 on Drone death; combo tracking active
-- [ ] WaveManager spawns Wave 1 (4 Drones); on all killed, 2s gap, Wave 2 spawns (6 Drones)
-- [ ] HUD HP bar and Score text update in real time
-- [ ] Pause (ESC) works: game freezes, Resume restores
-- [ ] All sprites imported, correct import settings, no pink/magenta errors in Scene view
-- [ ] At least 1 BGM track plays in Level1.unity
+- [x] Player bullet spawns from pool, flies upward, hits Drone, Drone dies with explosion
+- [x] Score increments by 100 on Drone death; combo tracking active
+- [x] WaveManager spawns Wave 1 (4 Drones); on all killed, 2s gap, Wave 2 spawns (6 Drones)
+- [x] HUD HP bar and Score text update in real time
+- [x] Pause (ESC) works: game freezes, Resume restores
+- [x] All sprites imported, correct import settings, no pink/magenta errors in Scene view
+- [x] At least 1 BGM track plays in Level1.unity
 
 ---
 
@@ -193,8 +193,8 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 - [x] **EnemyDrone prefab**: SpriteRenderer=enemy_drone.png, Rigidbody2D Dynamic gravity=0, CircleCollider2D, Animator=DroneAnimator, EnemyDrone, EnemyHealth(20, 100pts); layer=Enemy
 - [x] **ExplosionSmall prefab**: SpriteRenderer, Animator, AnimationEvent on last frame → ReturnToPool
 - [x] **HitEffect prefab**: same, smaller sprite
-- [ ] Validate Layer Collision Matrix: player bullet hits Enemy, enemy bullet hits Player, no cross-contamination
-- [ ] Tune PolygonCollider2D on Player (exclude wing tips); test in Play mode via Scene gizmos
+- [x] Validate Layer Collision Matrix: player bullet hits Enemy, enemy bullet hits Player, no cross-contamination
+- [x] Tune PolygonCollider2D on Player (exclude wing tips); test in Play mode via Scene gizmos
 
 ---
 
@@ -215,7 +215,7 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 - [x] Wire GameManager.OnStateChanged → PauseMenuController (show/hide panel) + timeScale
 - [x] **ExplosionSmall + HitEffect prefabs** placed in ObjectPoolContainer
 - [x] Assign AudioManager clip dictionary entries: sfx_shoot_player, sfx_explosion_small, sfx_player_hit entries populated in Inspector
-- [ ] Quick integration test: kill Drone → explosion plays, score +100, wave count decrements
+- [x] Quick integration test: kill Drone → explosion plays, score +100, wave count decrements
 
 ---
 
@@ -266,7 +266,7 @@ P3 (UI/Level) runs PARALLEL from Week 1; depends on P4 imports by Week 3
 - [x] Import all BGM .ogg → Assets/Audio/BGM/; select all → Load Type=Streaming, Loop=true; Apply
 - [x] Open Level1.unity → BGM AudioSource: assign bgm_gameplay.ogg; verify it plays on start
 - [x] Spot-check Console for red errors after import — fix any misnamed/missing files
-- [ ] Test: enter Play mode in Level1.unity → confirm no pink sprites, correct font renders, BGM audible
+- [x] Test: enter Play mode in Level1.unity → confirm no pink sprites, correct font renders, BGM audible
 
 ---
 
