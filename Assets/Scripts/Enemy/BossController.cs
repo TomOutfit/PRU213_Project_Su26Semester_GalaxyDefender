@@ -44,6 +44,16 @@ public class BossController : MonoBehaviour
     [Tooltip("Sprite shown during Phase 3 (33% HP).")]
     public string phase3SpritePath = "Assets/Sprites/Enemies/enemy_boss_phase3.png";
 
+    [Header("Visual Effects")]
+    [Tooltip("Particle effect for Boss aura (optional).")]
+    public GameObject auraParticlePrefab;
+    [Tooltip("Particle effect for phase change.")]
+    public GameObject phaseChangeParticlePrefab;
+    [Tooltip("Particle effect for Boss damage.")]
+    public GameObject damageParticlePrefab;
+    [Tooltip("Trail renderer for movement (optional).")]
+    public GameObject trailPrefab;
+
     [HideInInspector]
     public bool isSpawning = true;
     [HideInInspector]
@@ -60,6 +70,33 @@ public class BossController : MonoBehaviour
     private Vector2 targetSpawnPosition;
 
     private bool spawnedDronesPhase3 = false;
+    private Camera mainCamera;
+    private int lastScreenWidth = -1;
+    private int lastScreenHeight = -1;
+    private float cachedScreenW = 10f;
+
+    // Visual effects components
+    private GameObject auraEffect;
+    private GameObject trailEffect;
+    private SpriteRenderer spriteRenderer;
+    private Color originalColor;
+    private float damageFlashTimer = 0f;
+    private float pulseTimer = 0f;
+    private bool visualEffectsInitialized = false;
+
+    private float GetScreenW()
+    {
+        if (mainCamera == null) mainCamera = Camera.main;
+        if (mainCamera == null) return 10f;
+        
+        if (Screen.width != lastScreenWidth || Screen.height != lastScreenHeight)
+        {
+            lastScreenWidth = Screen.width;
+            lastScreenHeight = Screen.height;
+            cachedScreenW = mainCamera.ViewportToWorldPoint(Vector3.right).x - mainCamera.ViewportToWorldPoint(Vector3.zero).x;
+        }
+        return cachedScreenW;
+    }
 
     [Header("Events")]
     public UnityEvent<int> OnPhaseChanged;
@@ -70,6 +107,11 @@ public class BossController : MonoBehaviour
         Debug.Log($"[BossController] Awake called on GameObject: {gameObject.name}");
         rb = GetComponent<Rigidbody2D>();
         health = GetComponent<EnemyHealth>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null)
+        {
+            originalColor = spriteRenderer.color;
+        }
     }
 
     private void OnEnable()
@@ -101,12 +143,28 @@ public class BossController : MonoBehaviour
 
         Debug.Log($"[BossController] topY={topY}, startPosition={startPosition}, targetSpawnPosition={targetSpawnPosition}, initialPosition={transform.position}");
 
+        damageFlashTimer = 0f;
+        pulseTimer = 0f;
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = originalColor;
+        }
+
+        InitializeVisualEffects();
         StartCoroutine(SpawnSequence());
     }
 
     private void OnDisable()
     {
         Debug.Log($"[BossController] OnDisable called on GameObject: {gameObject.name}");
+
+        CleanupVisualEffects();
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = originalColor;
+        }
+        damageFlashTimer = 0f;
+        pulseTimer = 0f;
     }
 
     private void OnDestroy()
@@ -124,6 +182,9 @@ public class BossController : MonoBehaviour
             health.OnHealthChanged.AddListener(OnHealthChanged);
             health.OnDeath.AddListener(Die);
         }
+
+        // Initialize visual effects
+        InitializeVisualEffects();
 
         GameObject poolObj = GameObject.Find("BulletBossPool");
         if (poolObj != null)
@@ -179,6 +240,7 @@ public class BossController : MonoBehaviour
 
         UpdateMovement();
         UpdateShooting();
+        UpdateVisualEffects();
     }
 
     private void UpdateMovement()
@@ -191,8 +253,7 @@ public class BossController : MonoBehaviour
         }
         else if (currentPhase == 2)
         {
-            Camera cam = Camera.main;
-            float screenW = cam != null ? cam.ViewportToWorldPoint(Vector3.right).x - cam.ViewportToWorldPoint(Vector3.zero).x : 10f;
+            float screenW = GetScreenW();
             float amplitude = screenW * 0.3f;
             float xOffset = amplitude * Mathf.Sin(Time.time * (2f * Mathf.PI / 4f));
 
@@ -201,8 +262,7 @@ public class BossController : MonoBehaviour
         }
         else if (currentPhase == 3)
         {
-            Camera cam = Camera.main;
-            float screenW = cam != null ? cam.ViewportToWorldPoint(Vector3.right).x - cam.ViewportToWorldPoint(Vector3.zero).x : 10f;
+            float screenW = GetScreenW();
             float amplitude = screenW * 0.35f;
             float xOffset = amplitude * Mathf.Sin(Time.time * (2f * Mathf.PI / 3f));
 
@@ -323,6 +383,9 @@ public class BossController : MonoBehaviour
     {
         if (isSpawning || isDying) return;
 
+        // Trigger damage visual effects
+        TriggerDamageEffects();
+
         float pct = (float)currentHP / maxHP;
         int targetPhase = currentPhase;
 
@@ -339,6 +402,7 @@ public class BossController : MonoBehaviour
         {
             currentPhase = targetPhase;
             ApplyPhaseSprite(currentPhase);
+            TriggerPhaseChangeEffects();
             OnPhaseChanged?.Invoke(currentPhase);
             AudioManager.Instance?.PlaySFX("sfx_boss_phase");
 
@@ -489,5 +553,130 @@ public class BossController : MonoBehaviour
         {
             LevelManager.Instance?.LevelComplete();
         }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // VISUAL EFFECTS
+    // ─────────────────────────────────────────────────────────────────────
+
+    private void InitializeVisualEffects()
+    {
+        if (visualEffectsInitialized) return;
+
+        // Create aura effect if prefab is assigned
+        if (auraParticlePrefab != null && auraEffect == null)
+        {
+            auraEffect = Instantiate(auraParticlePrefab, transform.position, Quaternion.identity);
+            auraEffect.transform.SetParent(transform, false);
+            auraEffect.transform.localPosition = Vector3.zero;
+            auraEffect.transform.localScale = Vector3.one;
+        }
+
+        // Create trail effect if prefab is assigned
+        if (trailPrefab != null && trailEffect == null)
+        {
+            trailEffect = Instantiate(trailPrefab, transform.position, Quaternion.identity);
+            trailEffect.transform.SetParent(transform, false);
+            trailEffect.transform.localPosition = Vector3.zero;
+            trailEffect.transform.localScale = Vector3.one;
+        }
+
+        visualEffectsInitialized = true;
+    }
+
+    private void UpdateVisualEffects()
+    {
+        // Handle damage flash
+        if (damageFlashTimer > 0f)
+        {
+            damageFlashTimer -= Time.deltaTime;
+            float flashIntensity = damageFlashTimer / 0.15f;
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.color = Color.Lerp(originalColor, Color.red, flashIntensity);
+            }
+        }
+        else if (spriteRenderer != null)
+        {
+            spriteRenderer.color = originalColor;
+        }
+
+        // Handle pulsing aura effect
+        pulseTimer += Time.deltaTime * 3f;
+        float pulseScale = 1f + Mathf.Sin(pulseTimer) * 0.1f;
+        if (auraEffect != null)
+        {
+            auraEffect.transform.localScale = new Vector3(pulseScale, pulseScale, 1f);
+        }
+    }
+
+    private void TriggerDamageEffects()
+    {
+        // Flash red
+        damageFlashTimer = 0.15f;
+
+        // Spawn damage particles
+        if (damageParticlePrefab != null)
+        {
+            GameObject damageEffect = Instantiate(damageParticlePrefab, transform.position, Quaternion.identity);
+            Destroy(damageEffect, 1f);
+        }
+
+        // Small screen shake on damage
+        CameraShake.Instance?.Shake(0.1f, 0.05f);
+    }
+
+    private void TriggerPhaseChangeEffects()
+    {
+        // Spawn phase change particles
+        if (phaseChangeParticlePrefab != null)
+        {
+            GameObject phaseEffect = Instantiate(phaseChangeParticlePrefab, transform.position, Quaternion.identity);
+            Destroy(phaseEffect, 2f);
+        }
+
+        // Strong screen shake on phase change
+        CameraShake.Instance?.Shake(0.3f, 0.15f);
+
+        // Flash white briefly
+        if (spriteRenderer != null)
+        {
+            StartCoroutine(PhaseChangeFlash());
+        }
+    }
+
+    private IEnumerator PhaseChangeFlash()
+    {
+        if (spriteRenderer == null) yield break;
+        
+        Color flashColor = Color.white;
+        float flashDuration = 0.3f;
+        float elapsed = 0f;
+
+        while (elapsed < flashDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / flashDuration;
+            spriteRenderer.color = Color.Lerp(flashColor, originalColor, t);
+            yield return null;
+        }
+
+        spriteRenderer.color = originalColor;
+    }
+
+    private void CleanupVisualEffects()
+    {
+        if (auraEffect != null)
+        {
+            Destroy(auraEffect);
+            auraEffect = null;
+        }
+        if (trailEffect != null)
+        {
+            Destroy(trailEffect);
+            trailEffect = null;
+        }
+
+        visualEffectsInitialized = false;
     }
 }
